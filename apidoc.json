@@ -1,0 +1,16 @@
+{
+  "name": "CloudRending",
+  "version": "1.0.0",
+  "description": "KOA2基础框架",
+  "title": "KOA2基础框架",
+  "url" : "http://127.0.0.1:9999",
+  "sampleUrl": "http://127.0.0.1:9999",
+  "template": {
+    "withCompare": true,
+    "withGenerator": true
+  },
+  "header": {
+    "title": "简介",
+    "filename": ""
+  }
+}

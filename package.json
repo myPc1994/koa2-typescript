@@ -1,0 +1,43 @@
+{
+  "name": "base-koa2-ts",
+  "version": "1.0.0",
+  "description": "nodejs 基础模板",
+  "scripts": {
+    "dev": "set NODE_ENV=development && nodemon",
+    "start": "tsc && set NODE_ENV=production && node ./bin/www",
+    "apidoc": "apidoc -i src/routes/ -o static/apidoc/",
+    "pm2-start": "tsc && pm2 start ./bin/www --name node-koa2-base",
+    "pm2-restart": "pm2 restart node-koa2-base",
+    "pm2-list": "pm2 list",
+    "pm2-stop": "pm2 stop node-koa2-base",
+    "pm2-delete": "pm2 delete node-koa2-base"
+  },
+  "author": "939979509@qq.com",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.13.1",
+    "koa-body": "^4.2.0",
+    "koa-json": "^2.0.2",
+    "koa-json-error": "^3.1.2",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^10.1.1",
+    "koa-static-server": "^1.5.2",
+    "koa2-cors": "^2.0.6",
+    "log4js": "^6.3.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.13.4",
+    "@types/koa-json": "^2.0.20",
+    "@types/koa-json-error": "^3.1.3",
+    "@types/koa-logger": "^3.1.1",
+    "@types/koa-router": "^7.4.4",
+    "@types/koa-static-server": "^1.3.1",
+    "@types/koa2-cors": "^2.0.2",
+    "@types/moment": "^2.13.0",
+    "@types/mongoose": "^5.11.97",
+    "apidoc": "^0.29.0",
+    "nodemon": "^2.0.12",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.3"
+  }
+}

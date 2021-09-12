@@ -1,0 +1,71 @@
+global._envConfig = require("../env/index");
+var debug = require('debug')('demo:server');
+var http = require('http');
+var port = normalizePort(global._envConfig.port || '3000');
+var app = null;
+if (global._envConfig.env === 'development') {
+  app = require('../src/app');
+} else {
+  app = require('../dist/app');
+}
+
+var server = http.createServer(app.callback());
+
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+ function onError(error) {
+  if (error.syscall !== 'listen') {
+      throw error;
+  }
+
+  var bind = typeof port === 'string'
+      ? 'Pipe ' + port
+      : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+      case 'EACCES':
+          console.error("权限不足,需要提升权限:" + bind);
+          process.exit(1);
+      case 'EADDRINUSE':
+          console.error('端口已被占用：' + bind);
+          process.exit(1);
+      default:
+          throw error;
+  }
+}
+
+/**
+* Event listener for HTTP server "listening" event.
+*/
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+  console.log("服务启动了", bind)
+  console.log("当前环境:", global._envConfig.env);
+}
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+      // named pipe
+      return val;
+  }
+  if (port >= 0) {
+      // port number
+      return port;
+  }
+  return false;
+}
