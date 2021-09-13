@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "set NODE_ENV=development && nodemon",
     "start": "tsc && set NODE_ENV=production && node ./bin/www",
-    "apidoc": "apidoc -i src/routes/ -o public/apidoc/",
-    "apidoc1": "node ./apidoc.js",
+    "apidoc": "node ./apidoc.js",
     "pm2-start": "tsc && pm2 start ./bin/www --name node-koa2-base",
     "pm2-restart": "pm2 restart node-koa2-base",
     "pm2-list": "pm2 list",
