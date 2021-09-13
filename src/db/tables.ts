@@ -22,11 +22,6 @@ export const tables = {
         updateTime: {type: Date, default: Date.now},
     },
     [ETables.versionUpgrade]: {
-        uuid: {
-            type: String, default: () => {
-                return v1();
-            }
-        },
         createTime: {
             type: String,
             default: () => {

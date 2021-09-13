@@ -1,3 +1,6 @@
+import {Context} from "koa";
+import {IncomingMessage} from "http";
+
 // 环境变量接口说明
 export interface IEnvConfig {
     env: 'development' | 'production' | 'test', // 环境名称
@@ -18,4 +21,20 @@ export interface IEnvConfig {
 
 export interface IKeyValue {
     [key: string]: any
-};
+}
+
+export interface IMulterNcomingMessage extends IncomingMessage {
+    file: File,
+    body: IKeyValue
+}
+
+// 自定义ctx返回的类型
+export interface IMulterContext extends Context {
+    req: IMulterNcomingMessage
+}
+
+export interface ICpcVersion {
+    version_1: number,
+    version_2: number,
+    version_3: number,
+}

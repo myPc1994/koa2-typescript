@@ -1,9 +1,10 @@
 import {ELevel, ILogUtil} from "../ILogUtil";
 import {Context} from 'koa';
-var log4js = require('./log4js');
-var systemInfo = log4js.getLogger('systemInfo');
-var netError = log4js.getLogger('netError');
-var netResponse = log4js.getLogger('netResponse');
+import {NetUtil} from "../../utils/NetUtil";
+const log4js = require('./log4js');
+const systemInfo = log4js.getLogger('systemInfo');
+const netError = log4js.getLogger('netError');
+const netResponse = log4js.getLogger('netResponse');
 
 export class Log4jsUtil extends ILogUtil {
     public log(level: ELevel, msg: string) {
@@ -11,14 +12,14 @@ export class Log4jsUtil extends ILogUtil {
     }
 
     public netError(ctx: Context, error: any, time: number): void {
-        const info: any = this.getClinetInfo(ctx);
+        const info: any = NetUtil.getClinetInfo(ctx);
         info.time = time;
         let infoStr = JSON.stringify(info);
         netError.error(this.formatError(error, infoStr))
     }
 
     public netResponse(ctx: Context, time: number): void {
-        const info: any = this.getClinetInfo(ctx);
+        const info: any = NetUtil.getClinetInfo(ctx);
         info.time = time;
         let errStr = JSON.stringify(info);
         console.log(info, ctx)

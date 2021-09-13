@@ -73,7 +73,7 @@
     "encoding":true,// 定义编码格式默认utf-8
     "import-spacing":true,// import关键字后加空格
     "interface-name":[true,"always-prefix"],// interface必须以I开头
-    "jsdoc-format":true,// 注释基于jsdoc风格
+    "jsdoc-format":false,// 注释基于jsdoc风格
     "new-parens":true,// 调用构造函数时需要用括号
     "no-consecutive-blank-lines":[true,2],// 不允许有空行
     "no-trailing-whitespace": [// 不允许空格结尾

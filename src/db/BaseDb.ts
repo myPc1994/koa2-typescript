@@ -67,7 +67,7 @@ export abstract class BaseDb {
      * @param {IKeyValue} where
      */
     public deleteOne(where: IKeyValue) {
-        return  this.model.deleteOne(where);
+        return this.model.deleteOne(where);
     }
 
     /**
@@ -75,7 +75,7 @@ export abstract class BaseDb {
      * @param {IKeyValue} where
      */
     public deleteMany(where: IKeyValue) {
-        return  this.model.deleteMany(where);
+        return this.model.deleteMany(where);
     }
 
     /**
@@ -83,7 +83,7 @@ export abstract class BaseDb {
      * @param {IKeyValue} where
      * @param {IKeyValue} fields
      */
-    public find(where: IKeyValue={}, fields: IKeyValue = {_id: 0}) {
+    public find(where: IKeyValue = {}, fields: IKeyValue = {_id: 0}) {
         return this.model.find(where, fields, {});
     }
 
@@ -92,15 +92,16 @@ export abstract class BaseDb {
      * @param {IKeyValue} where
      * @param {IKeyValue} fields
      */
-    public findOne(where: IKeyValue={}, fields: IKeyValue = {_id: 0}) {
-        return  this.model.findOne(where, fields);
+    public findOne(where: IKeyValue = {}, fields: IKeyValue = {_id: 0}) {
+        return this.model.findOne(where, fields);
     }
 
     /**
      * 返回符合条件的文档数
      * @param {IKeyValue} where
      */
-    public countDocuments(where: IKeyValue={}) {
+    public countDocuments(where: IKeyValue = {}) {
         return this.model.countDocuments(where);
     }
+
 }
