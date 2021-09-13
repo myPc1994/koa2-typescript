@@ -1,17 +1,18 @@
 {
-    "verbose": false,
-    "ignore": [
-        "**/*.test.ts",
-        "**/*.spec.ts",
-        ".git",
-        "node_modules"
-    ],
-    "watch": [
-        "src",
-        "bin/www"
-    ],
-    "exec": "ts-node bin/www",
-    "ext": "ts, *",
-    "restartable": false,
-    "delay": 300
+  "verbose": false,
+  "ignore": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    ".git",
+    "node_modules"
+  ],
+  "watch": [
+    "src",
+    "bin/www",
+    "env"
+  ],
+  "exec": "ts-node bin/www",
+  "ext": "ts, *",
+  "restartable": false,
+  "delay": 300
 }

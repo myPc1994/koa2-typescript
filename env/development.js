@@ -14,7 +14,7 @@ module.exports = {
         pass: "",
         host: "127.0.0.1",
         port: 27017,
-        database: "cloudRender_dev",
+        database: "mobilePortalSite_dev",
         option: {
             useNewUrlParser: true,
             useUnifiedTopology: true

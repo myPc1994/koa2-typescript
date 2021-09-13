@@ -1,5 +1,8 @@
+import {v1} from 'uuid';
+
 export enum ETables {
-    user = "user"
+    user = "user",
+    versionUpgrade = "versionUpgrade"
 }
 
 export const tables = {
@@ -17,5 +20,25 @@ export const tables = {
         description: String,
         createTime: {type: Date, default: Date.now},
         updateTime: {type: Date, default: Date.now},
+    },
+    [ETables.versionUpgrade]: {
+        uuid: {
+            type: String, default: () => {
+                return v1();
+            }
+        },
+        createTime: {
+            type: String,
+            default: () => {
+                return new Date().getTime()
+            }
+        },
+        version_1: {type: String, required: true},// 第一级：重大重构
+        version_2: {type: String, required: true},// 第二级：重大功能改进
+        version_3: {type: String, required: true},// 第三极：小升级或者BUG修复
+        type: {type: String, required: true},// pc,android,ios
+        title: {type: String, required: true},// 升级信息标题
+        description: {type: String, required: true},// 升级信息描述
     }
 }
+

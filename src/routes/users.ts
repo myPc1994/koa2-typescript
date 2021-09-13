@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import Router from 'koa-router';
-import {UserController} from "../db/controller/UserController";
+import {UserCtrl} from "../db/controller/UserCtrl";
 import {ResponseBeautifier} from "../utils/ResponseBeautifier";
 
 const usersRouter = new Router({
@@ -20,44 +20,44 @@ const usersRouter = new Router({
  * @apiSuccess (200) {String} data.memory.free 从节点的总内存（格式化后）
  * @apiSuccess (200) {Array} data.gpus  从节点拥有的GPU(多显卡)
  * @apiSuccessExample {json} Success-Response:
- {
-     "status": 200,
-     "message": "操作成功",
-     "data": {
-     "ips": [
-         "172.17.224.1",
-         "11.23.254.129",
-         "192.168.168.70"
-     ],
-         "port": "9999",
-         "cpus": [
-         {
-             "model": "Intel(R) Core(TM) i7-8700K CPU @ 3.70GHz",
-             "speed": 3696,
-             "times": {
-                 "user": 39382093,
-                 "nice": 0,
-                 "sys": 36738921,
-                 "idle": 1251714187,
-                 "irq": 6603687
-             }
-         }
-     ],
-         "memory": {
-         "total": 34286379008,
-             "free": 19486371840
-     },
-     "gpus": [
-         {
-             "name": "GeForce GTX 1050 Ti"
-         }
-     ]
- }
- }
+ * {
+ *    "status": 200,
+ *   "message": "操作成功",
+ *   "data": {
+ *   "ips": [
+ *       "172.17.224.1",
+ *       "11.23.254.129",
+ *       "192.168.168.70"
+ *   ],
+ *       "port": "9999",
+ *       "cpus": [
+ *       {
+ *           "model": "Intel(R) Core(TM) i7-8700K CPU @ 3.70GHz",
+ *           "speed": 3696,
+ *           "times": {
+ *               "user": 39382093,
+ *               "nice": 0,
+ *               "sys": 36738921,
+ *               "idle": 1251714187,
+ *               "irq": 6603687
+ *           }
+ *       }
+ *   ],
+ *       "memory": {
+ *       "total": 34286379008,
+ *           "free": 19486371840
+ *   },
+ *   "gpus": [
+ *       {
+ *           "name": "GeForce GTX 1050 Ti"
+ *       }
+ *   ]
+ * }
+ * }
  * @apiVersion 1.0.0
  */
 usersRouter.get('/string', async (ctx: Koa.Context, next: Koa.Next) => {
-    const res = await UserController.instance.save({
+    const res = await UserCtrl.instance.save({
         user: "是否",
         price: "xxxxxxx"
     })
@@ -65,7 +65,7 @@ usersRouter.get('/string', async (ctx: Koa.Context, next: Koa.Next) => {
 })
 
 usersRouter.get('/json', async (ctx: Koa.Context, next: Koa.Next) => {
-    const data = await UserController.instance.find();
+    const data = await UserCtrl.instance.find();
     ResponseBeautifier.success(ctx, data);
 })
 
