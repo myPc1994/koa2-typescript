@@ -7,6 +7,8 @@ import koa_cors from 'koa2-cors';
 import path from 'path';
 import fs from 'fs';
 import {logUtil} from "./log/LogUtil";
+import {Pm2FlushUtil} from "./utils/Pm2FlushUtil";
+
 const app = new Koa();
 app.use(logUtil.net());// 日志处理
 app.use(koa_cors());// 跨域处理
@@ -27,4 +29,5 @@ app.on('error', async (error, ctx) => {
         }
     }
 });
+Pm2FlushUtil.start();
 module.exports = app;

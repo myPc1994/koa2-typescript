@@ -1,4 +1,5 @@
 import {createConnection, Connection} from 'mongoose';
+import mongoose from 'mongoose';
 import {logUtil} from "../log/LogUtil";
 import {ELevel} from "../log/ILogUtil";
 
@@ -12,23 +13,27 @@ export class DbUtil {
         if (user && pass) {
             // mongodb://user:pass@localhost:port/database
             // mongodb://127.0.0.1:27017/admin?compressors=disabled&gssapiServiceName=mongodb
-            uri = `mongodb://${user}:${pass}@${host}:${port}/${database}`;
+            uri = `mongodb://${user}:${pass}@${host}:${port}/?authSource=${database}`;
         } else {
             uri = `mongodb://${host}:${port}/${database}`;
         }
         this.uri = uri;
-        this.mongooseInstance = createConnection(uri, option);
-        this.mongooseInstance.on('connected', (err) => {
+        const instance = createConnection(uri, option);
+        instance.on('error', err => {
+            this.saveErrorInfo(uri, err);
+        });
+        instance.on('connected', (err) => {
             if (err) {
-                logUtil.log(ELevel.error, '连接数据库失败:' + uri + err);
-                console.error("连接数据库失败", uri, err);
+                this.saveErrorInfo(uri, err);
             } else {
-                console.log("连接数据库成功");
+                this.mongooseInstance = instance;
+                console.log("连接数据库成功")
                 logUtil.log(ELevel.info, '连接数据库成功:' + uri)
                 this.runCallBack();
             }
         });
     }
+
 
     public onConnected(cb: Function) {
         if (this.mongooseInstance) {
@@ -36,6 +41,11 @@ export class DbUtil {
         } else {
             this.openCbArr.push(cb);
         }
+    }
+
+    private saveErrorInfo(uri: string, err: any) {
+        console.error("连接数据库失败:", uri, err);
+        logUtil.log(ELevel.error, '连接数据库失败:' + uri + err);
     }
 
     private runCallBack() {
