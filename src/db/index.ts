@@ -11,6 +11,7 @@ export class DbUtil {
         let uri: string;
         if (user && pass) {
             // mongodb://user:pass@localhost:port/database
+            // mongodb://127.0.0.1:27017/admin?compressors=disabled&gssapiServiceName=mongodb
             uri = `mongodb://${user}:${pass}@${host}:${port}/${database}`;
         } else {
             uri = `mongodb://${host}:${port}/${database}`;

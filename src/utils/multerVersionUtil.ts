@@ -7,11 +7,12 @@ import {VersionUpgrade} from "../db/controller/VersionUpgrade";
 import {JsUtil} from "./JsUtil";
 
 function getAPKFilePath(type: string, version_1: number, version_2: number, version_3: number) {
-    return path.resolve(__dirname, `../../public/apk/${type}/${version_1}/${version_2}/${version_3}`);
+    return path.resolve(__dirname, `../../public/package/${type}/${version_1}/${version_2}/${version_3}`);
 }
 
-function getAPKUrlPath(type: string, version_1: number, version_2: number, version_3: number) {
-    return `/public/apk/${type}/${version_1}/${version_2}/${version_3}/skMap.apk`;
+function getAPKUrlPath(data: any) {
+    const {type, version_1, version_2, version_3} = data;
+    return `/public/package/${type}/${version_1}/${version_2}/${version_3}/skMap.apk`;
 }
 
 // apk接收数据规则
@@ -61,7 +62,7 @@ const uploadAPKileFilter = function (req: any, file: multer.File, cb: any) {
 }
 const uploadAPK = multer({storage: uploadAPKStorage, fileFilter: uploadAPKileFilter}).single('file');
 
-export const multerUtil = {
+export const multerVersionUtil = {
     uploadAPK,
     getAPKUrlPath
 }

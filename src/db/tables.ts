@@ -31,6 +31,7 @@ export const tables = {
         version_1: {type: String, required: true},// 第一级：重大重构
         version_2: {type: String, required: true},// 第二级：重大功能改进
         version_3: {type: String, required: true},// 第三极：小升级或者BUG修复
+        hasUpgrade: {type: Boolean, required: false},// 是否强制升级
         type: {type: String, required: true},// pc,android,ios
         title: {type: String, required: true},// 升级信息标题
         description: {type: String, required: true},// 升级信息描述

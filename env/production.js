@@ -10,11 +10,11 @@ module.exports = {
     type: "file",//file,db//文件保存，还是数据库保存
   },
   mongodb_config: { //mongodb数据库配置
-    user: "",
-    pass: "",
+    user: "cpc",
+    pass: "admin",
     host: "127.0.0.1",
     port: 27017,
-    database: "mobilePortalSite",
+    database: "mobileApp",
     option: {
       useNewUrlParser: true,
       useUnifiedTopology: true
