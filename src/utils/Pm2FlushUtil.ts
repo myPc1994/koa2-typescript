@@ -2,7 +2,7 @@ import {ELevel} from "../log/ILogUtil";
 import {logUtil} from "../log/LogUtil";
 
 const exec = require('child_process').exec;
-const defaultTime = 1000 * 60 * 60 * 24 * 30;// 默认30天清理一次
+const defaultTime = 1000 * 60 * 60 * 24 * 15;// 默认15天清理一次
 
 export class Pm2FlushUtil {
 
@@ -10,6 +10,7 @@ export class Pm2FlushUtil {
         if (Pm2FlushUtil.timer) {
             return
         }
+        console.log(delay)
         Pm2FlushUtil.timer = setInterval(Pm2FlushUtil.flush, delay)
     }
 

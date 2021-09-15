@@ -2,7 +2,10 @@ import {v1} from 'uuid';
 
 export enum ETables {
     user = "user",
-    versionUpgrade = "versionUpgrade"
+    versionUpgrade = "versionUpgrade",
+    nucleicAcid = "nucleicAcid",// 核酸
+    keyArea = "keyArea",// 重点区域
+    thread = "thread"// 省级推送线索
 }
 
 export const tables = {
@@ -35,6 +38,20 @@ export const tables = {
         type: {type: String, required: true},// pc,android,ios
         title: {type: String, required: true},// 升级信息标题
         description: {type: String, required: true},// 升级信息描述
-    }
+    },
+    [ETables.nucleicAcid]: {
+        createTime: {
+            type: String,
+            default: () => {
+                return new Date().getTime()
+            }
+        },// 创建时间
+        everyDay: {type: Number, required: true}, // 日常送检合计
+        allPeople: {type: Number, required: true},// 全民送检合计
+        updateTime: {type: String, required: true},// 更新时间
+        county: {type: String, required: true}// 区县
+    },
+    [ETables.keyArea]:{},
+    [ETables.thread]:{},
 }
 

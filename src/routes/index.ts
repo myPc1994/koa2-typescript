@@ -16,7 +16,7 @@ const indexRouter = new Router();
  * @apiParam  {String} version_2     第二级：重大功能改进
  * @apiParam  {String} version_3     第三极：小升级或者BUG修复
  * @apiParam  {Boolean} hasUpgrade     是否强制升级
- * @apiParam  {File} file     第三极：小升级或者BUG修复
+ * @apiParam  {File} file     apk文件
  * @apiSuccess (200) {Number} status 状态码
  * @apiSuccess (200) {String} message 消息
  * @apiSuccess (200) {Object} data 信息

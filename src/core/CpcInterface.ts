@@ -38,3 +38,8 @@ export interface ICpcVersion {
     version_2: number,
     version_3: number,
 }
+
+export interface DBCallBack {
+    status:"",
+    message:""
+}
