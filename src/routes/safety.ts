@@ -28,8 +28,10 @@ const usersRouter = new Router({
  * @apiSuccess (200) {Object} data.preDay.countEveryDay  前一天的统计信息-日常检测累计
  * @apiSuccess (200) {Object} data.preDay.countAllPeople  前一天的统计信息-全民检测累计
  * @apiSuccess (200) {Object} data.countyMap 各区县统计信息
- * @apiSuccess (200) {Object} data.countyMap.everyDay 各区县统计信息-日常检测
- * @apiSuccess (200) {Object} data.countyMap.allPeople 各区县统计信息-全民检测
+ * @apiSuccess (200) {Object} data.countyMap.preEveryDay 各区县统计信息-日常检测
+ * @apiSuccess (200) {Object} data.countyMap.preAllPeople 各区县统计信息-全民检测
+ * @apiSuccess (200) {Object} data.countyMap.countEveryDay 各区县统计信息-日常检测累计
+ * @apiSuccess (200) {Object} data.countyMap.countAllPeople 各区县统计信息-全民检测累计
  * @apiSuccess (200) {Array} data.totalTrend  累计趋势
  * @apiSuccess (200) {Array} data.totalTrend.time  累计趋势-时间节点
  * @apiSuccess (200) {Array} data.totalTrend.data  累计趋势-数据

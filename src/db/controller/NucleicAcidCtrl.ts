@@ -49,8 +49,8 @@ export class NucleicAcidCtrl extends BaseDb {
             // 区县统计
             if (!result.countyMap[item.county]) {
                 result.countyMap[item.county] = {
-                    everyDay: 0,
-                    allPeople: 0,
+                    preEveryDay: 0,
+                    preAllPeople: 0,
                     countEveryDay: 0,
                     countAllPeople: 0,
                 };
@@ -59,8 +59,8 @@ export class NucleicAcidCtrl extends BaseDb {
             result.countyMap[item.county].countAllPeople += item.allPeople;
             // 前一日统计
             if (day === preDay) {
-                result.countyMap[item.county].everyDay += item.everyDay;
-                result.countyMap[item.county].allPeople += item.allPeople;
+                result.countyMap[item.county].preEveryDay += item.everyDay;
+                result.countyMap[item.county].preAllPeople += item.allPeople;
                 result.preDay.everyDay += item.everyDay;
                 result.preDay.allPeople += item.allPeople;
             }
