@@ -104,4 +104,23 @@ export abstract class BaseDb {
         return this.model.countDocuments(where);
     }
 
+    /**
+     * 保存同时过滤相同数据
+     * @param fields 唯一值判断
+     * @param arr 需要判断的数组
+     */
+    public async saveOrFilterSame(fields: string[], arr: any[]) {
+        const result = [];
+        for (let item of arr) {
+            const where:any = {};
+            for (let field of fields) {
+                if (item[field]) {
+                    where[field] = item[field];
+                }
+            }
+            const data = await this.saveOrUpdate(where, item);
+            result.push(data);
+        }
+        return result;
+    }
 }

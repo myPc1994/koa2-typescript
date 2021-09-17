@@ -20,9 +20,9 @@ export class NucleicAcidCtrl extends BaseDb {
     public async getStatistics(ctx: Context, next: Next, county = "全市") {
         let allData: any = null;
         if (county === "全市") {
-            allData = await this.model.find();
+            allData = await this.model.find().sort({"updateTime":1});
         } else {
-            allData = await this.model.find({county});
+            allData = await this.model.find({county}).sort({"updateTime":1});
         }
         if (allData.length === 0) {
             return ResponseBeautifier.fail(ctx, ResponseInfo.internalServerError, "数据库没有数据!");
@@ -41,7 +41,6 @@ export class NucleicAcidCtrl extends BaseDb {
         };
         /*前一天的时间0点*/
         const preDay = moment().subtract(1, 'days').format("YY/MM/DD");
-        console.log(preDay, moment(preDay).valueOf(), new Date().getTime());
         for (let item of allData) {
             const day: any = moment(parseInt(item.updateTime, 0)).format("YY/MM/DD");
             result.everyDay += item.everyDay;
@@ -64,6 +63,7 @@ export class NucleicAcidCtrl extends BaseDb {
                 result.preDay.everyDay += item.everyDay;
                 result.preDay.allPeople += item.allPeople;
             }
+            // 趋势图
             if (!result.totalTrend[day]) {
                 result.totalTrend[day] = {
                     allPeople: 0,

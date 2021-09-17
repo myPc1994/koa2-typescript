@@ -39,7 +39,8 @@ export interface ICpcVersion {
     version_3: number,
 }
 
-export interface DBCallBack {
-    status:"",
-    message:""
+export interface IMulterUtil {
+    path: Function | string,
+    filename: Function|any,
+    suffixs: string[]
 }

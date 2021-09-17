@@ -97,7 +97,7 @@
               "chnname": "区县"
             },
             {
-              "name": "numberReceiv",
+              "name": "receivingNum",
               "type": "DefaultString",
               "remark": "",
               "chnname": "接收人数"
@@ -174,10 +174,10 @@
               "relationNoShow": true
             }
           ],
-          "chnname": "重点区域"
+          "chnname": "时空伴随-重点区域"
         },
         {
-          "title": "thread",
+          "title": "cluesMoPai",
           "fields": [
             {
               "name": "county",
@@ -240,13 +240,19 @@
               "chnname": "在省外总数"
             },
             {
+              "name": "inProvinceNum",
+              "type": "DefaultString",
+              "remark": "",
+              "chnname": "在省内总数"
+            },
+            {
               "name": "highRisk",
               "type": "number",
               "remark": "",
               "chnname": "高风险来闽"
             },
             {
-              "name": "inRisk",
+              "name": "middleRisk",
               "type": "number",
               "remark": "",
               "chnname": "中风险来闽"
@@ -317,7 +323,7 @@
               "relationNoShow": true
             }
           ],
-          "chnname": "省级推送线索"
+          "chnname": "线索摸排"
         }
       ],
       "graphCanvas": {
@@ -340,7 +346,7 @@
           },
           {
             "shape": "table",
-            "title": "thread",
+            "title": "cluesMoPai",
             "moduleName": false,
             "x": 824.40625,
             "y": 277,
