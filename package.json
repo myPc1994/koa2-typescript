@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./bin/www",
     "start": "tsc && cross-env  NODE_ENV=production  node ./bin/www",
+    "build": "node ./build/index",
     "apidoc": "node ./apidoc.js",
     "pm2-start": "tsc && pm2 start ./bin/www --name node-koa2-base",
     "pm2-restart": "pm2 restart node-koa2-base",
