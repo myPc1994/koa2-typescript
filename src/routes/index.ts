@@ -1,6 +1,6 @@
 import {Context, Next} from 'koa';
 import Router from 'koa-router';
-import {VersionUpgrade} from "../db/controller/VersionUpgrade";
+import {VersionUpgradeCtrl} from "../db/controller/VersionUpgradeCtrl";
 import {ResponseBeautifier, ResponseInfo} from "../utils/ResponseBeautifier";
 import {multerVersionUtil} from "../utils/multerVersionUtil";
 import {IMulterContext} from "../core/CpcInterface";
@@ -57,7 +57,7 @@ indexRouter.post('/addVersion', (ctx: Context, next: Next) => {
         }
         //  保存到数据库
         const {title, description, type, version_1, version_2, version_3} = body;
-        const data = await VersionUpgrade.instance.save({
+        const data = await VersionUpgradeCtrl.instance.save({
             title,
             description,
             type,
@@ -105,7 +105,7 @@ indexRouter.post('/addVersion', (ctx: Context, next: Next) => {
  */
 indexRouter.get('/latestVersion', async (ctx: Context, next: Next) => {
     const type = ctx.query.type;
-    const data: any = (await VersionUpgrade.instance.findOne({type}).sort({createTime: -1}).limit(1))?.toJSON();
+    const data: any = (await VersionUpgradeCtrl.instance.findOne({type}).sort({createTime: -1}).limit(1))?.toJSON();
     if (data) {
         data.url = multerVersionUtil.getAPKUrlPath(data);
     }

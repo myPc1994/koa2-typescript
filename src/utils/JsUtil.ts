@@ -1,5 +1,9 @@
 import {ICpcVersion, IKeyValue} from "../core/CpcInterface";
+import moment from 'moment';
 
+/**
+ * js工具类
+ */
 export class JsUtil {
     public static versionCheck(addV: ICpcVersion, dbV: ICpcVersion) {
         if (addV.version_1 < dbV.version_1) {
@@ -44,15 +48,25 @@ export class JsUtil {
         return name.substring(name.lastIndexOf("."), name.length);
     }
 
-    public static isEmpty(arr: any[]) {
-        if (arr.length === 0) {
+    public static moment(str: string) {
+        if(str.indexOf("/")){
+            return moment(str, "YYYY/MM/DD HH:mm:ss");
+        }else{
+            return moment(str);
+        }
+    }
+
+    public static isEmpty(arr: any[], len: number) {
+        if (arr.length === 0 || len < arr.length) {
             return false;
         }
-        for (const v of arr) {
+        for (let index = 0; index < len; index++) {
+            const v = arr[index]
             if (!v && typeof v !== "number") {
                 return false;
             }
         }
         return true;
     }
+
 }

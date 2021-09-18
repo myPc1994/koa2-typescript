@@ -3,6 +3,9 @@ import {GlobalVariable} from "../GlobalVariable";
 import {ETables, tables} from '../db/tables';
 import {IKeyValue} from "../core/CpcInterface";
 
+/**
+ * 所有表格处理的基础类，表格处理必须要继承它
+ */
 export abstract class BaseDb {
     protected model: Model<Document>;
 
@@ -79,6 +82,13 @@ export abstract class BaseDb {
     }
 
     /**
+     * 不传移除所有表数据
+     * @param filter
+     */
+    public remove(filter?:any){
+        return this.model.remove(filter);
+    }
+    /**
      *  查询数据
      * @param {IKeyValue} where
      * @param {IKeyValue} fields
@@ -104,4 +114,23 @@ export abstract class BaseDb {
         return this.model.countDocuments(where);
     }
 
+    /**
+     * 保存同时过滤相同数据
+     * @param fields 唯一值判断
+     * @param arr 需要判断的数组
+     */
+    public async saveOrFilterSame(fields: string[], arr: any[]) {
+        const result = [];
+        for (let item of arr) {
+            const where:any = {};
+            for (let field of fields) {
+                if (item[field]) {
+                    where[field] = item[field];
+                }
+            }
+            const data = await this.saveOrUpdate(where, item);
+            result.push(data);
+        }
+        return result;
+    }
 }

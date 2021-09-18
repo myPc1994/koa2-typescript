@@ -22,7 +22,6 @@ export class Log4jsUtil extends ILogUtil {
         const info: any = NetUtil.getClinetInfo(ctx);
         info.time = time;
         let errStr = JSON.stringify(info);
-        console.log(info, ctx)
         netResponse.info(errStr)
     }
 

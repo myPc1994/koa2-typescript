@@ -5,6 +5,9 @@ import moment from 'moment';
 import {ResponseBeautifier, ResponseInfo} from "../../utils/ResponseBeautifier";
 import {JsUtil} from "../../utils/JsUtil";
 
+/**
+ * 核酸大数据
+ */
 export class NucleicAcidCtrl extends BaseDb {
     public static instance: NucleicAcidCtrl = new NucleicAcidCtrl();
 
@@ -20,9 +23,9 @@ export class NucleicAcidCtrl extends BaseDb {
     public async getStatistics(ctx: Context, next: Next, county = "全市") {
         let allData: any = null;
         if (county === "全市") {
-            allData = await this.model.find();
+            allData = await this.model.find().sort({"updateTime":1});
         } else {
-            allData = await this.model.find({county});
+            allData = await this.model.find({county}).sort({"updateTime":1});
         }
         if (allData.length === 0) {
             return ResponseBeautifier.fail(ctx, ResponseInfo.internalServerError, "数据库没有数据!");
@@ -30,58 +33,43 @@ export class NucleicAcidCtrl extends BaseDb {
         const updateTime = allData[allData.length - 1].updateTime;// 最新更新时间
         const result: any = {
             updateTime: moment(parseInt(updateTime,10)).format("YY/MM/DD HH:mm"),
-            everyDay: 0,
-            allPeople: 0,
-            preDay: {
-                everyDay: 0,
-                allPeople: 0,
-            },
+            num: 0,
+            preDayNum:0,
             countyMap: {},
             totalTrend: {},
         };
         /*前一天的时间0点*/
         const preDay = moment().subtract(1, 'days').format("YY/MM/DD");
-        console.log(preDay, moment(preDay).valueOf(), new Date().getTime());
         for (let item of allData) {
             const day: any = moment(parseInt(item.updateTime, 0)).format("YY/MM/DD");
-            result.everyDay += item.everyDay;
-            result.allPeople += item.allPeople;
+            result.num += item.num;
             // 区县统计
             if (!result.countyMap[item.county]) {
                 result.countyMap[item.county] = {
-                    preEveryDay: 0,
-                    preAllPeople: 0,
-                    countEveryDay: 0,
-                    countAllPeople: 0,
+                    num: 0,
+                    preDayNum: 0,
                 };
             }
-            result.countyMap[item.county].countEveryDay += item.everyDay;
-            result.countyMap[item.county].countAllPeople += item.allPeople;
+            result.countyMap[item.county].num += item.num;
             // 前一日统计
             if (day === preDay) {
-                result.countyMap[item.county].preEveryDay += item.everyDay;
-                result.countyMap[item.county].preAllPeople += item.allPeople;
-                result.preDay.everyDay += item.everyDay;
-                result.preDay.allPeople += item.allPeople;
+                result.preDayNum += item.num;
+                result.countyMap[item.county].preDayNum += item.num;
             }
+            // 趋势图
             if (!result.totalTrend[day]) {
                 result.totalTrend[day] = {
-                    allPeople: 0,
-                    everyDay: 0
+                    num:0
                 }
             }
-            result.totalTrend[day].allPeople += item.allPeople;
-            result.totalTrend[day].everyDay += item.everyDay;
+            result.totalTrend[day].num += item.num;
         }
         // 变为递增
-        const divisionTrend = JsUtil.timeObj2ArrSort(result.totalTrend);
-        let countAllPeople = 0;
-        let countEveryDay = 0;
-        result.totalTrend = divisionTrend.map((item: any, index: number) => {
-            countAllPeople += item.data.allPeople;
-            countEveryDay += item.data.everyDay;
-            item.data.countAllPeople = countAllPeople;
-            item.data.countEveryDay = countEveryDay;
+        result.totalTrend = JsUtil.timeObj2ArrSort(result.totalTrend);
+        let countNum = 0;
+        result.totalTrend = result.totalTrend.map((item: any, index: number) => {
+            countNum += item.data.num;
+            item.data.countNum = countNum;
             return item;
         });
         ResponseBeautifier.success(ctx, result);
@@ -118,12 +106,10 @@ export class NucleicAcidCtrl extends BaseDb {
         const allData: any = await this.model.find(args);
         const result: any = {
             updateTime: et,
-            everyDay: 0,
-            allPeople: 0,
+            num: 0
         };
         for (let item of allData) {
-            result.everyDay += item.everyDay;
-            result.allPeople += item.allPeople;
+            result.num += item.num;
         }
         return result
     }

@@ -1,5 +1,9 @@
 import path from 'path';
 import fs from 'fs';
+
+/**
+ * 文件处理工具类
+ */
 export  class FileUtil {
     // 多层级创建文件夹
     public static mkdirs(dirname:string, callback:any) {

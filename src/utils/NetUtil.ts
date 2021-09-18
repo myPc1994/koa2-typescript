@@ -1,6 +1,9 @@
 import {Context} from "koa";
 import {IncomingMessage} from "http";
 
+/**
+ * 网络处理工具类
+ */
 export class NetUtil {
     public static getClientIp(req: IncomingMessage) {
         const ip = req.headers['x-forwarded-for'] ||

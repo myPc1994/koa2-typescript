@@ -1,12 +1,18 @@
 import {Context} from 'koa';
 
+/**
+ * 统一返回的状态码，统一管理
+ */
 export const ResponseInfo = {
     success: {code: 200, message: "操作成功!"},
     internalServerError: {code: 500, message: "系统内部错误!"},
     parameterError: {code: 401, message: "参数错误!"},
+    dataError: {code: 402, message: "数据错误!"},
 }
 
-// 统一返回格式
+/**
+ * 统一返回格式
+ */
 export class ResponseBeautifier {
     public static success(ctx: Context, data: any = null, customMessage: string = "") {
         const {code, message} = ResponseInfo.success;

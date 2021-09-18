@@ -5,7 +5,7 @@ import {Context} from 'koa';
 export class LogConsole extends ILogUtil {
     public net() {
         return logger((str: string, args: any) => {    // 使用日志中间件
-            console.log(Moment().format('YYYY-MM-DD HH:MM:SS') + str);
+            console.log(Moment().format('YYYY-MM-DD HH:mm:ss') + str);
         });
     }
 

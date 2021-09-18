@@ -3,9 +3,12 @@ import path from 'path';
 import fs from 'fs';
 
 import {FileUtil} from "./FileUtil";
-import {VersionUpgrade} from "../db/controller/VersionUpgrade";
+import {VersionUpgradeCtrl} from "../db/controller/VersionUpgradeCtrl";
 import {JsUtil} from "./JsUtil";
 
+/***
+ * 后期废弃，移到multerUtil，统一处理
+ */
 function getAPKFilePath(type: string, version_1: number, version_2: number, version_3: number) {
     return path.resolve(__dirname, `../../public/package/${type}/${version_1}/${version_2}/${version_3}`);
 }
@@ -31,7 +34,7 @@ const uploadAPKStorage = multer.diskStorage({
         if (!version_3) {
             return cb("参数version_3不能缺失");
         }
-        const data: any = await VersionUpgrade.instance.findOne({type}).sort({createTime: -1}).limit(1);
+        const data: any = await VersionUpgradeCtrl.instance.findOne({type}).sort({createTime: -1}).limit(1);
         if (!JsUtil.versionCheck(req.body, data)) {
             return cb(`版本号一定要高于最新版本:v${data.version_1}.${data.version_2}.${data.version_3}`);
         }
