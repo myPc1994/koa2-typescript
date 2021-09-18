@@ -4,6 +4,7 @@ export const ResponseInfo = {
     success: {code: 200, message: "操作成功!"},
     internalServerError: {code: 500, message: "系统内部错误!"},
     parameterError: {code: 401, message: "参数错误!"},
+    dataError: {code: 402, message: "数据错误!"},
 }
 
 // 统一返回格式

@@ -46,8 +46,9 @@ export const tables = {
                 return new Date().getTime()
             }
         },// 创建时间
-        everyDay: {type: Number, required: true}, // 日常送检合计
-        allPeople: {type: Number, required: true},// 全民送检合计
+        num: {type: Number, required: true}, // 核酸检测数量
+        No: {type: Number, required: true}, // 序号
+        sampleName: {type: String, required: true},// 采样点名称
         updateTime: {type: Number, required: true},// 更新时间
         county: {type: String, required: true}// 区县
     },

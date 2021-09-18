@@ -17,6 +17,10 @@ export class MulterUtil {
         multerU = multer({
             storage: multer.diskStorage({
                 async destination(req: any, res: any, cb: any) {
+                    const {password} = req.body;
+                    if (password !== "ascs.123") {
+                        return cb("password秘钥错误!");
+                    }
                     // 目录不存在，创建
                     if (!fs.existsSync(_basePath)) {
                         FileUtil.mkdirs(_basePath, (err: any) => {

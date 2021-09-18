@@ -25,55 +25,37 @@ const usersRouter = new Router({
  * @apiSuccess (200) {String} message 消息
  * @apiSuccess (200) {Object} data 信息
  * @apiSuccess (200) {Number} data.updateTime 最后更新时间
- * @apiSuccess (200) {Number} data.everyDay 日常检测累计
- * @apiSuccess (200) {Number} data.allPeople 全民检测累计
- * @apiSuccess (200) {Object} data.preDay  前一天的统计信息
+ * @apiSuccess (200) {Number} data.num 当前检测
+ * @apiSuccess (200) {Object} data.preDayNum  前一天的检测
  * @apiSuccess (200) {Object} data.preDay.updateTime  前一天的统计信息-最后更新时间
- * @apiSuccess (200) {Object} data.preDay.everyDay  前一天的统计信息-日常检测
- * @apiSuccess (200) {Object} data.preDay.allPeople  前一天的统计信息-全民检测
- * @apiSuccess (200) {Object} data.preDay.countEveryDay  前一天的统计信息-日常检测累计
- * @apiSuccess (200) {Object} data.preDay.countAllPeople  前一天的统计信息-全民检测累计
  * @apiSuccess (200) {Object} data.countyMap 各区县统计信息
- * @apiSuccess (200) {Object} data.countyMap.preEveryDay 各区县统计信息-日常检测
- * @apiSuccess (200) {Object} data.countyMap.preAllPeople 各区县统计信息-全民检测
- * @apiSuccess (200) {Object} data.countyMap.countEveryDay 各区县统计信息-日常检测累计
- * @apiSuccess (200) {Object} data.countyMap.countAllPeople 各区县统计信息-全民检测累计
+ * @apiSuccess (200) {Object} data.countyMap.num 各区县统计信息-检测累计
+ * @apiSuccess (200) {Object} data.countyMap.preDayNum 各区县统计信息-前一天的检测
  * @apiSuccess (200) {Array} data.totalTrend  累计趋势
  * @apiSuccess (200) {Array} data.totalTrend.time  累计趋势-时间节点
  * @apiSuccess (200) {Array} data.totalTrend.data  累计趋势-数据
- * @apiSuccess (200) {Array} data.totalTrend.data.allPeople  累计趋势-全民检测
- * @apiSuccess (200) {Array} data.totalTrend.data.everyDay  累计趋势-日常检测
- * @apiSuccess (200) {Array} data.totalTrend.data.countEveryDay  累计趋势-日常检测累计
- * @apiSuccess (200) {Array} data.totalTrend.data.countAllPeople  累计趋势-全民检测累计
+ * @apiSuccess (200) {Array} data.totalTrend.data.num  当天
+ * @apiSuccess (200) {Array} data.totalTrend.data.countNum  累计趋势
  * @apiSuccessExample {json} Success-Response:
- *  {
+ {
     "code": 200,
     "message": "操作成功!",
     "data": {
-        "updateTime": "1631721199",
-        "everyDay": 35014,
-        "allPeople": 42007,
-        "preDay": {
-            "updateTime": "1631721599",
-            "everyDay": 10004,
-            "allPeople": 12002
-        },
+        "updateTime": "21/09/16 23:59",
+        "num": 700142,
+        "preDayNum": 268093,
         "countyMap": {
             "鼓楼区": {
-                "everyDay": 15006,
-                "allPeople": 18003,
-                "countEveryDay": 18003,
-                "countallPeople": 18003
+                "num": 109346,
+                "preDayNum": 38938
             }
         },
         "totalTrend": [
-             {
-                "time": "2021-09-14",
+            {
+                "time": "21/09/15",
                 "data": {
-                    "allPeople": 235040,
-                    "everyDay": 111373,
-                    "countAllPeople": 362407,
-                    "countEveryDay": 296625
+                    "num": 432049,
+                    "countNum": 432049
                 }
             }
         ]
@@ -120,48 +102,24 @@ usersRouter.get('/getDataByRang', async (ctx: Context, next: Next) => {
 });
 
 /**
- * @api {post} /safety/addNucleicAcid 添加核酸大数据
- * @apiGroup 核酸大数据
- * @apiParam  {String} [everyDay]  日常检测，默认为0
- * @apiParam  {String} [allPeople]  全民检测，默认为0
- * @apiParam  {String} updateTime 更新时间(时间戳)
- * @apiParam  {String} county 区县名称
- * @apiSuccess (200) {Number} code 状态码
- * @apiSuccess (200) {String} message 消息
- * @apiSuccess (200) {Object} data 信息
- * @apiSuccess (200) {String} data.updateTime 更新时间
- * @apiSuccess (200) {Number} data.everyDay 日常检测
- * @apiSuccess (200) {Number} data.allPeople 全民检测
- * @apiSuccessExample {json} Success-Response:
- {
-    "code": 200,
-    "message": "操作成功!",
-    "data": {
-        "updateTime": "1234567830",
-        "everyDay": 15006,
-        "allPeople": 18003
-    }
-}
- * @apiVersion 1.0.0
- */
-usersRouter.post('/addNucleicAcid', async (ctx: Context, next: Next) => {
-    const {everyDay = 0, allPeople = 0, updateTime, county} = ctx.request.body;
-    if (!updateTime || !county) {
-        return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError);
-    }
-    const data = await NucleicAcidCtrl.instance.save({everyDay, allPeople, updateTime, county});
-    ResponseBeautifier.success(ctx, data);
-})
-/**
  * @api {post} /safety/addExcel2NucleicAcid 导入excel格式的核酸大数据
  * @apiGroup 核酸大数据
+ * @apiParam  {String} password  秘钥
  * @apiParam  {File} file     excel文件
  * @apiSuccess (200) {Number} code 状态码
  * @apiSuccess (200) {String} message 消息
  * @apiSuccess (200) {Object} data 信息
- * @apiSuccess (200) {String} data.updateTime 更新时间
- * @apiSuccess (200) {Number} data.everyDay 日常检测
- * @apiSuccess (200) {Number} data.allPeople 全民检测
+ * @apiSuccess (200) {String} data.count 入库数据总数
+ * @apiSuccess (200) {Number} data.abnormalData 异常数据信息
+ * @apiSuccessExample {json} Success-Response:
+  {
+        "code": 200,
+        "message": "入库成功",
+        "data": {
+            "count": 65,
+            "abnormalData": []
+        }
+    }
  * @apiVersion 1.0.0
  */
 usersRouter.post('/addExcel2NucleicAcid', async (ctx: Context, next: Next) => {
@@ -178,9 +136,13 @@ usersRouter.post('/addExcel2NucleicAcid', async (ctx: Context, next: Next) => {
         if (!file) {
             return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
         }
-        const arrItems = Excel2dbFormatUtil.nucleate((file as any).path);
-        const data = await NucleicAcidCtrl.instance.saveOrFilterSame(["county","updateTime"],arrItems);
-        return ResponseBeautifier.success(ctx, data, "入库成功");
+        const formatData = Excel2dbFormatUtil.general("核酸统计",(file as any).path);
+        if(formatData.code !== 200){
+            return ResponseBeautifier.fail(ctx,ResponseInfo.dataError,formatData.data);
+        }
+        const {normalData,abnormalData} = formatData.data;
+        const data = await NucleicAcidCtrl.instance.saveOrFilterSame(["county","updateTime","No"],normalData);
+        return ResponseBeautifier.success(ctx, {count:data.length,abnormalData}, "入库成功");
     }).catch((error: any) => {
         return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
     });
@@ -302,10 +264,22 @@ usersRouter.get('/moPaiStatsTrend', async (ctx: Context, next: Next) => {
 /**
  * @api {post} /safety/addExcel2MoPai 导入excel格式的摸排数据
  * @apiGroup 摸排
+ * @apiParam  {String} password  秘钥
  * @apiParam  {File} file     excel文件
  * @apiSuccess (200) {Number} code 状态码
  * @apiSuccess (200) {String} message 消息
  * @apiSuccess (200) {Object} data 信息
+ * @apiSuccess (200) {String} data.count 入库数据总数
+ * @apiSuccess (200) {Number} data.abnormalData 异常数据信息
+ * @apiSuccessExample {json} Success-Response:
+ {
+        "code": 200,
+        "message": "入库成功",
+        "data": {
+            "count": 65,
+            "abnormalData": []
+        }
+    }
  * @apiVersion 1.0.0
  */
 usersRouter.post('/addExcel2MoPai', async (ctx: Context, next: Next) => {
@@ -322,9 +296,13 @@ usersRouter.post('/addExcel2MoPai', async (ctx: Context, next: Next) => {
         if (!file) {
             return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
         }
-        const arrItems = Excel2dbFormatUtil.moPai((file as any).path);
-        const data = await CluesMopaiCtrl.instance.saveOrFilterSame(["county","updateTime"],arrItems);
-        return ResponseBeautifier.success(ctx, data, "入库成功");
+        const formatData = Excel2dbFormatUtil.general("线索摸排",(file as any).path);
+        if(formatData.code !== 200){
+            return ResponseBeautifier.fail(ctx,ResponseInfo.dataError,formatData.data);
+        }
+        const {normalData,abnormalData} = formatData.data;
+        const data = await CluesMopaiCtrl.instance.saveOrFilterSame(["county","updateTime"],normalData);
+        return ResponseBeautifier.success(ctx, {count:data.length,abnormalData}, "入库成功");
     }).catch((error: any) => {
         return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
     });
@@ -379,10 +357,22 @@ usersRouter.get('/keyAreaStats', async (ctx: Context, next: Next) => {
 /**
  * @api {post} /safety/addExcel2KeyArea 导入excel格式的数据到时空伴随-重点区域
  * @apiGroup 时空伴随-重点区域
+ * @apiParam  {String} password  秘钥
  * @apiParam  {File} file     excel文件
  * @apiSuccess (200) {Number} code 状态码
  * @apiSuccess (200) {String} message 消息
  * @apiSuccess (200) {Object} data 信息
+ * @apiSuccess (200) {String} data.count 入库数据总数
+ * @apiSuccess (200) {Number} data.abnormalData 异常数据信息
+ * @apiSuccessExample {json} Success-Response:
+ {
+        "code": 200,
+        "message": "入库成功",
+        "data": {
+            "count": 65,
+            "abnormalData": []
+        }
+    }
  * @apiVersion 1.0.0
  */
 usersRouter.post('/addExcel2KeyArea', async (ctx: Context, next: Next) => {
@@ -399,9 +389,13 @@ usersRouter.post('/addExcel2KeyArea', async (ctx: Context, next: Next) => {
         if (!file) {
             return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
         }
-        const arrItems = Excel2dbFormatUtil.keyArea((file as any).path);
-        const data = await KeyAreaCtrl.instance.saveOrFilterSame(["county","updateTime"],arrItems);
-        return ResponseBeautifier.success(ctx, data, "入库成功");
+        const formatData = Excel2dbFormatUtil.general("重点区域及时空伴随",(file as any).path);
+        if(formatData.code !== 200){
+            return ResponseBeautifier.fail(ctx,ResponseInfo.dataError,formatData.data);
+        }
+        const {normalData,abnormalData} = formatData.data;
+        const data = await KeyAreaCtrl.instance.saveOrFilterSame(["county","updateTime"],normalData);
+        return ResponseBeautifier.success(ctx, {count:data.length,abnormalData}, "入库成功");
     }).catch((error: any) => {
         return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
     });

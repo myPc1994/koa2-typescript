@@ -44,3 +44,8 @@ export interface IMulterUtil {
     filename: Function|any,
     suffixs: string[]
 }
+
+export interface IReturnInfo {
+    code:number,
+    data?:any
+}
