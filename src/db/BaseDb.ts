@@ -77,7 +77,9 @@ export abstract class BaseDb {
     public deleteMany(where: IKeyValue) {
         return this.model.deleteMany(where);
     }
-
+    public remove(filter?:any){
+        return this.model.remove(filter);
+    }
     /**
      *  查询数据
      * @param {IKeyValue} where

@@ -5,7 +5,8 @@ export enum ETables {
     versionUpgrade = "versionUpgrade",// 版本升级
     nucleicAcid = "nucleicAcid",// 核酸
     keyArea = "keyArea",// 时空伴随-重点区域
-    cluesMoPai = "cluesMoPai"// 线索摸排
+    cluesMoPai = "cluesMoPai",// 线索摸排
+    sceneDirectory = "sceneDirectory"// 场景目录树
 }
 
 export const tables = {
@@ -82,6 +83,18 @@ export const tables = {
         highRisk: {type: Number, required: true},// 高风险来闽
         middleRisk: {type: Number, required: true},// 中风险来闽
         lowRisk: {type: Number, required: true},// 低风险来闽
+    },
+    [ETables.sceneDirectory]: {
+        createTime: {
+            type: String,
+            default: () => {
+                return new Date().getTime()
+            }
+        },// 创建时间
+        name: {type: String, required: true},// 名称
+        active: {type: Boolean, required: true},// 是否是初始化场景
+        value: {type: String, required: true},// 专题图场景的名称
+        image: {type: String, required: true},// 图片，base64
     },
 }
 

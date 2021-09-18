@@ -27,13 +27,10 @@ const excelMapField: any = {
         "中风险来闽": "middleRisk",
         "低风险来闽": "lowRisk",
     },
-    "重点区域及时空伴随": {
-        "更新时间": "updateTime",
-        "所属区域": "county",
-        "接收人数": "receivingNum",
-        "已核查": "haveCheck",
-        "未核查": "notCheck",
-        "超24小时未核查": "notCheck24H",
+    "场景目录树": {
+        "显示名称": "name",
+        "场景名称": "value",
+        "图片": "image",
     },
 }
 
@@ -91,99 +88,5 @@ export class Excel2dbFormatUtil {
         }
         return {code: 200, data: {normalData,abnormalData}}
     }
-
-    public static nucleate(path: string): IReturnInfo {
-        const obj = xlsx.parse(path);
-        const result = [];
-        for (const table of obj) {
-            for (let index = 0; index < table.data.length; index++) {
-                if (index === 0) {
-
-                    const title = table.data[0][0];
-                    if (title !== "核酸统计") {
-                        return {code: 401, data: "标题识别错误无法匹配!" + title};
-                    }
-                    continue;
-                }
-                const item = table.data[index];
-                if (JsUtil.isEmpty(item, 5)) {
-                    result.push({
-                        "updateTime": JsUtil.moment(item[0] as any).valueOf(),
-                        "No": item[1],
-                        "county": item[2],
-                        "sampleName": item[3],
-                        "num": item[4]
-                    })
-                }
-            }
-        }
-        return {code: 200, data: result}
-    }
-
-    public static moPai(path: string): IReturnInfo {
-        const obj = xlsx.parse(path);
-        const result = [];
-        for (const table of obj) {
-            for (let index = 0; index < table.data.length; index++) {
-                if (index === 0) {
-                    const title = table.data[0][0];
-                    if (title !== "线索摸排") {
-                        return {code: 401, data: "数据格式无法匹配!"}
-                    }
-                    continue;
-                }
-                const item = table.data[index];
-                if (JsUtil.isEmpty(item, 15)) {
-                    result.push({
-                        "updateTime": JsUtil.moment(item[0] as any).valueOf(),
-                        "county": item[1],
-                        "receivingNum": item[2],
-                        "haveCheck": item[3],
-                        "notCheck": item[4],
-                        "verifyNum": item[5],
-                        "invalidCombin": item[6],
-                        "duplicateData": item[7],
-                        "notToAffectedArea": item[8],
-                        "infoNotComplete": item[9],
-                        "outProvinceNum": item[10],
-                        "inProvinceNum": item[11],
-                        "highRisk": item[12],
-                        "middleRisk": item[13],
-                        "lowRisk": item[14],
-                    })
-                }
-            }
-        }
-        return {code: 200, data: result}
-    }
-
-    public static keyArea(path: string): IReturnInfo {
-        const obj = xlsx.parse(path);
-        const result = [];
-        for (const table of obj) {
-            for (let index = 0; index < table.data.length; index++) {
-                if (index === 0) {
-                    const title = table.data[0][0];
-                    if (title !== "重点区域及时空伴随") {
-                        return {code: 401, data: "数据格式无法匹配!"}
-                    }
-                    continue;
-                }
-                const item = table.data[index];
-                if (JsUtil.isEmpty(item, 6)) {
-                    result.push({
-                        "updateTime": JsUtil.moment(item[0] as any).valueOf(),
-                        "county": item[1],
-                        "receivingNum": item[2],
-                        "haveCheck": item[3],
-                        "notCheck": item[4],
-                        "notCheck24H": item[5],
-                    })
-                }
-            }
-        }
-        return {code: 200, data: result}
-    }
-
 
 }

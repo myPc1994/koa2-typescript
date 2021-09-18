@@ -12,11 +12,12 @@ import {Excel2dbFormatUtil} from "../utils/Excel2dbFormatUtil";
 import path from 'path';
 import moment from 'moment';
 import {KeyAreaCtrl} from "../db/controller/KeyAreaCtrl";
+import {SceneDirectoryCtrl} from "../db/controller/SceneDirectoryCtrl";
 
 const usersRouter = new Router({
     prefix: '/safety'
 });
-/************************************核酸 start**********************************************************/
+// region 核酸大数据
 /**
  * @api {get} /safety/getStatistics 获取核酸大数据的最新统计信息
  * @apiGroup 核酸大数据
@@ -112,7 +113,7 @@ usersRouter.get('/getDataByRang', async (ctx: Context, next: Next) => {
  * @apiSuccess (200) {String} data.count 入库数据总数
  * @apiSuccess (200) {Number} data.abnormalData 异常数据信息
  * @apiSuccessExample {json} Success-Response:
-  {
+ {
         "code": 200,
         "message": "入库成功",
         "data": {
@@ -136,19 +137,19 @@ usersRouter.post('/addExcel2NucleicAcid', async (ctx: Context, next: Next) => {
         if (!file) {
             return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
         }
-        const formatData = Excel2dbFormatUtil.general("核酸统计",(file as any).path);
-        if(formatData.code !== 200){
-            return ResponseBeautifier.fail(ctx,ResponseInfo.dataError,formatData.data);
+        const formatData = Excel2dbFormatUtil.general("核酸统计", (file as any).path);
+        if (formatData.code !== 200) {
+            return ResponseBeautifier.fail(ctx, ResponseInfo.dataError, formatData.data);
         }
-        const {normalData,abnormalData} = formatData.data;
-        const data = await NucleicAcidCtrl.instance.saveOrFilterSame(["county","updateTime","No"],normalData);
-        return ResponseBeautifier.success(ctx, {count:data.length,abnormalData}, "入库成功");
+        const {normalData, abnormalData} = formatData.data;
+        const data = await NucleicAcidCtrl.instance.saveOrFilterSame(["county", "updateTime", "No"], normalData);
+        return ResponseBeautifier.success(ctx, {count: data.length, abnormalData}, "入库成功");
     }).catch((error: any) => {
         return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
     });
 })
-/************************************核酸 end**********************************************************/
-/************************************摸排 start**********************************************************/
+//endregion
+// region 摸排
 /**
  * @api {get} /safety/moPaiStats 获取摸排的最新统计信息
  * @apiGroup 摸排
@@ -296,18 +297,19 @@ usersRouter.post('/addExcel2MoPai', async (ctx: Context, next: Next) => {
         if (!file) {
             return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
         }
-        const formatData = Excel2dbFormatUtil.general("线索摸排",(file as any).path);
-        if(formatData.code !== 200){
-            return ResponseBeautifier.fail(ctx,ResponseInfo.dataError,formatData.data);
+        const formatData = Excel2dbFormatUtil.general("线索摸排", (file as any).path);
+        if (formatData.code !== 200) {
+            return ResponseBeautifier.fail(ctx, ResponseInfo.dataError, formatData.data);
         }
-        const {normalData,abnormalData} = formatData.data;
-        const data = await CluesMopaiCtrl.instance.saveOrFilterSame(["county","updateTime"],normalData);
-        return ResponseBeautifier.success(ctx, {count:data.length,abnormalData}, "入库成功");
+        const {normalData, abnormalData} = formatData.data;
+        const data = await CluesMopaiCtrl.instance.saveOrFilterSame(["county", "updateTime"], normalData);
+        return ResponseBeautifier.success(ctx, {count: data.length, abnormalData}, "入库成功");
     }).catch((error: any) => {
         return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
     });
 })
-/************************************摸排 end**********************************************************/
+//endregion
+// region 时空伴随-重点区域
 /**
  * @api {get} /safety/keyAreaStats 获取重点区域的最新统计信息
  * @apiGroup 时空伴随-重点区域
@@ -389,16 +391,103 @@ usersRouter.post('/addExcel2KeyArea', async (ctx: Context, next: Next) => {
         if (!file) {
             return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
         }
-        const formatData = Excel2dbFormatUtil.general("重点区域及时空伴随",(file as any).path);
-        if(formatData.code !== 200){
-            return ResponseBeautifier.fail(ctx,ResponseInfo.dataError,formatData.data);
+        const formatData = Excel2dbFormatUtil.general("重点区域及时空伴随", (file as any).path);
+        if (formatData.code !== 200) {
+            return ResponseBeautifier.fail(ctx, ResponseInfo.dataError, formatData.data);
         }
-        const {normalData,abnormalData} = formatData.data;
-        const data = await KeyAreaCtrl.instance.saveOrFilterSame(["county","updateTime"],normalData);
-        return ResponseBeautifier.success(ctx, {count:data.length,abnormalData}, "入库成功");
+        const {normalData, abnormalData} = formatData.data;
+        const data = await KeyAreaCtrl.instance.saveOrFilterSame(["county", "updateTime"], normalData);
+        return ResponseBeautifier.success(ctx, {count: data.length, abnormalData}, "入库成功");
     }).catch((error: any) => {
         return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
     });
 })
+//endregion
 
+// region 场景菜单目录树
+/**
+ * @api {get} /safety/getSceneDirectory 获取 场景菜单目录树
+ * @apiGroup  场景菜单目录树
+ * @apiSuccess (200) {Number} code 状态码
+ * @apiSuccess (200) {String} message 消息
+ * @apiSuccess (200) {Object} data 信息
+ * @apiSuccess (200) {Number} data.name 显示名称
+ * @apiSuccess (200) {Number} data.active 是否是初始化场景
+ * @apiSuccess (200) {Number} data.value 场景名称
+ * @apiSuccess (200) {Number} data.image base64图片
+ * @apiSuccessExample {json} Success-Response:
+ {
+    "code": 200,
+    "message": "操作成功!",
+    "data": [
+        {
+            "name": "福清市核酸检测点（共513个）",
+            "active": false,
+            "value": "核酸检测机构分布（福清市）",
+            "image": "base64图片",
+            "createTime": "1631949695080",
+            "__v": 0
+        }
+    ]
+}
+ * @apiVersion 1.0.0
+ */
+usersRouter.get('/getSceneDirectory', async (ctx: Context, next: Next) => {
+    const data = await SceneDirectoryCtrl.instance.find(undefined,{__v:0,createTime:0,_id:0});
+    ResponseBeautifier.success(ctx,data)
+})
+/**
+ * @api {post} /safety/addExcel2SceneDirectory 导入excel格式的数据到场景目录树
+ * @apiGroup  场景菜单目录树
+ * @apiParam  {String} password  秘钥
+ * @apiParam  {String} initSceneName  初始化场景名称
+ * @apiParam  {File} file     excel文件
+ * @apiSuccess (200) {Number} code 状态码
+ * @apiSuccess (200) {String} message 消息
+ * @apiSuccess (200) {Object} data 信息
+ * @apiSuccess (200) {String} data.count 入库数据总数
+ * @apiSuccess (200) {Number} data.abnormalData 异常数据信息
+ * @apiSuccessExample {json} Success-Response:
+ {
+        "code": 200,
+        "message": "入库成功",
+        "data": {
+            "count": 65,
+            "abnormalData": []
+        }
+    }
+ * @apiVersion 1.0.0
+ */
+usersRouter.post('/addExcel2SceneDirectory', async (ctx: Context, next: Next) => {
+    const config: IMulterUtil = {
+        suffixs: [".xlsx", ".xls"],
+        path: path.resolve(__dirname, `../../public/excels/sceneDirectory`),
+        filename: function (req: any, file: any, cb: Function) {
+            const name = moment().format("YYYY_YY_MM_DD_HH_mm") + JsUtil.getType(file.originalname);
+            cb(null, name)
+        }
+    }
+    return MulterUtil.getMulter("sceneDirectory", ctx, next, config).then(async () => {
+        const {file, body} = (ctx as IMulterContext).req;
+        if (!file) {
+            return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
+        }
+        const formatData = Excel2dbFormatUtil.general("场景目录树", (file as any).path);
+        if (formatData.code !== 200) {
+            return ResponseBeautifier.fail(ctx, ResponseInfo.dataError, formatData.data);
+        }
+        const {normalData, abnormalData} = formatData.data;
+        for(let item of normalData){
+            item.active = item.value === body.initSceneName
+        }
+        await SceneDirectoryCtrl.instance.remove();// 清空表
+        const data = await SceneDirectoryCtrl.instance.saves(normalData);
+        return ResponseBeautifier.success(ctx, {count: data.length, abnormalData}, "入库成功");
+    }).catch((error: any) => {
+        console.log(error);
+        return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
+    });
+})
+
+//endregion
 export default usersRouter;
