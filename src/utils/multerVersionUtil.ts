@@ -6,6 +6,9 @@ import {FileUtil} from "./FileUtil";
 import {VersionUpgradeCtrl} from "../db/controller/VersionUpgradeCtrl";
 import {JsUtil} from "./JsUtil";
 
+/***
+ * 后期废弃，移到multerUtil，统一处理
+ */
 function getAPKFilePath(type: string, version_1: number, version_2: number, version_3: number) {
     return path.resolve(__dirname, `../../public/package/${type}/${version_1}/${version_2}/${version_3}`);
 }

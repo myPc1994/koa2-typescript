@@ -1,8 +1,10 @@
 import {createConnection, Connection} from 'mongoose';
-import mongoose from 'mongoose';
 import {logUtil} from "../log/LogUtil";
 import {ELevel} from "../log/ILogUtil";
 
+/**
+ * mongose连接工具类
+ */
 export class DbUtil {
     private mongooseInstance: Connection;
     private uri: string;

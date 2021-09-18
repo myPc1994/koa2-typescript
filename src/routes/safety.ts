@@ -403,7 +403,6 @@ usersRouter.post('/addExcel2KeyArea', async (ctx: Context, next: Next) => {
     });
 })
 //endregion
-
 // region 场景菜单目录树
 /**
  * @api {get} /safety/getSceneDirectory 获取 场景菜单目录树
@@ -420,21 +419,23 @@ usersRouter.post('/addExcel2KeyArea', async (ctx: Context, next: Next) => {
     "code": 200,
     "message": "操作成功!",
     "data": [
-        {
+       data: {
             "name": "福清市核酸检测点（共513个）",
             "active": false,
             "value": "核酸检测机构分布（福清市）",
             "image": "base64图片",
             "createTime": "1631949695080",
-            "__v": 0
-        }
+        },
+        GISURL:"xxx"
     ]
 }
  * @apiVersion 1.0.0
  */
 usersRouter.get('/getSceneDirectory', async (ctx: Context, next: Next) => {
-    const data = await SceneDirectoryCtrl.instance.find(undefined,{__v:0,createTime:0,_id:0});
-    ResponseBeautifier.success(ctx,data)
+    const data = await SceneDirectoryCtrl.instance.find(undefined, {__v: 0, createTime: 0, _id: 0});
+    // 后期会换掉，就写死，不入库了
+    const GISURL = "http://leader.view.cityworks.cn:39360/city-rainbow/view/?id=3ab7a67111914aa29f770fea273c0ea3";
+    ResponseBeautifier.success(ctx, {data, GISURL})
 })
 /**
  * @api {post} /safety/addExcel2SceneDirectory 导入excel格式的数据到场景目录树
@@ -477,7 +478,7 @@ usersRouter.post('/addExcel2SceneDirectory', async (ctx: Context, next: Next) =>
             return ResponseBeautifier.fail(ctx, ResponseInfo.dataError, formatData.data);
         }
         const {normalData, abnormalData} = formatData.data;
-        for(let item of normalData){
+        for (let item of normalData) {
             item.active = item.value === body.initSceneName
         }
         await SceneDirectoryCtrl.instance.remove();// 清空表

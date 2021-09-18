@@ -1,6 +1,9 @@
 import {ICpcVersion, IKeyValue} from "../core/CpcInterface";
 import moment from 'moment';
 
+/**
+ * js工具类
+ */
 export class JsUtil {
     public static versionCheck(addV: ICpcVersion, dbV: ICpcVersion) {
         if (addV.version_1 < dbV.version_1) {

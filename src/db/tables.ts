@@ -1,5 +1,8 @@
 import {v1} from 'uuid';
 
+/**
+ * 所有表格的统一管理
+ */
 export enum ETables {
     user = "user", // 用户
     versionUpgrade = "versionUpgrade",// 版本升级
@@ -9,6 +12,9 @@ export enum ETables {
     sceneDirectory = "sceneDirectory"// 场景目录树
 }
 
+/**
+ * 所有表格字段的限制管理
+ */
 export const tables = {
     [ETables.user]: {
         user: {type: String, require: true, ref: 'User'},

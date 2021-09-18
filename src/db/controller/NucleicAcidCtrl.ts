@@ -5,6 +5,9 @@ import moment from 'moment';
 import {ResponseBeautifier, ResponseInfo} from "../../utils/ResponseBeautifier";
 import {JsUtil} from "../../utils/JsUtil";
 
+/**
+ * 核酸大数据
+ */
 export class NucleicAcidCtrl extends BaseDb {
     public static instance: NucleicAcidCtrl = new NucleicAcidCtrl();
 

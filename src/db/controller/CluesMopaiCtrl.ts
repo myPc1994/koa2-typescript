@@ -5,6 +5,9 @@ import moment from 'moment';
 import {ResponseBeautifier, ResponseInfo} from "../../utils/ResponseBeautifier";
 import {JsUtil} from "../../utils/JsUtil";
 
+/**
+ * 摸排统计
+ */
 export class CluesMopaiCtrl extends BaseDb {
     public static instance: CluesMopaiCtrl = new CluesMopaiCtrl();
 
@@ -12,6 +15,12 @@ export class CluesMopaiCtrl extends BaseDb {
         super(ETables.cluesMoPai);
     }
 
+    /**
+     * 获取摸排统计数据
+     * @param ctx
+     * @param next
+     * @param county
+     */
     public async moPaiStats(ctx: Context, next: Next, county = "全市") {
         let allData: any = null;
         const newData: any = await this.model.findOne(undefined, {
@@ -55,6 +64,12 @@ export class CluesMopaiCtrl extends BaseDb {
         ResponseBeautifier.success(ctx, result);
     }
 
+    /**
+     * 获取摸排趋势图
+     * @param ctx
+     * @param next
+     * @param county
+     */
     public async moPaiStatsTrend(ctx: Context, next: Next, county = "全市") {
         let allData: any = null;
         if (county === "全市") {

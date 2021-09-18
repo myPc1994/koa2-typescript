@@ -34,6 +34,9 @@ const excelMapField: any = {
     },
 }
 
+/**
+ * excel导入数据库，中间格式化处理
+ */
 export class Excel2dbFormatUtil {
 
     public static general(mapName: string, path: string): IReturnInfo {

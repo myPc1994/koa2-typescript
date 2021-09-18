@@ -19,32 +19,49 @@ export interface IEnvConfig {
     }
 }
 
+/**
+ * 定义统一的{key:value}格式
+ */
 export interface IKeyValue {
     [key: string]: any
 }
 
+/**
+ * 扩展http的IncomingMessage
+ */
 export interface IMulterNcomingMessage extends IncomingMessage {
     file: File,
     body: IKeyValue
 }
 
-// 自定义ctx返回的类型
+/**
+ * 自定义ctx返回的类型
+ */
 export interface IMulterContext extends Context {
     req: IMulterNcomingMessage
 }
 
+/**
+ * 版本信息接口
+ */
 export interface ICpcVersion {
     version_1: number,
     version_2: number,
     version_3: number,
 }
 
+/**
+ * 上传参数配置接口
+ */
 export interface IMulterUtil {
     path: Function | string,
     filename: Function|any,
     suffixs: string[]
 }
 
+/**
+ * 内部返回信息格式化
+ */
 export interface IReturnInfo {
     code:number,
     data?:any

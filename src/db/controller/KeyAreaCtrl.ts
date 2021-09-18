@@ -5,6 +5,9 @@ import moment from 'moment';
 import {ResponseBeautifier, ResponseInfo} from "../../utils/ResponseBeautifier";
 import {JsUtil} from "../../utils/JsUtil";
 
+/**
+ * 重点区域
+ */
 export class KeyAreaCtrl extends BaseDb {
     public static instance: KeyAreaCtrl = new KeyAreaCtrl();
 
@@ -12,6 +15,12 @@ export class KeyAreaCtrl extends BaseDb {
         super(ETables.keyArea);
     }
 
+    /**
+     * 获取重点区域统计数据
+     * @param ctx
+     * @param next
+     * @param county
+     */
     public async keyAreaStats(ctx: Context, next: Next, county = "全市") {
         let allData: any = null;
         const newData: any = await this.model.findOne(undefined, {

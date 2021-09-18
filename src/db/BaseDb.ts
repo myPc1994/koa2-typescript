@@ -3,6 +3,9 @@ import {GlobalVariable} from "../GlobalVariable";
 import {ETables, tables} from '../db/tables';
 import {IKeyValue} from "../core/CpcInterface";
 
+/**
+ * 所有表格处理的基础类，表格处理必须要继承它
+ */
 export abstract class BaseDb {
     protected model: Model<Document>;
 
@@ -77,6 +80,11 @@ export abstract class BaseDb {
     public deleteMany(where: IKeyValue) {
         return this.model.deleteMany(where);
     }
+
+    /**
+     * 不传移除所有表数据
+     * @param filter
+     */
     public remove(filter?:any){
         return this.model.remove(filter);
     }

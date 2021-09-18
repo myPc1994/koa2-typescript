@@ -14,7 +14,7 @@ const app = new Koa();
 app.use(koa_cors());// 跨域处理
 app.use(koa_static({rootDir: 'public', rootPath: '/public'}));// 静态数据（代码生成，用于存放用户数据上传等）
 app.use(koa_static({rootDir: 'static', rootPath: '/static'}));// 服务器自带的数据,同步到git上
-app.use(bodyParser());
+app.use(bodyParser());// get,post参数解析
 app.use(koa_json());
 app.use(logUtil.net());// 日志处理
 // routes--动态引入

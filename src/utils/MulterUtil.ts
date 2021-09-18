@@ -5,6 +5,9 @@ import fs from 'fs';
 import {Context, Next} from "koa";
 import multer from 'koa-multer';
 
+/**
+ * 文件上传处理工具类
+ */
 export class MulterUtil {
     public static getMulter(key: string, ctx: Context, next: Next, config: IMulterUtil) {
         let multerU = MulterUtil.keyMapMulter[key];
