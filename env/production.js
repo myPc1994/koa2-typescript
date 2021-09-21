@@ -10,11 +10,11 @@ module.exports = {
     type: "file",//file,db//文件保存，还是数据库保存
   },
   mongodb_config: { //mongodb数据库配置
-    user: "",
-    pass: "",
-    host: "127.0.0.1",
+    user: "root",
+    pass: "123456",
+    host: "cpc_db",// mongodb容器的别名
     port: 27017,
-    database: "mobileApp",
+    database: "test",
     option: {
       useNewUrlParser: true,
       useUnifiedTopology: true

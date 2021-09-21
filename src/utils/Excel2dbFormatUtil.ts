@@ -27,6 +27,14 @@ const excelMapField: any = {
         "中风险来闽": "middleRisk",
         "低风险来闽": "lowRisk",
     },
+    "重点区域及时空伴随": {
+        "更新时间": "updateTime",
+        "所属区域": "county",
+        "接收人数": "receivingNum",
+        "已核查": "haveCheck",
+        "未核查": "notCheck",
+        "超24小时未核查": "notCheck24H",
+    },
     "场景目录树": {
         "显示名称": "name",
         "场景名称": "value",

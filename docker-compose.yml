@@ -1,0 +1,38 @@
+version: "3.2"  #指定 docker-compose.yml 文件的写法格式
+services: # 多个容器集合
+  cpc_db:
+    container_name: cpc_db
+    image: mongo
+    restart: always
+    networks:  # 使用net_cpc网络来通信
+      - cpc_network
+    ports: #暴露端口
+      - "27017:27017"
+    volumes:  # 创建数据卷
+      # 挂载数据目录
+      -  "/data/cpc/mongodb/data/db:/data/db"
+      # 挂载日志目录
+      - "/data/cpc/mongodb/log:/var/log/mongodb"
+      # 挂载配置目录
+      - "/data/cpc/mongodb/config:/etc/mongo"
+      #  挂载数据库备份
+      - "/data/cpc/mongodb/data/backup:/data/backup"
+    environment: #设置用户名和密码
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+  cpc_koa2: # 服务名称
+    container_name: cpc_koa2  # 容器名称
+    build:  # 构建
+      context: .   # 指定 Dockerfile 所在路径
+      dockerfile: Dockerfile  # 指定 context 指定的目录下面的 Dockerfile 的名称(默认为 Dockerfile)
+    ports:  # docker宿主的端口9999映射到内部端口9999
+      - "9999:9999"
+    networks:  # 使用net_cpc网络来通信
+      - cpc_network
+    depends_on: # 等待其他容器创建完成
+      - cpc_db
+    volumes:  # 创建数据卷
+      -  "/data/cpc/mobileApp/public:/home/mobileApp/public"
+networks:  # 自定义内部通信网络
+  cpc_network:   # 建立一个名字为net_cpc的网络
+    driver: bridge   # bridge:单一网络使用，overlay:swarm集群，none:禁用所有网络,host:将 container 与宿主机的网络相连通

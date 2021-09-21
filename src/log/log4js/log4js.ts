@@ -55,7 +55,7 @@ log4js.configure({
         }
     },
     pm2: true,// （布尔值）（可选） -如果你使用的是运行你的应用程序此设置为true PM2，否则日志将无法正常工作（你还需要安装PM2对讲为PM2模块：pm2 install pm2-intercom）
-    pm2InstanceVar: 'INSTANCE_ID'
+    pm2InstanceVar: 'INSTANCE_ID'// pm2InstanceVar跟要跟pm2的启动配置项中的pm2中的InstanceVar配置保持要一致的
 });
 
 module.exports = log4js;

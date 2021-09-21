@@ -4,16 +4,8 @@
   "description": "nodejs 基础模板",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./bin/www",
-    "start": "tsc && cross-env  NODE_ENV=production  node ./bin/www",
-    "build": "node ./build/index",
-    "apidoc": "node ./apidoc.js",
-    "pm2-start": "tsc && pm2 start ./bin/www --name node-koa2-base",
-    "pm2-restart": "pm2 restart node-koa2-base",
-    "pm2-list": "pm2 list",
-    "pm2-stop": "pm2 stop node-koa2-base",
-    "pm2-log": "pm2 log node-koa2-base",
-    "pm2-flush": "pm2 flush",
-    "pm2-delete": "pm2 delete node-koa2-base"
+    "build": "node ./build/start && tsc && node ./build/end",
+    "apidoc": "node ./apidoc.js"
   },
   "author": "939979509@qq.com",
   "license": "ISC",
@@ -29,8 +21,8 @@
     "koa2-cors": "^2.0.6",
     "log4js": "^6.3.0",
     "moment": "^2.29.1",
+    "mongoose": "^6.0.5",
     "node-xlsx": "^0.17.1",
-    "pm2": "^5.1.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

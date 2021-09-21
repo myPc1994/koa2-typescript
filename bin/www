@@ -2,20 +2,11 @@ global._envConfig = require("../env/index");
 var debug = require('debug')('demo:server');
 var http = require('http');
 var port = normalizePort(global._envConfig.port || '3000');
-var app = null;
-if (global._envConfig.env === 'development') {
-  app = require('../src/app');
-} else {
-  app = require('../dist/app');
-}
-
+var app = require('../src/app');
 var server = http.createServer(app.callback());
-
-
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-
 /**
  * Event listener for HTTP server "error" event.
  */

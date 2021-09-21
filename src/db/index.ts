@@ -15,7 +15,7 @@ export class DbUtil {
         if (user && pass) {
             // mongodb://user:pass@localhost:port/database
             // mongodb://127.0.0.1:27017/admin?compressors=disabled&gssapiServiceName=mongodb
-            uri = `mongodb://${user}:${pass}@${host}:${port}/?authSource=${database}`;
+            uri = `mongodb://${user}:${pass}@${host}:${port}/?authSource=admin`;
         } else {
             uri = `mongodb://${host}:${port}/${database}`;
         }
@@ -47,7 +47,7 @@ export class DbUtil {
 
     private saveErrorInfo(uri: string, err: any) {
         console.error("连接数据库失败:", uri, err);
-        logUtil.log(ELevel.error, '连接数据库失败:' + uri + err);
+        logUtil.log(ELevel.error, '连接数据库失败:' + uri + ":" + err);
     }
 
     private runCallBack() {
