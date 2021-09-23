@@ -9,6 +9,7 @@ import bodyParser from 'koa-bodyparser';
 import fs from 'fs';
 import {logUtil} from "./log/LogUtil";
 import {Pm2FlushUtil} from "./utils/Pm2FlushUtil";
+import {JsUtil} from "./utils/JsUtil";
 const app = new Koa();
 
 app.use(koa_cors());// 跨域处理

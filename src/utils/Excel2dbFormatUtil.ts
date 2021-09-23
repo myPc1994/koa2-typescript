@@ -1,6 +1,6 @@
 import {JsUtil} from "./JsUtil";
 import xlsx from "node-xlsx";
-import {IReturnInfo} from "../core/CpcInterface";
+import {EResponseType, IReturnInfo} from "./ResponseBeautifier";
 // excel字段映射数据字段
 const excelMapField: any = {
     "核酸统计": {
@@ -50,7 +50,7 @@ export class Excel2dbFormatUtil {
     public static general(mapName: string, path: string): IReturnInfo {
         const fileMap: any = excelMapField[mapName];
         if (!fileMap) {
-            return {code: 500, data: "找不到表格映射关系,表名"+mapName};
+            return {type: EResponseType.internalServerError, data: "找不到表格映射关系,表名"+mapName};
         }
         let len = Object.keys(fileMap).length;
         const obj = xlsx.parse(path);
@@ -59,18 +59,18 @@ export class Excel2dbFormatUtil {
         for (const table of obj) {
             let filedMapIndex: any = {};
             if (table.data.length === 0) {
-                return {code: 500, data: "表格内容为空!"};
+                return {type: EResponseType.dataError, data: "表格内容为空!"};
             }
             const headRow = table.data[0];
             for (let index = 0; index < headRow.length; index++) {
                 const excelField: any = (headRow[index] as string).trim();
                 if (!fileMap[excelField]) {
-                    return {code: 500, data: "找不到映射关系,字段:"+excelField};
+                    return {type: EResponseType.dataError, data: "找不到映射关系,字段:"+excelField};
                 }
                 filedMapIndex[fileMap[excelField]] = index;
             }
             if (Object.keys(filedMapIndex).length !== len) {
-                return {code: 500, data: "表格字段缺失或者不匹配!,字段必须是数量:"+ len};
+                return {type: EResponseType.dataError, data: "表格字段缺失或者不匹配!,字段必须是数量:"+ len};
             }
             for (let index = 1; index < table.data.length; index++) {
                 const row = table.data[index];
@@ -80,24 +80,30 @@ export class Excel2dbFormatUtil {
                 let isOk = true;
                 const obj: any = {};
                 for (let key of Object.keys(filedMapIndex)) {
-                    let ItemResult: any = row[filedMapIndex[key]];
-                    if (!ItemResult && typeof ItemResult !== "number") {
+                    let itemResult: any = row[filedMapIndex[key]];
+                    if (!itemResult && typeof itemResult !== "number") {
                         isOk = false;
                         abnormalData.push({"message":"异常数据","索引位置":index,row});
                         break;// 如果必须字段为空，说明数据有问题，直接跳过该数据
                     }
                     // 更新日期，统一转为时间戳
                     if (key === "updateTime") {
-                        ItemResult = JsUtil.moment(ItemResult).valueOf()
+                        const monentObj = JsUtil.moment(itemResult);
+                        if(!monentObj.isValid()){
+                            isOk = false;
+                            abnormalData.push({"message":"日期有问题","索引位置":index,row,error:"强制执行格式:YYYY/MM/DD HH:mm,不足10必须补0,否则报错。"});
+                            break;
+                        }
+                        itemResult = monentObj.valueOf()
                     }
-                    obj[key] = ItemResult
+                    obj[key] = itemResult
                 }
                 if(isOk){
                     normalData.push(obj);
                 }
             }
         }
-        return {code: 200, data: {normalData,abnormalData}}
+        return {type: EResponseType.success, data: {normalData,abnormalData}}
     }
 
 }

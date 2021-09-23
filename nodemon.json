@@ -1,5 +1,4 @@
 {
-  "verbose": false,
   "ignore": [
     "**/*.test.ts",
     "**/*.spec.ts",
@@ -12,7 +11,5 @@
     "env"
   ],
   "exec": "ts-node bin/www",
-  "ext": "ts, *",
-  "restartable": false,
-  "delay": 300
+  "ext": "ts, *"
 }

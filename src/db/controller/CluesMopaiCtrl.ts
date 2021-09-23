@@ -1,8 +1,7 @@
 import {ETables} from "../tables";
 import {BaseDb} from "../BaseDb";
-import {Context, Next} from 'koa';
 import moment from 'moment';
-import {ResponseBeautifier, ResponseInfo} from "../../utils/ResponseBeautifier";
+import {EResponseType, IReturnInfo} from "../../utils/ResponseBeautifier";
 import {JsUtil} from "../../utils/JsUtil";
 
 /**
@@ -10,25 +9,30 @@ import {JsUtil} from "../../utils/JsUtil";
  */
 export class CluesMopaiCtrl extends BaseDb {
     public static instance: CluesMopaiCtrl = new CluesMopaiCtrl();
-
+    private dataMap: { [key: string]: IReturnInfo } = {};
     constructor() {
         super(ETables.cluesMoPai);
     }
-
+    public async saveOrFilterSame2(fields: string[], arr: any[]) {
+        const result = await this.saveOrFilterSame(fields, arr);
+        this.dataMap = {};
+        setTimeout(this.moPaiStats.bind(this), 100);
+        return result;
+    }
     /**
      * 获取摸排统计数据
      * @param ctx
      * @param next
      * @param county
      */
-    public async moPaiStats(ctx: Context, next: Next, county = "全市") {
+    public async moPaiStats(county = "全市"):Promise<IReturnInfo> {
         let allData: any = null;
         const newData: any = await this.model.findOne(undefined, {
             updateTime: 1,
             _id: 0
         }).sort({"updateTime": -1}).exec();
         if (!newData) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.internalServerError, "数据库没有数据!");
+            return {type: EResponseType.internalServerError, error:"数据库没有数据"}
         }
         if (county === "全市") {
             allData = (await this.model.find({updateTime: newData.updateTime}, {
@@ -39,7 +43,7 @@ export class CluesMopaiCtrl extends BaseDb {
             allData = await this.model.find({county, updateTime: newData.updateTime}).sort({"updateTime": 1});
         }
         if (allData.length === 0) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.internalServerError, "数据库没有数据!");
+            return {type: EResponseType.internalServerError, error:"数据库没有数据"}
         }
         const updateTime = allData[allData.length - 1].updateTime;// 最新更新时间
         const result: any = {
@@ -61,7 +65,7 @@ export class CluesMopaiCtrl extends BaseDb {
             result.countyMap.push(item1);
         }
         result.haveCheckCent = (result.haveCheck / (result.haveCheck + result.notCheck) * 100).toFixed(2) + "%";
-        ResponseBeautifier.success(ctx, result);
+        return {type:EResponseType.success,data:result}
     }
 
     /**
@@ -70,7 +74,10 @@ export class CluesMopaiCtrl extends BaseDb {
      * @param next
      * @param county
      */
-    public async moPaiStatsTrend(ctx: Context, next: Next, county = "全市") {
+    public async moPaiStatsTrend(county = "全市"):Promise<IReturnInfo> {
+        if (this.dataMap[county]) {
+            return {type: EResponseType.success, data: this.dataMap[county]}
+        }
         let allData: any = null;
         if (county === "全市") {
             allData = (await this.model.find({}, {_id: 0, __v: 0}).sort({"updateTime": 1}));
@@ -78,7 +85,7 @@ export class CluesMopaiCtrl extends BaseDb {
             allData = await this.model.find({county}).sort({"updateTime": 1});
         }
         if (allData.length === 0) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.internalServerError, "数据库没有数据!");
+            return {type: EResponseType.internalServerError, error:"数据库没有数据"}
         }
         const result: any = {
             totalTrend: [],// 累计趋势图
@@ -112,6 +119,7 @@ export class CluesMopaiCtrl extends BaseDb {
             item.time = time;
             result.totalTrend.push(item);
         }
-        ResponseBeautifier.success(ctx, result);
+        this.dataMap[county] = {type: EResponseType.success, data: result};
+        return this.dataMap[county];
     }
 }

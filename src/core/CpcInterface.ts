@@ -58,11 +58,3 @@ export interface IMulterUtil {
     filename: Function|any,
     suffixs: string[]
 }
-
-/**
- * 内部返回信息格式化
- */
-export interface IReturnInfo {
-    code:number,
-    data?:any
-}

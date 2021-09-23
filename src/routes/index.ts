@@ -1,7 +1,7 @@
 import {Context, Next} from 'koa';
 import Router from 'koa-router';
 import {VersionUpgradeCtrl} from "../db/controller/VersionUpgradeCtrl";
-import {ResponseBeautifier, ResponseInfo} from "../utils/ResponseBeautifier";
+import {EResponseType, ResponseBeautifier} from "../utils/ResponseBeautifier";
 import {multerVersionUtil} from "../utils/multerVersionUtil";
 import {IMulterContext} from "../core/CpcInterface";
 
@@ -53,7 +53,7 @@ indexRouter.post('/addVersion', (ctx: Context, next: Next) => {
     return multerVersionUtil.uploadAPK(ctx, next).then(async () => {
         const {file, body} = (ctx as IMulterContext).req;
         if (!file) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
+            return ResponseBeautifier.fail(ctx, EResponseType.parameterError, "缺少参数file");
         }
         //  保存到数据库
         const {title, description, type, version_1, version_2, version_3} = body;
@@ -67,7 +67,7 @@ indexRouter.post('/addVersion', (ctx: Context, next: Next) => {
         });
         return ResponseBeautifier.success(ctx, data);
     }).catch((error: any) => {
-        return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
+        return ResponseBeautifier.fail(ctx, EResponseType.parameterError, error);
     });
 })
 /**
