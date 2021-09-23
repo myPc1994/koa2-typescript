@@ -1,8 +1,7 @@
 import {ETables} from "../tables";
 import {BaseDb} from "../BaseDb";
-import {Context, Next} from 'koa';
 import moment from 'moment';
-import {ResponseBeautifier, ResponseInfo} from "../../utils/ResponseBeautifier";
+import {EResponseType, IReturnInfo} from "../../utils/ResponseBeautifier";
 import {JsUtil} from "../../utils/JsUtil";
 
 /**
@@ -10,9 +9,17 @@ import {JsUtil} from "../../utils/JsUtil";
  */
 export class NucleicAcidCtrl extends BaseDb {
     public static instance: NucleicAcidCtrl = new NucleicAcidCtrl();
+    private dataMap: { [key: string]: IReturnInfo } = {};
 
     constructor() {
         super(ETables.nucleicAcid);
+    }
+
+    public async saveOrFilterSame2(fields: string[], arr: any[]) {
+        const result = await this.saveOrFilterSame(fields, arr);
+        this.dataMap = {};
+        setTimeout(this.getStatistics.bind(this), 100);
+        return result;
     }
 
     /**
@@ -20,21 +27,24 @@ export class NucleicAcidCtrl extends BaseDb {
      * @param ctx
      * @param next
      */
-    public async getStatistics(ctx: Context, next: Next, county = "全市") {
+    public async getStatistics(county = "全市"): Promise<IReturnInfo> {
+        if (this.dataMap[county]) {
+            return {type: EResponseType.success, data: this.dataMap[county]}
+        }
         let allData: any = null;
         if (county === "全市") {
-            allData = await this.model.find().sort({"updateTime":1});
+            allData = await this.model.find().sort({"updateTime": 1});
         } else {
-            allData = await this.model.find({county}).sort({"updateTime":1});
+            allData = await this.model.find({county}).sort({"updateTime": 1});
         }
         if (allData.length === 0) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.internalServerError, "数据库没有数据!");
+            return {type: EResponseType.internalServerError, error: "数据库没有数据"}
         }
         const updateTime = allData[allData.length - 1].updateTime;// 最新更新时间
         const result: any = {
-            updateTime: moment(parseInt(updateTime,10)).format("YY/MM/DD HH:mm"),
+            updateTime: moment(parseInt(updateTime, 10)).format("YY/MM/DD HH:mm"),
             num: 0,
-            preDayNum:0,
+            preDayNum: 0,
             countyMap: {},
             totalTrend: {},
         };
@@ -59,7 +69,7 @@ export class NucleicAcidCtrl extends BaseDb {
             // 趋势图
             if (!result.totalTrend[day]) {
                 result.totalTrend[day] = {
-                    num:0
+                    num: 0
                 }
             }
             result.totalTrend[day].num += item.num;
@@ -72,7 +82,8 @@ export class NucleicAcidCtrl extends BaseDb {
             item.data.countNum = countNum;
             return item;
         });
-        ResponseBeautifier.success(ctx, result);
+        this.dataMap[county] = {type: EResponseType.success, data: result};
+        return this.dataMap[county];
     }
 
     /**
@@ -81,7 +92,7 @@ export class NucleicAcidCtrl extends BaseDb {
      * @param et 结束时间
      * @param county 区县
      */
-    public async getDataByRang(st: string = "", et: string = "", county: string = "全市") {
+    public async getDataByRang(st: string = "", et: string = "", county: string = "全市"): Promise<IReturnInfo> {
         let args: any = {};
         if (st || et) {
             args.updateTime = {};
@@ -103,14 +114,19 @@ export class NucleicAcidCtrl extends BaseDb {
         if (county !== "全市") {
             args.county = county;
         }
-        const allData: any = await this.model.find(args);
+        const allData: any = await this.model.find(args).sort({"updateTime": -1});
+        if (allData.length === 0) {
+            return {type: EResponseType.internalServerError, error: "数据库没有数据"}
+        }
         const result: any = {
-            updateTime: et,
+            updateTime: allData[0].updateTime,
             num: 0
         };
         for (let item of allData) {
             result.num += item.num;
         }
-        return result
+        return {type: EResponseType.success, data: result}
     }
+
+
 }

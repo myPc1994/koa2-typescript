@@ -1,10 +1,8 @@
 import {Context, Next} from 'koa';
 import Router from 'koa-router';
-import {ResponseBeautifier, ResponseInfo} from "../utils/ResponseBeautifier";
+import {EResponseType, IReturnInfo, ResponseBeautifier} from "../utils/ResponseBeautifier";
 import {NucleicAcidCtrl} from "../db/controller/NucleicAcidCtrl";
-import {multerVersionUtil} from "../utils/multerVersionUtil";
 import {IMulterContext, IMulterUtil} from "../core/CpcInterface";
-import {VersionUpgradeCtrl} from "../db/controller/VersionUpgradeCtrl";
 import {CluesMopaiCtrl} from "../db/controller/CluesMopaiCtrl";
 import {MulterUtil} from "../utils/MulterUtil";
 import {JsUtil} from "../utils/JsUtil";
@@ -17,6 +15,7 @@ import {SceneDirectoryCtrl} from "../db/controller/SceneDirectoryCtrl";
 const usersRouter = new Router({
     prefix: '/safety'
 });
+
 // region 核酸大数据
 /**
  * @api {get} /safety/getStatistics 获取核酸大数据的最新统计信息
@@ -66,7 +65,8 @@ const usersRouter = new Router({
  */
 usersRouter.get('/getStatistics', async (ctx: Context, next: Next) => {
     const {county} = ctx.request.query;
-    await NucleicAcidCtrl.instance.getStatistics(ctx, next, county as any);
+    const res: IReturnInfo = await NucleicAcidCtrl.instance.getStatistics(county as any);
+    ResponseBeautifier.response(ctx, res);
 })
 
 /**
@@ -96,10 +96,10 @@ usersRouter.get('/getStatistics', async (ctx: Context, next: Next) => {
 usersRouter.get('/getDataByRang', async (ctx: Context, next: Next) => {
     const {st, et, county} = ctx.request.query;
     if (!st || !et) {
-        return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError)
+        return ResponseBeautifier.fail(ctx, EResponseType.parameterError)
     }
-    const data = await NucleicAcidCtrl.instance.getDataByRang(st as any, et as any, county as any);
-    ResponseBeautifier.success(ctx, data);
+    const data: IReturnInfo = await NucleicAcidCtrl.instance.getDataByRang(st as any, et as any, county as any);
+    ResponseBeautifier.response(ctx, data);
 });
 
 /**
@@ -135,17 +135,17 @@ usersRouter.post('/addExcel2NucleicAcid', async (ctx: Context, next: Next) => {
     return MulterUtil.getMulter("nucleate", ctx, next, config).then(async () => {
         const {file, body} = (ctx as IMulterContext).req;
         if (!file) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
+            return ResponseBeautifier.fail(ctx, EResponseType.parameterError, "缺少参数file");
         }
         const formatData = Excel2dbFormatUtil.general("核酸统计", (file as any).path);
-        if (formatData.code !== 200) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.dataError, formatData.data);
+        if (formatData.type !== EResponseType.success) {
+            return ResponseBeautifier.response(ctx, formatData);
         }
         const {normalData, abnormalData} = formatData.data;
-        const data = await NucleicAcidCtrl.instance.saveOrFilterSame(["county", "updateTime", "No"], normalData);
+        const data = await NucleicAcidCtrl.instance.saveOrFilterSame2(["county", "updateTime", "No"], normalData);
         return ResponseBeautifier.success(ctx, {count: data.length, abnormalData}, "入库成功");
     }).catch((error: any) => {
-        return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
+        return ResponseBeautifier.fail(ctx, EResponseType.parameterError, error);
     });
 })
 //endregion
@@ -218,7 +218,8 @@ usersRouter.post('/addExcel2NucleicAcid', async (ctx: Context, next: Next) => {
  */
 usersRouter.get('/moPaiStats', async (ctx: Context, next: Next) => {
     const {county} = ctx.request.query;
-    await CluesMopaiCtrl.instance.moPaiStats(ctx, next, county as any);
+    const res:IReturnInfo =  await CluesMopaiCtrl.instance.moPaiStats(county as any);
+    ResponseBeautifier.response(ctx,res);
 })
 /**
  * @api {get} /safety/moPaiStatsTrend 获取摸排的趋势图
@@ -260,7 +261,8 @@ usersRouter.get('/moPaiStats', async (ctx: Context, next: Next) => {
  */
 usersRouter.get('/moPaiStatsTrend', async (ctx: Context, next: Next) => {
     const {county} = ctx.request.query;
-    await CluesMopaiCtrl.instance.moPaiStatsTrend(ctx, next, county as any);
+    const res:IReturnInfo =  await CluesMopaiCtrl.instance.moPaiStatsTrend(county as any);
+    ResponseBeautifier.response(ctx,res);
 })
 /**
  * @api {post} /safety/addExcel2MoPai 导入excel格式的摸排数据
@@ -295,17 +297,17 @@ usersRouter.post('/addExcel2MoPai', async (ctx: Context, next: Next) => {
     return MulterUtil.getMulter("moPai", ctx, next, config).then(async () => {
         const {file, body} = (ctx as IMulterContext).req;
         if (!file) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
+            return ResponseBeautifier.fail(ctx, EResponseType.parameterError, "缺少参数file");
         }
         const formatData = Excel2dbFormatUtil.general("线索摸排", (file as any).path);
-        if (formatData.code !== 200) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.dataError, formatData.data);
+        if (formatData.type !== EResponseType.success) {
+            return ResponseBeautifier.response(ctx, formatData);
         }
         const {normalData, abnormalData} = formatData.data;
-        const data = await CluesMopaiCtrl.instance.saveOrFilterSame(["county", "updateTime"], normalData);
+        const data = await CluesMopaiCtrl.instance.saveOrFilterSame2(["county", "updateTime"], normalData);
         return ResponseBeautifier.success(ctx, {count: data.length, abnormalData}, "入库成功");
     }).catch((error: any) => {
-        return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
+        return ResponseBeautifier.fail(ctx, EResponseType.parameterError, error);
     });
 })
 //endregion
@@ -354,7 +356,8 @@ usersRouter.post('/addExcel2MoPai', async (ctx: Context, next: Next) => {
  */
 usersRouter.get('/keyAreaStats', async (ctx: Context, next: Next) => {
     const {county} = ctx.request.query;
-    await KeyAreaCtrl.instance.keyAreaStats(ctx, next, county as any);
+    const res:IReturnInfo = await KeyAreaCtrl.instance.keyAreaStats(county as any);
+    ResponseBeautifier.response(ctx,res);
 })
 /**
  * @api {post} /safety/addExcel2KeyArea 导入excel格式的数据到时空伴随-重点区域
@@ -389,17 +392,17 @@ usersRouter.post('/addExcel2KeyArea', async (ctx: Context, next: Next) => {
     return MulterUtil.getMulter("keyArea", ctx, next, config).then(async () => {
         const {file, body} = (ctx as IMulterContext).req;
         if (!file) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
+            return ResponseBeautifier.fail(ctx, EResponseType.parameterError, "缺少参数file");
         }
         const formatData = Excel2dbFormatUtil.general("重点区域及时空伴随", (file as any).path);
-        if (formatData.code !== 200) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.dataError, formatData.data);
+        if (formatData.type !== EResponseType.success) {
+            return ResponseBeautifier.response(ctx, formatData);
         }
         const {normalData, abnormalData} = formatData.data;
-        const data = await KeyAreaCtrl.instance.saveOrFilterSame(["county", "updateTime"], normalData);
+        const data = await KeyAreaCtrl.instance.saveOrFilterSame2(["county", "updateTime"], normalData);
         return ResponseBeautifier.success(ctx, {count: data.length, abnormalData}, "入库成功");
     }).catch((error: any) => {
-        return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
+        return ResponseBeautifier.fail(ctx, EResponseType.parameterError, error);
     });
 })
 //endregion
@@ -471,11 +474,11 @@ usersRouter.post('/addExcel2SceneDirectory', async (ctx: Context, next: Next) =>
     return MulterUtil.getMulter("sceneDirectory", ctx, next, config).then(async () => {
         const {file, body} = (ctx as IMulterContext).req;
         if (!file) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, "缺少参数file");
+            return ResponseBeautifier.fail(ctx, EResponseType.parameterError, "缺少参数file");
         }
         const formatData = Excel2dbFormatUtil.general("场景目录树", (file as any).path);
-        if (formatData.code !== 200) {
-            return ResponseBeautifier.fail(ctx, ResponseInfo.dataError, formatData.data);
+        if (formatData.type !== EResponseType.success) {
+            return ResponseBeautifier.response(ctx, formatData);
         }
         const {normalData, abnormalData} = formatData.data;
         for (let item of normalData) {
@@ -486,7 +489,7 @@ usersRouter.post('/addExcel2SceneDirectory', async (ctx: Context, next: Next) =>
         return ResponseBeautifier.success(ctx, {count: data.length, abnormalData}, "入库成功");
     }).catch((error: any) => {
         console.log(error);
-        return ResponseBeautifier.fail(ctx, ResponseInfo.parameterError, error);
+        return ResponseBeautifier.fail(ctx, EResponseType.parameterError, error);
     });
 })
 

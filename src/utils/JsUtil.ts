@@ -50,9 +50,9 @@ export class JsUtil {
 
     public static moment(str: string) {
         if(str.indexOf("/")){
-            return moment(str, "YYYY/MM/DD HH:mm:ss");
+            return moment(str, "YYYY/MM/DD HH:mm",true);
         }else{
-            return moment(str);
+            return moment(str,true);
         }
     }
 
