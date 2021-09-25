@@ -2,17 +2,25 @@ import {Connection, Model, Schema, Document} from 'mongoose';
 import {GlobalVariable} from "../GlobalVariable";
 import {ETables, tables} from '../db/tables';
 import {IKeyValue} from "../core/CpcInterface";
+import {IReturnInfo} from "../utils/ResponseBeautifier";
+import schedule from 'node-schedule';
+
 
 /**
  * 所有表格处理的基础类，表格处理必须要继承它
  */
 export abstract class BaseDb {
     protected model: Model<Document>;
+    protected dataMap: { [key: string]: IReturnInfo } = {};
 
     constructor(name: ETables) {
         GlobalVariable.dbUtil.onConnected((mongooseInstance: Connection) => {
             this.model = mongooseInstance.model(name, new Schema(tables[name]));
-        })
+        });
+        // 6个占位符从左到右分别代表：秒、分、时、日、月、周几
+        schedule.scheduleJob('0 0 0 * * *',()=>{
+            this.dataMap = {};
+        });
     }
 
     /**
@@ -85,9 +93,10 @@ export abstract class BaseDb {
      * 不传移除所有表数据
      * @param filter
      */
-    public remove(filter?:any){
+    public remove(filter?: any) {
         return this.model.remove(filter);
     }
+
     /**
      *  查询数据
      * @param {IKeyValue} where
@@ -122,7 +131,7 @@ export abstract class BaseDb {
     public async saveOrFilterSame(fields: string[], arr: any[]) {
         const result = [];
         for (let item of arr) {
-            const where:any = {};
+            const where: any = {};
             for (let field of fields) {
                 if (item[field]) {
                     where[field] = item[field];

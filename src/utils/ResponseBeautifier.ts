@@ -43,6 +43,7 @@ export class ResponseBeautifier {
 
     public static response(ctx: Context, res: IReturnInfo) {
         if (res.type === EResponseType.success) {
+            console.log(res.data);
             return ResponseBeautifier.success(ctx, res.data, res.message);
         }
         return ResponseBeautifier.fail(ctx, res.type, res.error || res.data, res.message);

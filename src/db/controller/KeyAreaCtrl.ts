@@ -8,7 +8,6 @@ import {EResponseType, IReturnInfo} from "../../utils/ResponseBeautifier";
  */
 export class KeyAreaCtrl extends BaseDb {
     public static instance: KeyAreaCtrl = new KeyAreaCtrl();
-    private dataMap: { [key: string]: IReturnInfo } = {};
     constructor() {
         super(ETables.keyArea);
     }
@@ -26,7 +25,7 @@ export class KeyAreaCtrl extends BaseDb {
      */
     public async keyAreaStats(county = "全市"):Promise<IReturnInfo> {
         if (this.dataMap[county]) {
-            return {type: EResponseType.success, data: this.dataMap[county]}
+            return this.dataMap[county]
         }
         let allData: any = null;
         const newData: any = await this.model.findOne(undefined, {

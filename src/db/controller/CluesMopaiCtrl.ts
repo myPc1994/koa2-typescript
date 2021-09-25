@@ -9,7 +9,6 @@ import {JsUtil} from "../../utils/JsUtil";
  */
 export class CluesMopaiCtrl extends BaseDb {
     public static instance: CluesMopaiCtrl = new CluesMopaiCtrl();
-    private dataMap: { [key: string]: IReturnInfo } = {};
     constructor() {
         super(ETables.cluesMoPai);
     }
@@ -76,7 +75,7 @@ export class CluesMopaiCtrl extends BaseDb {
      */
     public async moPaiStatsTrend(county = "全市"):Promise<IReturnInfo> {
         if (this.dataMap[county]) {
-            return {type: EResponseType.success, data: this.dataMap[county]}
+            return this.dataMap[county]
         }
         let allData: any = null;
         if (county === "全市") {
