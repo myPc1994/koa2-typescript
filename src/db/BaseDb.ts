@@ -2,8 +2,6 @@ import {Connection, Model, Schema, Document} from 'mongoose';
 import {GlobalVariable} from "../GlobalVariable";
 import {ETables, tables} from '../db/tables';
 import {IKeyValue} from "../core/CpcInterface";
-import {IReturnInfo} from "../utils/ResponseBeautifier";
-import schedule from 'node-schedule';
 
 
 /**
@@ -11,15 +9,9 @@ import schedule from 'node-schedule';
  */
 export abstract class BaseDb {
     protected model: Model<Document>;
-    protected dataMap: { [key: string]: IReturnInfo } = {};
-
     constructor(name: ETables) {
         GlobalVariable.dbUtil.onConnected((mongooseInstance: Connection) => {
             this.model = mongooseInstance.model(name, new Schema(tables[name]));
-        });
-        // 6个占位符从左到右分别代表：秒、分、时、日、月、周几
-        schedule.scheduleJob('0 0 0 * * *',()=>{
-            this.dataMap = {};
         });
     }
 
@@ -43,24 +35,24 @@ export abstract class BaseDb {
 
     /**
      *  保存数据，数据存在，变为更新数据
-     * @param {IKeyValue} where
-     * @param {IKeyValue} data
+     * @param {IKeyValue} where 条件
+     * @param {IKeyValue} data 存储的数据
      * @returns {any}
      */
     public saveOrUpdate(where: IKeyValue, data: IKeyValue) {
         let options = {upsert: true, new: true, setDefaultsOnInsert: true};
-        return this.model.findOneAndUpdate(where, {$set: data}, options);
+        return this.model.findOneAndUpdate(where, {$set: data}, options).lean();
 
     }
 
     /**
      * 更新数据-更新一个
-     * @param {IKeyValue} where
-     * @param {IKeyValue} data
+     * @param {IKeyValue} where 条件
+     * @param {IKeyValue} data 存储的数据
      * @returns {any}
      */
     public updateOne(where: IKeyValue, data: IKeyValue) {
-        return this.model.updateOne(where, {$set: data});
+        return this.model.updateOne(where, {$set: data}).lean();
     }
 
     /**
@@ -69,8 +61,8 @@ export abstract class BaseDb {
      * @param {IKeyValue} data
      * @returns {any}
      */
-    public updateMany(where: IKeyValue, data: IKeyValue) {
-        return this.model.updateMany(where, {$set: data});
+    public updateMany(where: IKeyValue, data: IKeyValue[]) {
+        return this.model.updateMany(where, {$set: data}).lean();
     }
 
     /**
@@ -78,15 +70,15 @@ export abstract class BaseDb {
      * @param {IKeyValue} where
      */
     public deleteOne(where: IKeyValue) {
-        return this.model.deleteOne(where);
+        return this.model.deleteOne(where).lean();
     }
 
     /**
      * 删除数据-多条
      * @param {IKeyValue} where
      */
-    public deleteMany(where: IKeyValue) {
-        return this.model.deleteMany(where);
+    public deleteMany(where: IKeyValue[]) {
+        return this.model.deleteMany(where).lean();
     }
 
     /**
@@ -94,7 +86,7 @@ export abstract class BaseDb {
      * @param filter
      */
     public remove(filter?: any) {
-        return this.model.remove(filter);
+        return this.model.remove(filter).lean();
     }
 
     /**
@@ -103,7 +95,7 @@ export abstract class BaseDb {
      * @param {IKeyValue} fields
      */
     public find(where: IKeyValue = {}, fields: IKeyValue = {_id: 0}) {
-        return this.model.find(where, fields, {});
+        return this.model.find(where, fields, {}).lean();
     }
 
     /**
@@ -112,7 +104,7 @@ export abstract class BaseDb {
      * @param {IKeyValue} fields
      */
     public findOne(where: IKeyValue = {}, fields: IKeyValue = {_id: 0}) {
-        return this.model.findOne(where, fields);
+        return this.model.findOne(where, fields).lean();
     }
 
     /**
@@ -120,7 +112,7 @@ export abstract class BaseDb {
      * @param {IKeyValue} where
      */
     public countDocuments(where: IKeyValue = {}) {
-        return this.model.countDocuments(where);
+        return this.model.countDocuments(where).lean();
     }
 
     /**
@@ -137,7 +129,7 @@ export abstract class BaseDb {
                     where[field] = item[field];
                 }
             }
-            const data = await this.saveOrUpdate(where, item);
+            const data = await this.saveOrUpdate(where, item).lean();
             result.push(data);
         }
         return result;

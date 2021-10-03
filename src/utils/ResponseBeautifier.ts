@@ -8,6 +8,7 @@ export enum EResponseType {
     internalServerError = "internalServerError",// 系统内部错误
     parameterError = "parameterError",// 参数错误
     dataError = "dataError",// 数据错误
+    tokenError = "dataError",// token错误或者过期
 }
 
 /**
@@ -18,6 +19,7 @@ const ResponseInfo = {
     [EResponseType.internalServerError]: {code: 500, message: "系统内部错误!"},
     [EResponseType.parameterError]: {code: 401, message: "参数错误!"},
     [EResponseType.dataError]: {code: 402, message: "数据错误!"},
+    [EResponseType.tokenError]: {code: 403, message: "token错误或者过期!"},
 }
 
 export interface IReturnInfo {

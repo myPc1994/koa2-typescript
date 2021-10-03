@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./bin/www",
     "build": "node ./build/start && tsc && node ./build/end",
-    "apidoc": "node ./apidoc.js"
+    "apidoc": "node ./apidoc.js",
+    "printDir": "node printDir.js"
   },
   "author": "939979509@qq.com",
   "license": "ISC",
   "dependencies": {
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
     "koa-json": "^2.0.2",
@@ -27,6 +29,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.5",
     "@types/koa": "^2.13.4",
     "@types/koa-bodyparser": "^4.3.3",
     "@types/koa-json": "^2.0.20",
