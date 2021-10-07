@@ -10,6 +10,8 @@ import fs from 'fs';
 import {logUtil} from "./log/LogUtil";
 import {Pm2FlushUtil} from "./utils/Pm2FlushUtil";
 import {JsUtil} from "./utils/JsUtil";
+import {ResponseBeautifier} from "./utils/ResponseBeautifier";
+
 const app = new Koa();
 
 app.use(koa_cors());// 跨域处理
@@ -23,14 +25,9 @@ fs.readdirSync(path.resolve(__dirname, './routes')).forEach(file => {
     let route: Router = require(path.resolve(__dirname, `./routes/${file}`)).default;
     app.use(route.routes()).use(route.allowedMethods());
 });
-// error-handling
-app.on('error', async (error, ctx) => {
-    // 正式环境的错误，已经被记录了，这里不再处理
-    if (GlobalVariable.isDev) {
-        if (error.status !== 404) {
-            console.error('服务器发生错误了', error);
-        }
-    }
-});
+// error-handling 已经在/log/ILogUtil拦截统一处理了
+// app.on('error', async (error, ctx) => {
+//
+// });
 Pm2FlushUtil.start();
 module.exports = app;

@@ -40,9 +40,12 @@ export class MulterUtil {
                 filename
             }),
             fileFilter: function (req: any, file: multer.File, cb: any) {
+                if (!suffixs) {
+                    return cb(null, true);
+                }
                 const type = JsUtil.getType(file.originalname);
                 if (suffixs.indexOf(type) === -1) {
-                    cb("不是excel文件")
+                    cb("该类型文件不被支持!")
                 } else {
                     cb(null, true);
                 }
@@ -51,5 +54,6 @@ export class MulterUtil {
         MulterUtil.keyMapMulter[key] = multerU;
         return multerU(ctx, next);
     }
+
     private static keyMapMulter: IKeyValue = {};
 }

@@ -148,7 +148,7 @@
     })
 ```
 
-1. 到目录/utils/token/pem/目录下，打开终端，使用openssl命令生成公钥私钥
+到目录/utils/token/pem/目录下，打开终端，使用openssl命令生成公钥私钥
     ```sudo
         //生成1024位的RSA私钥
         openssl genrsa -out private_key.pem 1024
@@ -163,3 +163,10 @@
         //查看密钥
         openssl rsa -noout -text -in private.pem
         //私钥文件中也包含公钥信息
+### 统一返回格式---ResponseBeautifier
+具体查看：utils/ResponseBeautifier.ts文件
+> 示例
+```typescript
+    ResponseBeautifier.success(ctx, null, "入库成功");
+    ResponseBeautifier.fail(ctx, EResponseType.parameterError, "缺少参数file");
+```

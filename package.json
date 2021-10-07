@@ -1,5 +1,5 @@
 {
-  "name": "base-koa2-ts",
+  "name": "cpc-base-koa2-ts",
   "version": "1.0.0",
   "description": "nodejs 基础模板",
   "scripts": {
@@ -11,6 +11,7 @@
   "author": "939979509@qq.com",
   "license": "ISC",
   "dependencies": {
+    "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",

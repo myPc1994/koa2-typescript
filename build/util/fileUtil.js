@@ -22,7 +22,9 @@ function loopCopy(target, source, regexp) {
         return;
     } else if (stats.isDirectory()) {
         //目标文件夹是否存在，不存在则新建
-        mkdirs(source);
+        if (!fs.existsSync(source)) {
+            mkdirs(source);
+        }
         // 递归读取文件夹中的内容
         fs.readdirSync(target).forEach(function (path) {
             const _target = target + '/' + path;

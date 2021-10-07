@@ -1,7 +1,8 @@
+const pkg = require("./package.json");
 module.exports = {
     apps: [
         {
-            "name": "cpc-node-koa2-base",//应用程序名称
+            "name": pkg.name,//应用程序名称
             "script": "bin/www",//应用程序的脚本路径
             "cwd":"./",//根目录
             "instances": 1,//应用启动实例个数，仅在cluster模式有效，默认为fork；

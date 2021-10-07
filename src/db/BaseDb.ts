@@ -3,7 +3,6 @@ import {GlobalVariable} from "../GlobalVariable";
 import {ETables, tables} from '../db/tables';
 import {IKeyValue} from "../core/CpcInterface";
 
-
 /**
  * 所有表格处理的基础类，表格处理必须要继承它
  */

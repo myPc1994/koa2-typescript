@@ -29,6 +29,7 @@ server.on('listening', onListening);
           console.error('端口已被占用：' + bind);
           process.exit(1);
       default:
+          console.error('/bin/www文件截取未知错误',error);
           throw error;
   }
 }

@@ -45,9 +45,15 @@ export class ResponseBeautifier {
 
     public static response(ctx: Context, res: IReturnInfo) {
         if (res.type === EResponseType.success) {
-            console.log(res.data);
             return ResponseBeautifier.success(ctx, res.data, res.message);
         }
         return ResponseBeautifier.fail(ctx, res.type, res.error || res.data, res.message);
+    }
+
+    public static responseByStatus(ctx: Context, code: number, message: string, data: any) {
+        if (code === 200) {
+            return ResponseBeautifier.success(ctx, data, message);
+        }
+        ctx.body = {code: code, message: message, error: data};
     }
 }

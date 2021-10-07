@@ -1,4 +1,7 @@
-import {Context,Next} from "koa";
+import {Context, Next} from "koa";
+import Moment from 'moment';
+import {ResponseBeautifier} from "../utils/ResponseBeautifier";
+
 export enum ELevel {
     error = "error",
     info = "info",
@@ -23,6 +26,7 @@ export abstract class ILogUtil {
 
     public net() {
         return async (ctx: Context, next: Next) => {
+            this.netBefore(ctx);
             // 响应开始时间
             const start = new Date().getTime();
             // 响应间隔时间
@@ -35,10 +39,16 @@ export abstract class ILogUtil {
             } catch (error: any) {
                 ms = new Date().getTime() - start;
                 this.netError(ctx, error, ms); // 记录异常日志
-                ctx.throw();
+                ResponseBeautifier.responseByStatus(ctx, error.status || 500, error.message, error);
             }
         }
     };
+
+
+    public netBefore(ctx: Context): void {
+        let {originalUrl, method} = ctx;
+        console.log(Moment().format('YYYY-MM-DD HH:mm:ss'), " <-- ", method, originalUrl);
+    }
 
     public abstract netResponse(ctx: Context, time: number): void;
 

@@ -1,5 +1,6 @@
 import {Context} from "koa";
 import {IncomingMessage} from "http";
+import Joi from 'joi'
 
 // 环境变量接口说明
 export interface IEnvConfig {
@@ -55,6 +56,13 @@ export interface ICpcVersion {
  */
 export interface IMulterUtil {
     path: Function | string,
-    filename: Function|any,
+    filename: Function | any,
     suffixs: string[]
+}
+
+/**
+ * 参数验证基类
+ */
+export interface IJoiBase {
+    [key: string]: Joi.Schema
 }
