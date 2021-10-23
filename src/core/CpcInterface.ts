@@ -61,7 +61,7 @@ export interface IMulterUtil {
 }
 
 /**
- * 参数验证基类
+ * 参数验证基本数据类型
  */
 export interface IJoiBase {
     [key: string]: Joi.Schema

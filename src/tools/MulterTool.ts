@@ -1,16 +1,16 @@
 import {IKeyValue, IMulterUtil} from "../core/CpcInterface";
-import {FileUtil} from "./FileUtil";
-import {JsUtil} from "./JsUtil";
 import fs from 'fs';
 import {Context, Next} from "koa";
 import multer from 'koa-multer';
+import {FileTool} from "./FileTool";
+import {JsTool} from "./JsTool";
 
 /**
  * 文件上传处理工具类
  */
-export class MulterUtil {
+export class MulterTool {
     public static getMulter(key: string, ctx: Context, next: Next, config: IMulterUtil) {
-        let multerU = MulterUtil.keyMapMulter[key];
+        let multerU = MulterTool.keyMapMulter[key];
         if (multerU) {
             return multerU(ctx, next);
         }
@@ -26,7 +26,7 @@ export class MulterUtil {
                     }
                     // 目录不存在，创建
                     if (!fs.existsSync(_basePath)) {
-                        FileUtil.mkdirs(_basePath, (err: any) => {
+                        FileTool.mkdirs(_basePath, (err: any) => {
                             if (err) {
                                 cb(err);
                             } else {
@@ -43,7 +43,7 @@ export class MulterUtil {
                 if (!suffixs) {
                     return cb(null, true);
                 }
-                const type = JsUtil.getType(file.originalname);
+                const type = JsTool.getType(file.originalname);
                 if (suffixs.indexOf(type) === -1) {
                     cb("该类型文件不被支持!")
                 } else {
@@ -51,7 +51,7 @@ export class MulterUtil {
                 }
             }
         }).single('file');
-        MulterUtil.keyMapMulter[key] = multerU;
+        MulterTool.keyMapMulter[key] = multerU;
         return multerU(ctx, next);
     }
 

@@ -1,6 +1,5 @@
 import {Connection, Model, Schema, Document} from 'mongoose';
 import {GlobalVariable} from "../GlobalVariable";
-import {ETables, tables} from '../db/tables';
 import {IKeyValue} from "../core/CpcInterface";
 
 /**
@@ -8,9 +7,11 @@ import {IKeyValue} from "../core/CpcInterface";
  */
 export abstract class BaseDb {
     protected model: Model<Document>;
-    constructor(name: ETables) {
+    protected abstract tableName:string;
+    protected abstract tableSchema:IKeyValue;
+    constructor() {
         GlobalVariable.dbUtil.onConnected((mongooseInstance: Connection) => {
-            this.model = mongooseInstance.model(name, new Schema(tables[name]));
+            this.model = mongooseInstance.model(this.tableName, new Schema(this.tableSchema));
         });
     }
 
@@ -34,50 +35,50 @@ export abstract class BaseDb {
 
     /**
      *  保存数据，数据存在，变为更新数据
-     * @param {IKeyValue} where 条件
+     * @param {IKeyValue} filter 条件
      * @param {IKeyValue} data 存储的数据
      * @returns {any}
      */
-    public saveOrUpdate(where: IKeyValue, data: IKeyValue) {
+    public saveOrUpdate(filter: IKeyValue, data: IKeyValue) {
         let options = {upsert: true, new: true, setDefaultsOnInsert: true};
-        return this.model.findOneAndUpdate(where, {$set: data}, options).lean();
+        return this.model.findOneAndUpdate(filter, {$set: data}, options).lean();
 
     }
 
     /**
      * 更新数据-更新一个
-     * @param {IKeyValue} where 条件
+     * @param {IKeyValue} filter 条件
      * @param {IKeyValue} data 存储的数据
      * @returns {any}
      */
-    public updateOne(where: IKeyValue, data: IKeyValue) {
-        return this.model.updateOne(where, {$set: data}).lean();
+    public updateOne(filter: IKeyValue, data: IKeyValue) {
+        return this.model.updateOne(filter, {$set: data}).lean();
     }
 
     /**
      * 更新数据-更新多个
-     * @param {IKeyValue} where
+     * @param {IKeyValue} filter
      * @param {IKeyValue} data
      * @returns {any}
      */
-    public updateMany(where: IKeyValue, data: IKeyValue[]) {
-        return this.model.updateMany(where, {$set: data}).lean();
+    public updateMany(filter: IKeyValue, data: IKeyValue[]) {
+        return this.model.updateMany(filter, {$set: data}).lean();
     }
 
     /**
      * 删除数据-一条
-     * @param {IKeyValue} where
+     * @param {IKeyValue} filter
      */
-    public deleteOne(where: IKeyValue) {
-        return this.model.deleteOne(where).lean();
+    public deleteOne(filter: IKeyValue) {
+        return this.model.deleteOne(filter).lean();
     }
 
     /**
      * 删除数据-多条
-     * @param {IKeyValue} where
+     * @param {IKeyValue} filter
      */
-    public deleteMany(where: IKeyValue[]) {
-        return this.model.deleteMany(where).lean();
+    public deleteMany(filter: IKeyValue) {
+        return this.model.deleteMany(filter).lean();
     }
 
     /**
@@ -90,28 +91,28 @@ export abstract class BaseDb {
 
     /**
      *  查询数据
-     * @param {IKeyValue} where
+     * @param {IKeyValue} filter
      * @param {IKeyValue} fields
      */
-    public find(where: IKeyValue = {}, fields: IKeyValue = {_id: 0}) {
-        return this.model.find(where, fields, {}).lean();
+    public find(filter: IKeyValue = {}, fields: IKeyValue = {_id: 0}) {
+        return this.model.find(filter, fields, {}).lean();
     }
 
     /**
      * 查询单条数据
-     * @param {IKeyValue} where
+     * @param {IKeyValue} filter
      * @param {IKeyValue} fields
      */
-    public findOne(where: IKeyValue = {}, fields: IKeyValue = {_id: 0}) {
-        return this.model.findOne(where, fields).lean();
+    public findOne(filter: IKeyValue = {}, fields: IKeyValue = {_id: 0}) {
+        return this.model.findOne(filter, fields).lean();
     }
 
     /**
      * 返回符合条件的文档数
-     * @param {IKeyValue} where
+     * @param {IKeyValue} filter
      */
-    public countDocuments(where: IKeyValue = {}) {
-        return this.model.countDocuments(where).lean();
+    public countDocuments(filter: IKeyValue = {}) {
+        return this.model.countDocuments(filter).lean();
     }
 
     /**
@@ -122,13 +123,13 @@ export abstract class BaseDb {
     public async saveOrFilterSame(fields: string[], arr: any[]) {
         const result = [];
         for (let item of arr) {
-            const where: any = {};
+            const filter: any = {};
             for (let field of fields) {
                 if (item[field]) {
-                    where[field] = item[field];
+                    filter[field] = item[field];
                 }
             }
-            const data = await this.saveOrUpdate(where, item).lean();
+            const data = await this.saveOrUpdate(filter, item).lean();
             result.push(data);
         }
         return result;

@@ -1,6 +1,6 @@
 import {Context, Next} from "koa";
 import Moment from 'moment';
-import {ResponseBeautifier} from "../utils/ResponseBeautifier";
+import {ResponseBeautifier} from "../tools/ResponseBeautifier";
 
 export enum ELevel {
     error = "error",

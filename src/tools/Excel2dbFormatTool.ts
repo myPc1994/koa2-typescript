@@ -1,4 +1,4 @@
-import {JsUtil} from "./JsUtil";
+import {JsTool} from "./JsUtil";
 import xlsx from "node-xlsx";
 import {EResponseType, IReturnInfo} from "./ResponseBeautifier";
 // excel字段映射数据字段
@@ -45,7 +45,7 @@ const excelMapField: any = {
 /**
  * excel导入数据库，中间格式化处理
  */
-export class Excel2dbFormatUtil {
+export class Excel2dbFormatTool {
 
     public static general(mapName: string, path: string): IReturnInfo {
         const fileMap: any = excelMapField[mapName];
@@ -88,7 +88,7 @@ export class Excel2dbFormatUtil {
                     }
                     // 更新日期，统一转为时间戳
                     if (key === "updateTime") {
-                        const monentObj = JsUtil.moment(itemResult);
+                        const monentObj = JsTool.moment(itemResult);
                         if(!monentObj.isValid()){
                             isOk = false;
                             abnormalData.push({"message":"日期有问题","索引位置":index,row,error:"强制执行格式:YYYY/MM/DD HH:mm,不足10必须补0,否则报错。"});

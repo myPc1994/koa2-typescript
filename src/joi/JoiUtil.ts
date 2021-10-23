@@ -1,21 +1,16 @@
 import Joi from 'joi'
 import {Context, Next} from 'koa';
-import {EResponseType, ResponseBeautifier} from "./ResponseBeautifier";
-import {IJoiBase, IKeyValue} from "../core/CpcInterface";
+import {EResponseType, ResponseBeautifier} from "../tools/ResponseBeautifier";
+import Users from './routes/users';
+import Rbac from './routes/rbac';
+import Index from "./routes";
+
 
 export class JoiUtil {
-    public static users: IJoiBase = {
-        login: Joi.object({
-            userName: Joi.string().required(),
-            password: Joi.string().required()
-        }),
-        register: Joi.object({
-            userName: Joi.string().required(),
-            password: Joi.string().required()
-        })
-    }
-
-    public static middleware(schema: Joi.Schema) {
+    public static index = Index;
+    public static users = Users;
+    public static rbac = Rbac;
+    public static  middleware(schema: Joi.Schema) {
         return async function (ctx: Context, next: Next) {
             let data = null;
             if (ctx.method.toLocaleLowerCase() === "get") {
@@ -23,6 +18,7 @@ export class JoiUtil {
             } else {
                 data = ctx.request.body
             }
+            console.log(typeof data.roles,data);
             const {error} = schema.validate(data)
             if (error) {
                 return ResponseBeautifier.fail(ctx, EResponseType.parameterError, error.message);
@@ -30,4 +26,5 @@ export class JoiUtil {
             return next();
         };
     }
+
 }

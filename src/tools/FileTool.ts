@@ -4,14 +4,14 @@ import fs from 'fs';
 /**
  * 文件处理工具类
  */
-export  class FileUtil {
+export  class FileTool {
     // 多层级创建文件夹
     public static mkdirs(dirname:string, callback:any) {
         fs.exists(dirname, function (exists) {
             if (exists) {
                 callback();
             } else {
-                FileUtil.mkdirs(path.dirname(dirname), function () {
+                FileTool.mkdirs(path.dirname(dirname), function () {
                     fs.mkdir(dirname, callback);
                 });
             }
@@ -25,7 +25,7 @@ export  class FileUtil {
             files.forEach((file, index) => {
                 let curPath = path + "/" + file;
                 if (fs.statSync(curPath).isDirectory()) {
-                    FileUtil.rmdir(curPath); // 递归删除文件夹
+                    FileTool.rmdir(curPath); // 递归删除文件夹
                 } else {
                     fs.unlinkSync(curPath); // 删除文件
                 }
@@ -36,7 +36,7 @@ export  class FileUtil {
     // 移除当前目录下的文件
     public static  removeFile(path:string) {
         if (fs.existsSync(path)) {
-            FileUtil.rmdir(path);
+            FileTool.rmdir(path);
             fs.mkdirSync(path);
         }
     }
