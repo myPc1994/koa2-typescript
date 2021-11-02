@@ -27,6 +27,7 @@
     "mongoose": "^6.0.5",
     "node-schedule": "^2.0.0",
     "node-xlsx": "^0.17.1",
+    "svg-captcha": "^1.4.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

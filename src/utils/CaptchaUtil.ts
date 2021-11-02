@@ -20,7 +20,7 @@ export interface ICaptchaInfo {
 /**
  * 验证码
  */
-export class CaptchaTool {
+export class CaptchaUtil {
 
     /**
      * 算式验证码
@@ -40,7 +40,7 @@ export class CaptchaTool {
             background: '#cc9966',// 背景颜色
         }
         const obj = svgCaptcha.createMathExpr(codeConfig); // 算式验证码
-        return CaptchaTool.saveMap(obj)
+        return CaptchaUtil.saveMap(obj)
     }
 
     /**
@@ -61,7 +61,7 @@ export class CaptchaTool {
             // charPreset:'abcd123456789', //随机预设字符
         }
         const obj = svgCaptcha.create(codeConfig); // 验证码
-        return CaptchaTool.saveMap(obj)
+        return CaptchaUtil.saveMap(obj)
     }
 
     public static middleware(uuidField: string = "uuid", textField: string = "text") {
@@ -72,7 +72,7 @@ export class CaptchaTool {
             } else {
                 data = ctx.request.body
             }
-            if (CaptchaTool.verify(data[uuidField], data[textField])) {
+            if (CaptchaUtil.verify(data[uuidField], data[textField])) {
                 return next();
             } else {
                 return ResponseBeautifier.fail(ctx, EResponseType.parameterError, "验证码错误!");

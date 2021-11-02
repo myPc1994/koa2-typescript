@@ -1,17 +1,15 @@
 import Joi from 'joi'
-import {IJoiBase} from "../../core/CpcInterface";
+import {IJoiBase} from "../../../core/CpcInterface";
 
-const Index: IJoiBase = {
-    xxx: Joi.object({
+export const JoiUsers: IJoiBase = {
+    login: Joi.object({
         userName: Joi.string().required(),
         password: Joi.string().required(),
         uuid: Joi.string().required(),
         text: Joi.string().required()
     }),
-    xxxxx: Joi.object({
+    register: Joi.object({
         userName: Joi.string().required(),
         password: Joi.string().required()
     })
 }
-
-export default Index;

@@ -3,7 +3,7 @@ import crypto from 'crypto';
 /**
  * 加解密
  */
-export class CryptoTool {
+export class CryptoUtil {
     /**
      * 密码加盐
      * @param {string} password 密码

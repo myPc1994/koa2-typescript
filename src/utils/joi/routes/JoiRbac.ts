@@ -1,7 +1,7 @@
 import Joi from 'joi'
-import {IJoiBase} from "../../core/CpcInterface";
+import {IJoiBase} from "../../../core/CpcInterface";
 
-const Rbac: IJoiBase = {
+export const JoiRbac: IJoiBase = {
     addUserRoles: Joi.object({
         userId: Joi.string().required(),
         roles: Joi.array().required(),
@@ -11,5 +11,3 @@ const Rbac: IJoiBase = {
         password: Joi.string().required()
     })
 }
-
-export default Rbac;

@@ -8,7 +8,7 @@ import path from 'path';
 import bodyParser from 'koa-bodyparser';
 import fs from 'fs';
 import {logUtil} from "./log/LogUtil";
-import {Pm2FlushTool} from "./tools/Pm2FlushTool";
+import {Pm2FlushUtil} from "./utils/Pm2FlushUtil";
 
 const app = new Koa();
 
@@ -23,9 +23,9 @@ fs.readdirSync(path.resolve(__dirname, './routes')).forEach(file => {
     let route: Router = require(path.resolve(__dirname, `./routes/${file}`)).default;
     app.use(route.routes()).use(route.allowedMethods());
 });
-// error-handling 已经在/log/ILogTool拦截统一处理了
+// error-handling 已经在/log/ILogUtil拦截统一处理了
 // app.on('error', async (error, ctx) => {
 //
 // });
-Pm2FlushTool.start();
+Pm2FlushUtil.start();
 module.exports = app;

@@ -8,7 +8,7 @@ import jsonwebtoken from 'jsonwebtoken';// JSON Web令牌签名和验证
 let cert_public = fs.readFileSync(path.join(__dirname, './pem/public_key.pem'));// 公钥 可以自己生成
 let cert_private = fs.readFileSync(path.join(__dirname, './pem/private_key.pem'));// 私钥 可以自己生成
 // 创建 token 类
-export class JwtTool {
+export class JwtUtil {
     /**
      * 生成token
      * @param {string | Buffer | object} data 用户自定义信息
@@ -62,7 +62,7 @@ export class JwtTool {
         if (!access_token) {
             return ResponseBeautifier.fail(ctx, EResponseType.parameterError, "缺少token");
         }
-        const info: IReturnInfo = await JwtTool.verifyToken(access_token as string);
+        const info: IReturnInfo = await JwtUtil.verifyToken(access_token as string);
         if (info.type === EResponseType.success) {
             ctx.req.headers.token_info = info.data;
             return next();

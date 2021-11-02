@@ -1,15 +1,8 @@
 import Joi from 'joi'
 import {Context, Next} from 'koa';
-import {EResponseType, ResponseBeautifier} from "../tools/ResponseBeautifier";
-import Users from './routes/users';
-import Rbac from './routes/rbac';
-import Index from "./routes";
-
+import {EResponseType, ResponseBeautifier} from "../ResponseBeautifier";
 
 export class JoiUtil {
-    public static index = Index;
-    public static users = Users;
-    public static rbac = Rbac;
     public static  middleware(schema: Joi.Schema) {
         return async function (ctx: Context, next: Next) {
             let data = null;
