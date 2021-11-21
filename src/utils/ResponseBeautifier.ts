@@ -1,59 +1,62 @@
 import {Context} from 'koa';
 
 /**
- * 统一返回码类型
+ * 返回格式
  */
-export enum EResponseType {
-    success = "success", // 成功
-    internalServerError = "internalServerError",// 系统内部错误
-    parameterError = "parameterError",// 参数错误
-    dataError = "dataError",// 数据错误
-    tokenError = "dataError",// token错误或者过期
+export interface IReturnInfo {
+    code: number,
+    message: string,
+    data?: any,
 }
 
 /**
  * 统一返回的状态码，统一管理
  */
-const ResponseInfo = {
-    [EResponseType.success]: {code: 200, message: "操作成功!"},
-    [EResponseType.internalServerError]: {code: 500, message: "系统内部错误!"},
-    [EResponseType.parameterError]: {code: 401, message: "参数错误!"},
-    [EResponseType.dataError]: {code: 402, message: "数据错误!"},
-    [EResponseType.tokenError]: {code: 403, message: "token错误或者过期!"},
-}
-
-export interface IReturnInfo {
-    type: EResponseType,
-    data?: any,
-    message?: string,
-    error?: any,
+export const ResponseInfo = {
+    success: {code: 200, message: "成功!"},// 正常返回
+    badRequest: {code: 400, message: "错误请求!"},// 表示其他错误，就是4xx都无法描述的错误
+    parameterError: {code: 401, message: "参数错误!"},// 参数错误
+    dataError: {code: 402, message: "数据错误!"},// 参数没有错误，但是数据内容不允许
+    tokenError: {code: 403, message: "token错误或者过期!"},
+    internalServerError: {code: 500, message: "系统内部错误!"},// 表示其他错误，就是5xx都无法描述的错误
 }
 
 /**
  * 统一返回格式
  */
 export class ResponseBeautifier {
-    public static success(ctx: Context, data: any = null, customMessage: string = "") {
-        const {code, message} = ResponseInfo.success;
-        ctx.body = {code, message: customMessage || message, data}
+    /**
+     * 成功返回
+     * @param  ctx koa的上下文对象
+     * @param data 数据
+     * @param {string} describe 描述
+     */
+    public static success(ctx: Context, data: any, curMessage?: string) {
+        ResponseBeautifier.responseByStatus(ctx, ResponseInfo.success, curMessage, data);
     }
 
-    public static fail(ctx: Context, type: EResponseType, error: any = null, customMessage: string = "") {
-        const info = ResponseInfo[type];
-        ctx.body = {code: info.code, message: customMessage || info.message, error}
-    }
-
-    public static response(ctx: Context, res: IReturnInfo) {
-        if (res.type === EResponseType.success) {
-            return ResponseBeautifier.success(ctx, res.data, res.message);
+    /**
+     * 根据状态返回结果
+     * @param ctx koa的上下文对象
+     * @param {{code: number; message: string}} statusInfo 状态信息
+     * @param data 数据
+     * @param {string} describe 描述
+     */
+    public static responseByStatus(ctx: Context, statusInfo = ResponseInfo.success, curMessage: string = "", data: any = "") {
+        const {code, message} = statusInfo;
+        const info = {code, message: curMessage || message, data: undefined};
+        if (data || data === 0) {
+            info.data = data;
         }
-        return ResponseBeautifier.fail(ctx, res.type, res.error || res.data, res.message);
+        ResponseBeautifier.response(ctx, info);
     }
 
-    public static responseByStatus(ctx: Context, code: number, message: string, data: any) {
-        if (code === 200) {
-            return ResponseBeautifier.success(ctx, data, message);
-        }
-        ctx.body = {code: code, message: message, error: data};
+    /**
+     * 返回结果
+     * @param ctx koa的上下文对象
+     * @param {IReturnInfo} info 返回的信息
+     */
+    public static response(ctx: Context, info: IReturnInfo) {
+        ctx.body = info
     }
 }

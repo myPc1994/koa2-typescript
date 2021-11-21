@@ -3,19 +3,19 @@ import {BaseDb} from "../../BaseDb";
 import {IKeyValue} from "../../../core/CpcInterface";
 
 /**
- * 角色-用户
+ * 角色-资源
  */
-class UserRole extends BaseDb {
-    protected tableName: string = "UserRole";
+class RoleResources extends BaseDb {
+    protected tableName: string = "RoleAuth";
     protected tableSchema: IKeyValue = {
-        userId: {type: String, required: true},
         roleId: {type: String, required: true},
+        authId: {type: String, required: true},
     };
 
-    public  getRolesByUser(userId: string) {
+    public getRolesByAuth(authId: string) {
         return this.model.aggregate([
             {
-                $match: {userId}
+                $match: {authId}
             },
             {
                 $lookup:// 连表关键词，类似mysql中的left join
@@ -27,12 +27,12 @@ class UserRole extends BaseDb {
                     }
             },
             {
-                $project: {userId: 1, _id: 0, "roles.name": 1, "roles.roleId": 1, "roles.createTime": 1}
+                $project: {authId: 1, _id: 0, "roles.name": 1, "roles.roleId": 1, "roles.createTime": 1}
             },
         ]);
     }
 
-    public  getUsersByRole(roleId: string) {
+    public getAuthsByRole(roleId: string) {
         return this.model.aggregate([
             {
                 $match: {roleId}
@@ -40,22 +40,29 @@ class UserRole extends BaseDb {
             {
                 $lookup:// 连表关键词，类似mysql中的left join
                     {
-                        localField: "userId",// 本表需要关联的字段
-                        from: "User",// 需要连接的表名
-                        foreignField: "userId",// 被连接表需要关联的字段
-                        as: "users"// 查询出的结果集别名
+                        localField: "authId",// 本表需要关联的字段
+                        from: "Auth",// 需要连接的表名
+                        foreignField: "authId",// 被连接表需要关联的字段
+                        as: "auths"// 查询出的结果集别名
                     }
             },
             {
-                $project: {roleId: 1, _id: 0, "users.userId": 1, "users.userName": 1, "users.createTime": 1}
+                $project: {
+                    roleId: 1,
+                    _id: 0,
+                    "auths.authId": 1,
+                    "auths.type": 1,
+                    "auths.subType": 1,
+                    "auths.name": 1,
+                    "auths.createTime": 1,
+                }
             },
         ]);
     }
 
     protected createModelEnd(schema: Schema) {
-        schema.index({roleId: 1, userId: 1}, {unique: true});
+        schema.index({roleId: 1, resourceId: 1}, {unique: true});
     }
-
 }
 
-export const UserRoleCtrl = new UserRole();
+export const RoleAuthCtrl = new RoleResources();

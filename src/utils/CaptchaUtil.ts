@@ -2,7 +2,7 @@ import svgCaptcha from "svg-captcha";
 import {IKeyValue} from "../core/CpcInterface";
 import {v1} from 'uuid';
 import schedule from 'node-schedule';
-import {EResponseType, ResponseBeautifier} from "./ResponseBeautifier";
+import {ResponseBeautifier, ResponseInfo} from "./ResponseBeautifier";
 import {Context, Next} from 'koa';
 
 let uuidMapCode: IKeyValue = {};
@@ -75,7 +75,7 @@ export class CaptchaUtil {
             if (CaptchaUtil.verify(data[uuidField], data[textField])) {
                 return next();
             } else {
-                return ResponseBeautifier.fail(ctx, EResponseType.parameterError, "验证码错误!");
+                return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "验证码错误!");
             }
         };
     }

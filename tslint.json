@@ -38,7 +38,7 @@
     // "no-console":true,// 不允许使用console对象
     "no-debugger":true,// 不允许使用debugger
     "no-duplicate-super":true,// 不允许super() 两次使用在构造函数中
-    "no-empty":true,// 函数体不允许空
+    "no-empty":false,// 函数体允许空
     "no-eval":false,// 不允许使用eval
     "no-for-in-array":true,// 不允许对Array使用for-in
     "no-invalid-template-strings":true,// 只允许在模板字符串中使用${

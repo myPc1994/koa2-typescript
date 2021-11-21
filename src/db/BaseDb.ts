@@ -7,11 +7,14 @@ import {IKeyValue} from "../core/CpcInterface";
  */
 export abstract class BaseDb {
     protected model: Model<Document>;
-    protected abstract tableName:string;
-    protected abstract tableSchema:IKeyValue;
+    protected abstract tableName: string;
+    protected abstract tableSchema: IKeyValue;
+
     constructor() {
         GlobalVariable.dbUtil.onConnected((mongooseInstance: Connection) => {
-            this.model = mongooseInstance.model(this.tableName, new Schema(this.tableSchema));
+            const schema = new Schema(this.tableSchema);
+            this.model = mongooseInstance.model(this.tableName, schema, this.tableName);
+            this.createModelEnd(schema);
         });
     }
 
@@ -133,5 +136,29 @@ export abstract class BaseDb {
             result.push(data);
         }
         return result;
+    }
+
+    /**
+     * 分页查询
+     * @param {IKeyValue} filter 条件
+     * @param {IKeyValue} fields 输出字段
+     * @param {number} page 页码
+     * @param {number} limit 每页个数
+     * @returns {Promise<any>}
+     */
+    public async findByPage(filter: IKeyValue, fields: IKeyValue, page: number, limit: number) {
+        const count = await this.model.countDocuments(filter);
+        if (count === 0) {
+            return {count, data: []};
+        }
+        const data = await this.model.find(filter, fields).skip((page) * limit).limit(limit).exec();
+        return {count, data};
+    }
+
+    /**
+     * 模型创建完成后触发
+     * @returns {string}
+     */
+    protected createModelEnd(schema: Schema): void {
     }
 }

@@ -59,10 +59,3 @@ export interface IMulterUtil {
     filename: Function | any,
     suffixs: string[]
 }
-
-/**
- * 参数验证基本数据类型
- */
-export interface IJoiBase {
-    [key: string]: Joi.Schema
-}

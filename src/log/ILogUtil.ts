@@ -1,6 +1,6 @@
 import {Context, Next} from "koa";
 import Moment from 'moment';
-import {ResponseBeautifier} from "../utils/ResponseBeautifier";
+import {ResponseBeautifier, ResponseInfo} from "../utils/ResponseBeautifier";
 
 export enum ELevel {
     error = "error",
@@ -39,7 +39,7 @@ export abstract class ILogUtil {
             } catch (error: any) {
                 ms = new Date().getTime() - start;
                 this.netError(ctx, error, ms); // 记录异常日志
-                ResponseBeautifier.responseByStatus(ctx, error.status || 500, error.message, error);
+                ResponseBeautifier.responseByStatus(ctx, ResponseInfo.internalServerError);
             }
         }
     };

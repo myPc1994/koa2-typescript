@@ -5,68 +5,84 @@ import moment from 'moment';
  * js工具类
  */
 export class JsUtil {
-    public static versionCheck(addV: ICpcVersion, dbV: ICpcVersion) {
-        if (addV.version_1 < dbV.version_1) {
-            return false;
-        }
-        if (addV.version_1 > dbV.version_1) {
-            return true;
-        }
-        // 到此version_1一定相等
-        if (addV.version_2 < dbV.version_2) {
-            return false;
-        }
-        if (addV.version_2 > dbV.version_2) {
-            return true;
-        }
-        // 到此version_2一定相等
-        if (addV.version_3 <= dbV.version_3) {
-            return false;
-        }
-        if (addV.version_3 > dbV.version_3) {
-            return true;
-        }
+    /**
+     * 获取文件后缀
+     * @param {string} path 路径/文件名
+     * @returns {any}
+     */
+    public static getType(path: string) {
+        return path.substring(path.lastIndexOf("."), path.length);
     }
 
-
-    public static timeObj2ArrSort(obj: IKeyValue) {
-        const arr = [];
-        for (let key of Object.keys(obj)) {
-            arr.push({
-                time: key,
-                data: obj[key],
-            })
-        }
-        const divisionTrend = arr.sort((item1: any, item2: any) => {
-            return item1.time > item2.time ? 1 : -1;
-        })
-        return divisionTrend;
-    }
-
-
-    public static getType(name: string) {
-        return name.substring(name.lastIndexOf("."), name.length);
-    }
-
+    /**
+     * 字符串日期格式化
+     * @param {string} str
+     * @returns {moment.Moment}
+     */
     public static moment(str: string) {
-        if(str.indexOf("/")){
-            return moment(str, "YYYY/MM/DD HH:mm",true);
-        }else{
-            return moment(str,true);
+        if (str.indexOf("/")) {
+            return moment(str, "YYYY/MM/DD HH:mm", true);
+        } else {
+            return moment(str, true);
         }
     }
 
-    public static isEmpty(arr: any[], len: number) {
-        if (arr.length === 0 || len < arr.length) {
-            return false;
-        }
-        for (let index = 0; index < len; index++) {
-            const v = arr[index]
-            if (!v && typeof v !== "number") {
-                return false;
+    /**
+     * 根据唯一值field判断数据1中和数组2的内容差异性
+     * @param arr1 数组1
+     * @param arr2 数组2
+     * @param fields 用于判断唯一的字段名称数组
+     * @returns {{
+     *              meet: Array, 数组1和数组2中都存在
+     *              noMeet: Array, 只有数组1中存在
+     *              noMeet2:Array  只有数组2中存在
+     *           }}
+     */
+    public static splitArrayMeet(arr1: any, arr2: any, fields: string[]) {
+        const meet = [];
+        const noMeet = [];
+        let isMeet;
+        for (const item of arr1) {
+            isMeet = false;
+            for (const v of arr2) {
+                let isMeet2 = true;
+                for (const field of fields) {
+                    if (item[field] !== v[field]) {
+                        isMeet2 = false;
+                        break;
+                    }
+                }
+                if (isMeet2) {
+                    isMeet = true;
+                    break;
+                }
+            }
+            if (isMeet) {
+                meet.push(item);
+            } else {
+                noMeet.push(item);
             }
         }
-        return true;
+        const noMeet2 = [];
+        for (const item of arr2) {
+            isMeet = false;
+            for (const v of meet) {
+                let isMeet2 = true;
+                for (const field of fields) {
+                    if (item[field] !== v[field]) {
+                        isMeet2 = false;
+                        break;
+                    }
+                }
+                if (isMeet2) {
+                    isMeet = true;
+                    break;
+                }
+            }
+            if (!isMeet) {
+                noMeet2.push(item);
+            }
+        }
+        return {meet, noMeet, noMeet2};
     }
-
 }

@@ -19,21 +19,11 @@
     |   |-- start.js
     |   |-- util
     |       |-- fileUtil.js
+    |-- dist
     |-- env
     |   |-- development.js
     |   |-- index.js
     |   |-- production.js
-    |-- logs
-    |   |-- net
-    |   |   |-- netError.2021-09-12.log
-    |   |   |-- netError.2021-09-14.log
-    |   |   |-- netError.2021-09-19.log
-    |   |   |-- netResponse.2021-09-12.log
-    |   |   |-- netResponse.2021-09-14.log
-    |   |   |-- netResponse.2021-09-19.log
-    |   |-- system
-    |       |-- systemInfo.2021-09-14.log
-    |       |-- systemInfo.2021-09-19.log
     |-- src
     |   |-- app.ts
     |   |-- GlobalVariable.ts
@@ -43,10 +33,13 @@
     |   |   |-- BaseDb.ts
     |   |   |-- index.ts
     |   |   |-- mongoseTest.md
-    |   |   |-- tables.ts
     |   |   |-- controller
-    |   |       |-- UserCtrl.ts
-    |   |       |-- VersionUpgradeCtrl.ts
+    |   |       |-- rbac
+    |   |           |-- AuthCtrl.ts
+    |   |           |-- RoleAuthCtrl.ts
+    |   |           |-- RoleCtrl.ts
+    |   |           |-- UserCtrl.ts
+    |   |           |-- UserRoleCtrl.ts
     |   |-- log
     |   |   |-- ILogUtil.ts
     |   |   |-- LogUtil.ts
@@ -58,11 +51,20 @@
     |   |   |-- logDB
     |   |       |-- LogDB.ts
     |   |-- routes
-    |   |   |-- index.ts
-    |   |   |-- users.ts
+    |   |   |-- controller
+    |   |   |   |-- IndexCtrl.ts
+    |   |   |   |-- RbacCtrl.ts
+    |   |   |   |-- UsersCtrl.ts
+    |   |   |-- routers
+    |   |       |-- index.ts
+    |   |       |-- rbac.ts
+    |   |       |-- users.ts
     |   |-- utils
+    |       |-- CaptchaUtil.ts
+    |       |-- CryptoUtil.ts
     |       |-- Excel2dbFormatUtil.ts
     |       |-- FileUtil.ts
+    |       |-- JoiUtil.ts
     |       |-- JsUtil.ts
     |       |-- MulterUtil.ts
     |       |-- NetUtil.ts

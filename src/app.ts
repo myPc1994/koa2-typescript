@@ -5,8 +5,8 @@ import koa_static from 'koa-static-server';
 import koa_json from 'koa-json';
 import koa_cors from 'koa2-cors';
 import path from 'path';
-import bodyParser from 'koa-bodyparser';
 import fs from 'fs';
+import bodyParser from 'koa-bodyparser';
 import {logUtil} from "./log/LogUtil";
 import {Pm2FlushUtil} from "./utils/Pm2FlushUtil";
 
@@ -19,8 +19,8 @@ app.use(bodyParser());// get,post参数解析
 app.use(koa_json());
 app.use(logUtil.net());// 日志处理
 // routes--动态引入
-fs.readdirSync(path.resolve(__dirname, './routes')).forEach(file => {
-    let route: Router = require(path.resolve(__dirname, `./routes/${file}`)).default;
+fs.readdirSync(path.resolve(__dirname, './routes/routers')).forEach(file => {
+    let route: Router = require(path.resolve(__dirname, `./routes/routers/${file}`)).default;
     app.use(route.routes()).use(route.allowedMethods());
 });
 // error-handling 已经在/log/ILogUtil拦截统一处理了

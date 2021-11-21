@@ -1,5 +1,5 @@
 // 引入模块依赖
-import {EResponseType, IReturnInfo, ResponseBeautifier} from "../ResponseBeautifier";
+import {IReturnInfo, ResponseBeautifier, ResponseInfo} from "../ResponseBeautifier";
 import {Context, Next} from 'koa';
 
 const fs = require('fs');
@@ -35,17 +35,17 @@ export class JwtUtil {
         return new Promise((resolve, reject) => {
             jsonwebtoken.verify(token, cert_public, {algorithms: ['RS256']}, (error, data) => {
                 if (!error) {
-                    return resolve({type: EResponseType.success, message: "验证通过", data});
+                    return resolve({...ResponseInfo.success, message: "验证通过", data});
                 }
                 switch (error.name) {
                     case 'TokenExpiredError':// token过期错误
-                        return resolve({type: EResponseType.tokenError, message: "token过期了"});
+                        return resolve({...ResponseInfo.tokenError, message: "token过期了"});
                     case 'NotBeforeError':// 当前时间超过nbf的值时抛出该错误,一般是由于服务端修改了系统时间引起的
-                        return resolve({type: EResponseType.tokenError, message: "token早于签发时间"});
+                        return resolve({...ResponseInfo.tokenError, message: "token早于签发时间"});
                     case 'JsonWebTokenError':// 令牌有问题
-                        return resolve({type: EResponseType.tokenError, message: "token被篡改"});
+                        return resolve({...ResponseInfo.tokenError, message: "token被篡改"});
                     default:
-                        return resolve({type: EResponseType.tokenError, message: "token解析到未知错误"});
+                        return resolve({...ResponseInfo.tokenError, message: "token解析到未知错误"});
                 }
             });
         })
@@ -60,13 +60,13 @@ export class JwtUtil {
     public static async middleware(ctx: Context, next: Next) {
         const access_token = ctx.header.access_token;
         if (!access_token) {
-            return ResponseBeautifier.fail(ctx, EResponseType.parameterError, "缺少token");
+            return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.parameterError, "缺少token");
         }
         const info: IReturnInfo = await JwtUtil.verifyToken(access_token as string);
-        if (info.type === EResponseType.success) {
+        if (info.code === 200) {
             ctx.req.headers.token_info = info.data;
             return next();
         }
-        ResponseBeautifier.fail(ctx, info.type, info.error, info.message);
+        ResponseBeautifier.response(ctx, info);
     }
 }
