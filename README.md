@@ -1,26 +1,36 @@
-# koa2+typeScript+mongose
+# 整体介绍
+项目地址：[项目地址](https://gitee.com/CPC1994/koa2-typescript-mongose)
 
 > 开发框架：koa2
 
-> 开发语言：TypeScript
+> 开发语言：Nodejs、TypeScript
 
 > 数 据 库：Mongodb
+>  数据库操作插件：mongose
 
-> 权限验证：jsonwebtoken
+> token生成与验证：jsonwebtoken
 
-> 数据库插件：mongose
-
-> 日志插件：开发环境: koa-logger    生产环境：log4js、mongodb
+> 日志插件：
+> 开发环境: 自定义拦截 控制台打印   
+> 生产环境：自定义拦截配置设置，log4js、mongodb
 
 > 日期格式化插件：moment
+
+> 数据格式校验：Joi
+
+> 二维码生成：svg-captcha
 
 > 文件上传插件：koa-multer
 
 > excel解析插件：node-xlsx
 
+>API注释接口文档生成：apidoc 
+
+> 语法格式检测：tslint
+
 ## Build Setup
 
-``` bash
+```bash
 # 安装依赖关系
     npm install
 
@@ -30,11 +40,13 @@
 # 构建生产环境包
     npm run build
 
-# 构建接口文档
+# 构建API接口文档
     npm run apidoc
-# 
+# 构建加密混淆包(X)
+	npm run obfuscator
 ```
 ## 生成环境部署包
+### 打包优势：允许对源代码加密混淆（javascript-obfuscator）
 ### windows系统部署
 ```
     1. npm run build 后生成dist文件夹
@@ -82,49 +94,62 @@
      |   |   |-- netResponse.2021-09-19.log  请求成功
      |   |-- system     存放系统相关的日志
      |       |-- systemInfo.2021-09-19.log
-     |-- src            存放源代码文件夹
-     |   |-- app.ts     源代码入口
-     |   |-- GlobalVariable.ts   全局变量
-     |   |-- core       核心文件
-     |   |   |-- CpcInterface.ts  接口处理
-     |   |-- db         数据处理层
-     |   |   |-- BaseDb.ts   基础数据库处理
-     |   |   |-- index.ts    数据库入口文件，包含连接数据库等操作
-     |   |   |-- mongoseTest.md   mongose一些使用的说明
-     |   |   |-- tables.ts    数据库所有的表格
-     |   |   |-- controller   业务操作逻辑
-     |   |       |-- UserCtrl.ts   
-     |   |       |-- VersionUpgradeCtrl.ts
-     |   |-- log        日志
-     |   |   |-- ILogUtil.ts   日志接口
-     |   |   |-- LogUtil.ts    对外统一出口
-     |   |   |-- console       控制台输出-只有开发环境生效
-     |   |   |   |-- LogConsole.ts
-     |   |   |-- log4js        文件输出-只有生产环境生效
-     |   |   |   |-- log4js.ts
-     |   |   |   |-- Log4jsUtil.ts
-     |   |   |-- logDB         数据库输出-只有生产环境生效
-     |   |       |-- LogDB.ts
-     |   |-- routes            路由
-     |   |   |-- index.ts
-     |   |   |-- users.ts
-     |   |-- utils             工具类
-     |       |-- Excel2dbFormatUtil.ts   excel转为数据库支持的格式
-     |       |-- FileUtil.ts             文件处理工具类
-     |       |-- JsUtil.ts               js工具类
-     |       |-- MulterUtil.ts           文件上传工具类  
-     |       |-- NetUtil.ts              网络处理工具类
-     |       |-- Pm2FlushUtil.ts         pm2处理工具类
-     |       |-- ResponseBeautifier.ts   统一返回格式
-     |       |-- token                   token处理
-     |           |-- JwtUtil.ts          jwt工具类
-     |           |-- pem                 公钥和私钥
-     |               |-- private_key.pem  私钥
-     |               |-- public_key.pem   公钥
-     |-- static                           项目必备的静态文件
-     |   |-- county.json
-     |   |-- mobileApp.pdman.json         数据设计图，使用pdman设计的
-     |-- public                           项目运行中生成的静态文件
+    |-- src  存放源代码文件夹
+    |   |-- app.ts 源代码入口
+    |   |-- GlobalVariable.ts 全局变量
+    |   |-- core 核心文件
+    |   |   |-- CpcInterface.ts 接口处理
+    |   |-- db 数据处理层
+    |   |   |-- BaseDb.ts  基础数据库处理
+    |   |   |-- index.ts 数据库入口文件，包含连接数据库等操作
+    |   |   |-- mongoseTest.md mongose一些使用的说明
+    |   |   |-- controller 数据库业务操作逻辑
+    |   |       |-- rbac 用户-角色-权限的rbac模式
+    |   |           |-- AuthCtrl.ts  权限表
+    |   |           |-- RoleAuthCtrl.ts  角色权限表
+    |   |           |-- RoleCtrl.ts 角色表
+    |   |           |-- UserCtrl.ts 用户表
+    |   |           |-- UserRoleCtrl.ts 用户角色表
+    |   |-- log 日志
+    |   |   |-- ILogUtil.ts  日志接口
+    |   |   |-- LogUtil.ts   对外统一出口
+    |   |   |-- console   控制台输出-只有开发环境生效
+    |   |   |   |-- LogConsole.ts
+    |   |   |-- log4js    文件输出-只有生产环境生效
+    |   |   |   |-- log4js.ts
+    |   |   |   |-- Log4jsUtil.ts
+    |   |   |-- logDB    数据库输出-只有生产环境生效
+    |   |       |-- LogDB.ts
+    |   |-- routes  路由
+    |   |   |-- controller  逻辑层
+    |   |   |   |-- IndexCtrl.ts
+    |   |   |   |-- RbacCtrl.ts
+    |   |   |   |-- UsersCtrl.ts
+    |   |   |-- routers  对外接口
+    |   |       |-- index.ts
+    |   |       |-- rbac.ts
+    |   |       |-- users.ts
+    |   |-- utils             工具类
+    |       |-- Excel2dbFormatUtil.ts   excel转为数据库支持的格式
+    |       |-- FileUtil.ts             文件处理工具类
+    |       |-- JsUtil.ts               js工具类
+    |       |-- MulterUtil.ts           文件上传工具类  
+    |       |-- NetUtil.ts              网络处理工具类
+    |       |-- Pm2FlushUtil.ts         pm2处理工具类
+    |       |-- ResponseBeautifier.ts   统一返回格式
+    |       |-- token                   token处理
+    |           |-- JwtUtil.ts          jwt工具类
+    |           |-- pem                 公钥和私钥
+    |               |-- private_key.pem  私钥
+    |               |-- public_key.pem   公钥
+    |       |-- CaptchaUtil.ts  验证码
+    |       |-- CryptoUtil.ts 密码加盐处理
+    |       |-- FileUtil.ts  文件处理
+    |       |-- JoiUtil.ts  数据格式校验
+    |-- static                           项目必备的静态文件
+    |   |-- county.json
+    |   |-- mobileApp.pdman.json         数据设计图，使用pdman设计的
+    |-- public                           项目运行中生成的静态文件
   ```
   
   
@@ -142,10 +167,7 @@
 
 ```
     // 需要验证的方法前，加入JwtUtil.middleware即可
-    usersRouter.get('/verifyToken', JwtUtil.middleware, async (ctx: Context, next: Next) => {
-        // TODO 检验通过后，处理对应的业务逻辑
-        ResponseBeautifier.success(ctx, ctx.header.token_info, "token验证成功!");
-    })
+ 	router.post('/register', JoiUtil.middleware(UsersJoi.register), UsersCtrl.register);
 ```
 
 到目录/utils/token/pem/目录下，打开终端，使用openssl命令生成公钥私钥
@@ -167,6 +189,19 @@
 具体查看：utils/ResponseBeautifier.ts文件
 > 示例
 ```typescript
-    ResponseBeautifier.success(ctx, null, "入库成功");
-    ResponseBeautifier.fail(ctx, EResponseType.parameterError, "缺少参数file");
+	    ResponseBeautifier.success(ctx, null, "入库成功");
+	    ResponseBeautifier.fail(ctx, EResponseType.parameterError, "缺少参数file");
+```
+### 接口数据校验
+具体查看：utils/JoiUtil.ts文件
+>需要验证的方法前，加入JoiUtil.middleware即可
+```typescript
+	    // 创建角色
+		router.post('/role', JoiUtil.middleware(RbacJoi.addRole), RbacCtrl.addRole);
+		// 删除角色
+		router.delete('/role', JoiUtil.middleware(RbacJoi.deleteRole), RbacCtrl.deleteRole);
+		// 修改角色
+		router.put('/role', JoiUtil.middleware(RbacJoi.putRole), RbacCtrl.putRole);
+		// 查询角色信息
+		router.get('/role', JoiUtil.middleware(RbacJoi.getRole), RbacCtrl.getRole);
 ```
