@@ -23,12 +23,12 @@ export class Auth extends BaseDb {
         createTime: {type: String, default: () => new Date().getTime()},
     };
 
-    public async addAuth(type: string, subType: string, name: string): Promise<IReturnInfo> {
-        const userInfo = await this.findOne({type, subType, name});
+    public async addAuth(authObj: IKeyValue): Promise<IReturnInfo> {
+        const userInfo = await this.findOne({type: authObj.type, subType: authObj.subType, name: authObj.name});
         if (userInfo) {
             return {...ResponseInfo.dataError, message: "该权限已存在!"};
         }
-        const data: IKeyValue = await this.save({type, subType, name});
+        const data: IKeyValue = await this.save(authObj);
         return {...ResponseInfo.success, data};
     }
 
@@ -45,6 +45,10 @@ export class Auth extends BaseDb {
         this.importAllRouter();
     }
 
+    /**
+     * 导入所有使用jsDoc注释的接口，做为权限资源
+     * @returns {Promise<void>}
+     */
     private async importAllRouter() {
         const auths: any = [];
         fs.readdirSync(path.resolve(__dirname, '../../../routes/routers')).forEach(file => {
@@ -83,7 +87,6 @@ export class Auth extends BaseDb {
         const routers = await this.find({type: "_router_"}, {_id: 0, __v: 0});
         const result = JsUtil.splitArrayMeet(routers, auths, ["subType", "name", "describe"]);
         const {meet, noMeet, noMeet2} = JsUtil.splitArrayMeet(result.noMeet2, result.noMeet, ["subType", "name"]);
-        console.log("03",meet, noMeet, noMeet2)
         // 说明只是修改了描述，不需要删除，而是修改
         if (meet) {
             for (const item of meet) {

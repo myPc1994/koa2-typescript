@@ -13,20 +13,20 @@ class User extends BaseDb {
     protected tableName: string = "User";
     protected tableSchema: IKeyValue = {
         userId: {type: String, required: true, unique: true, default: () => v1()},// 唯一标识
-        userName: {type: String, required: true, unique: true},// 用户名唯一
+        account: {type: String, required: true, unique: true},// 用户名唯一
         password: {type: String, required: true},// 密码
         name: {type: String},// 名称
         createTime: {type: String, default: () => new Date().getTime()},
     };
 
-    public async addUser(userName: string, password: string): Promise<IReturnInfo> {
-        const userInfo = await this.findOne({userName});
+    public async addUser(account: string, password: string): Promise<IReturnInfo> {
+        const userInfo = await this.findOne({account});
         if (userInfo) {
             return {...ResponseInfo.dataError, message: "该用户名已存在!"};
         }
-        const saltPassword = CryptoUtil.saltHashPassword(password, userName);// 密码加盐
-        const res: IKeyValue = await this.save({userName, password: saltPassword});
-        return {...ResponseInfo.success, data: {userId: res.userId, userName: res.userName,createTime:res.createTime}};
+        const saltPassword = CryptoUtil.saltHashPassword(password, account);// 密码加盐
+        const res: IKeyValue = await this.save({account, password: saltPassword,error:"a"});
+        return {...ResponseInfo.success, data: {userId: res.userId, account: res.account,createTime:res.createTime}};
     }
 
     public async deleteUser(userId: string): Promise<IReturnInfo> {

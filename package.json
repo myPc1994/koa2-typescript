@@ -4,6 +4,7 @@
   "description": "nodejs 基础模板",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./bin/www",
+    "start": "cross-env NODE_ENV=development ts-node ./bin/www",
     "build": "node ./build/start && tsc && node ./build/end",
     "apidoc": "node ./apidoc.js",
     "printDir": "node printDir.js"

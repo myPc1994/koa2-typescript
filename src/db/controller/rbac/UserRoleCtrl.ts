@@ -47,7 +47,7 @@ class UserRole extends BaseDb {
                     }
             },
             {
-                $project: {roleId: 1, _id: 0, "users.userId": 1, "users.userName": 1, "users.createTime": 1}
+                $project: {roleId: 1, _id: 0, "users.userId": 1, "users.account": 1, "users.createTime": 1}
             },
         ]);
     }

@@ -9,11 +9,11 @@ import {JsUtil} from "../../utils/JsUtil";
 
 export const IndexJoi = {
     login: Joi.object({
-        userName: Joi.string().required(),
+        account: Joi.string().required(),
         password: Joi.string().required(),
     }),
     register: Joi.object({
-        userName: Joi.string().required(),
+        account: Joi.string().required(),
         password: Joi.string().required()
     }),
     addUserRoles: Joi.object({

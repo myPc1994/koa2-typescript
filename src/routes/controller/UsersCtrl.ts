@@ -9,36 +9,36 @@ import {JwtUtil} from "../../utils/token/JwtUtil";
 
 export const UsersJoi = {
     login: Joi.object({
-        userName: Joi.string().alphanum().min(5).max(20).required(),
+        account: Joi.string().alphanum().min(5).max(20).required(),
         password: Joi.string().alphanum().min(6).max(20).required(),
         uuid: Joi.string().required(),
         text: Joi.string().required()
     }),
     register: Joi.object({
-        userName: Joi.string().required(),
+        account: Joi.string().required(),
         password: Joi.string().required()
     })
 }
 
 export class UsersCtrl {
     public static async register(ctx: Context, next: Next) {
-        const {userName, password} = ctx.request.body;
-        const userInfo = await UserCtrl.findOne({userName});
+        const {account, password} = ctx.request.body;
+        const userInfo = await UserCtrl.findOne({account});
         if (userInfo) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "该用户名已存在!");
         }
-        const saltPassword = CryptoUtil.saltHashPassword(password, userName);// 密码加盐
-        const res: IKeyValue = await UserCtrl.save({userName, password: saltPassword});
-        ResponseBeautifier.success(ctx, {userId: res.userId, userName: res.userName});
+        const saltPassword = CryptoUtil.saltHashPassword(password, account);// 密码加盐
+        const res: IKeyValue = await UserCtrl.save({account, password: saltPassword});
+        ResponseBeautifier.success(ctx, {userId: res.userId, account: res.account});
     }
 
     public static async login(ctx: Context, next: Next) {
-        const {userName, password} = ctx.request.body;
-        const saltPassword = CryptoUtil.saltHashPassword(password, userName);// 密码加盐
-        const userInfo: any = await UserCtrl.findOne({userName, password: saltPassword}, {
+        const {account, password} = ctx.request.body;
+        const saltPassword = CryptoUtil.saltHashPassword(password, account);// 密码加盐
+        const userInfo: IKeyValue | null = await UserCtrl.findOne({account, password: saltPassword}, {
             _id: 0,
             userId: 1,
-            userName: 1
+            account: 1
         });
         if (!userInfo) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "用户名或者密码错误!");
@@ -58,9 +58,9 @@ export class UsersCtrl {
 
     public static async userInfo(ctx: Context, next: Next) {
         const {_id} = ctx.header.token_info as any;
-        const userInfo: any = await UserCtrl.findOne({_id}, {
+        const userInfo: IKeyValue|null = await UserCtrl.findOne({_id}, {
             _id: 1,
-            userName: 1,
+            account: 1,
             roleIds: 1,
             createTime: 1
         });

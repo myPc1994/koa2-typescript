@@ -14,7 +14,7 @@ import {RoleAuthCtrl} from "../../db/controller/rbac/RoleAuthCtrl";
 export const RbacJoi = {
     // 用户
     addUser: Joi.object({
-        userName: Joi.string().alphanum().min(5).max(20).required(),
+        account: Joi.string().alphanum().min(5).max(20).required(),
         password: Joi.string().alphanum().min(6).max(20).required()
     }),
     deleteUser: Joi.object({
@@ -101,6 +101,7 @@ export const RbacJoi = {
         type: Joi.string(),
         subType: Joi.string(),
         name: Joi.string(),
+        describe: Joi.string(),
     }),
     getAuth: Joi.object({
         authId: Joi.string().required(),
@@ -116,14 +117,14 @@ export class RbacCtrl {
 
     // 创建用户
     public static async addUser(ctx: Context, next: Next) {
-        const {userName, password} = ctx.request.body;
-        const data: IReturnInfo = await UserCtrl.addUser(userName, password);
+        const {account, password} = ctx.request.body;
+        const data: IReturnInfo = await UserCtrl.addUser(account, password);
         ResponseBeautifier.response(ctx, data);
     }
 
     // 删除用户
     public static async deleteUser(ctx: Context, next: Next) {
-        const {userId} = ctx.request.query;
+        const {userId} = ctx.request.body;
         const data: IReturnInfo = await UserCtrl.deleteUser(userId as string);
         ResponseBeautifier.response(ctx, data);
     }
@@ -138,13 +139,13 @@ export class RbacCtrl {
         if (!data.acknowledged) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "修改失败!");
         }
-        ResponseBeautifier.success(ctx, userId);
+        ResponseBeautifier.success(ctx, null);
     }
 
     // 查询用户信息
     public static async getUser(ctx: Context, next: Next) {
         const {userId} = ctx.request.query;
-        const fields = {userName: 1, userId: 1, createTime: 1, _id: 0};
+        const fields = {password: 0, __v: 0, _id: 0};
         const data = await UserCtrl.findOne({userId}, fields);
         if (!data) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "找不到该用户的信息!");
@@ -155,7 +156,7 @@ export class RbacCtrl {
     // 查询所有用户
     public static async getUsers(ctx: Context, next: Next) {
         const {page = 0, limit = 10} = ctx.request.query;
-        const fields = {userName: 1, userId: 1, createTime: 1, _id: 0};
+        const fields = {account: 1, userId: 1, createTime: 1, _id: 0};
         const data = await UserCtrl.findByPage({}, fields, Number(page), Number(limit));
         ResponseBeautifier.success(ctx, data);
     }
@@ -178,7 +179,7 @@ export class RbacCtrl {
         if (roles.length !== dbRoles.length) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "存在错误的角色id!");
         }
-        const newRoles = dbRoles.map((item: any) => ({roleId: item.roleId, userId}));
+        const newRoles = dbRoles.map((item: IKeyValue) => ({roleId: item.roleId, userId}));
         const data = await UserRoleCtrl.saveOrFilterSame(["roleId", "userId"], newRoles);
         ResponseBeautifier.success(ctx, data);
     }
@@ -197,7 +198,7 @@ export class RbacCtrl {
         if (users.length !== dbUsers.length) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "存在错误的用户id!");
         }
-        const newUsers = dbUsers.map((item: any) => ({userId: item.userId, roleId}));
+        const newUsers = dbUsers.map((item: IKeyValue) => ({userId: item.userId, roleId}));
         const data = await UserRoleCtrl.saveOrFilterSame(["roleId", "userId"], newUsers);
         ResponseBeautifier.success(ctx, data);
     }
@@ -238,7 +239,7 @@ export class RbacCtrl {
 
     // 删除角色
     public static async deleteRole(ctx: Context, next: Next) {
-        const {roleId} = ctx.request.query;
+        const {roleId} = ctx.request.body;
         const data: IReturnInfo = await RoleCtrl.deleteRole(roleId as string);
         ResponseBeautifier.response(ctx, data);
     }
@@ -253,7 +254,7 @@ export class RbacCtrl {
         if (!data.acknowledged) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "修改失败!");
         }
-        ResponseBeautifier.success(ctx, roleId);
+        ResponseBeautifier.success(ctx, null);
     }
 
     // 查询角色信息
@@ -288,7 +289,7 @@ export class RbacCtrl {
         if (roles.length !== dbRoles.length) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "存在错误的角色id!");
         }
-        const newRoles = dbRoles.map((item: any) => ({roleId: item.roleId, authId}));
+        const newRoles = dbRoles.map((item: IKeyValue) => ({roleId: item.roleId, authId}));
         const data = await RoleAuthCtrl.saveOrFilterSame(["roleId", "authId"], newRoles);
         ResponseBeautifier.success(ctx, data);
     }
@@ -307,7 +308,7 @@ export class RbacCtrl {
         if (auths.length !== dbAuths.length) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "存在错误的权限id!");
         }
-        const newAuths = dbAuths.map((item: any) => ({authId: item.authId, roleId}));
+        const newAuths = dbAuths.map((item: IKeyValue) => ({authId: item.authId, roleId}));
         const data = await RoleAuthCtrl.saveOrFilterSame(["roleId", "authId"], newAuths);
         ResponseBeautifier.success(ctx, data);
     }
@@ -341,22 +342,22 @@ export class RbacCtrl {
 
     // 创建权限
     public static async addAuth(ctx: Context, next: Next) {
-        const {type, subType, name} = ctx.request.body;
-        const data: IReturnInfo = await AuthCtrl.addAuth(type, subType, name);
+        const {type, subType, name,describe} = ctx.request.body;
+        const data: IReturnInfo = await AuthCtrl.addAuth({type, subType, name, describe});
         ResponseBeautifier.response(ctx, data);
     }
 
     // 删除权限
     public static async deleteAuth(ctx: Context, next: Next) {
-        const {authId} = ctx.request.query;
+        const {authId} = ctx.request.body;
         const data: IReturnInfo = await AuthCtrl.deleteAuth(authId as string);
         ResponseBeautifier.response(ctx, data);
     }
 
     // 修改权限
     public static async putAuth(ctx: Context, next: Next) {
-        const {authId, name, type, subType} = ctx.request.body;
-        const data = await AuthCtrl.updateOne({authId}, {name, type, subType});
+        const {authId, name, type, subType, describe} = ctx.request.body;
+        const data = await AuthCtrl.updateOne({authId}, {name, type, subType, describe});
         if (data.matchedCount === 0) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "找不到对应的权限!");
         }

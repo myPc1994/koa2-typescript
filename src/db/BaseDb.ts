@@ -149,10 +149,10 @@ export abstract class BaseDb {
     public async findByPage(filter: IKeyValue, fields: IKeyValue, page: number, limit: number) {
         const count = await this.model.countDocuments(filter);
         if (count === 0) {
-            return {count, data: []};
+            return {count, list: []};
         }
-        const data = await this.model.find(filter, fields).skip((page) * limit).limit(limit).exec();
-        return {count, data};
+        const list = await this.model.find(filter, fields).skip((page) * limit).limit(limit).exec();
+        return {count, list};
     }
 
     /**

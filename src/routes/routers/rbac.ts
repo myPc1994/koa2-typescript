@@ -10,13 +10,12 @@ const router = new Router({
 /**
  * @api {post} /rbac/user 创建用户
  * @apiGroup 用户操作
- * @apiParam {String} userName 用户名
+ * @apiParam {String} account 用户名
  * @apiParam {String} password 密码
- * @apiSuccess (200) {Number} code 状态码
- * @apiSuccess (200) {String} message 消息
+ * @apiUse responseSuccess
  * @apiSuccess (200) {Object} data 数据
  * @apiSuccess (200) {String} data.userId 用户id
- * @apiSuccess (200) {String} data.userName 用户名称
+ * @apiSuccess (200) {String} data.account 账号
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
@@ -25,12 +24,7 @@ router.post('/user', JoiUtil.middleware(RbacJoi.addUser), RbacCtrl.addUser);
  * @api {delete} /rbac/user 删除用户
  * @apiGroup 用户操作
  * @apiParam {String} userId 用户id
- * @apiSuccess (200) {Number} code 状态码
- * @apiSuccess (200) {String} message 消息
- * @apiSuccess (200) {Object} data 数据
- * @apiSuccess (200) {String} data.userId 用户id
- * @apiSuccess (200) {String} data.userName 用户名称
- * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiUse responseSuccess
  * @apiVersion 1.0.0
  */
 router.delete('/user', JoiUtil.middleware(RbacJoi.deleteUser), RbacCtrl.deleteUser);
@@ -39,12 +33,7 @@ router.delete('/user', JoiUtil.middleware(RbacJoi.deleteUser), RbacCtrl.deleteUs
  * @apiGroup 用户操作
  * @apiParam {String} userId 用户id
  * @apiParam {String} [name] 用户别名
- * @apiSuccess (200) {Number} code 状态码
- * @apiSuccess (200) {String} message 消息
- * @apiSuccess (200) {Object} data 数据
- * @apiSuccess (200) {String} data.userId 用户id
- * @apiSuccess (200) {String} data.userName 用户名称
- * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiUse responseSuccess
  * @apiVersion 1.0.0
  */
 router.put('/user', JoiUtil.middleware(RbacJoi.putUser), RbacCtrl.putUser);
@@ -52,16 +41,24 @@ router.put('/user', JoiUtil.middleware(RbacJoi.putUser), RbacCtrl.putUser);
  * @api {get} /rbac/user 查询用户信息
  * @apiGroup 用户操作
  * @apiParam {String} userId 用户id
- * @apiSuccess (200) {Number} code 状态码
- * @apiSuccess (200) {String} message 消息
+ * @apiUse responseSuccess
  * @apiSuccess (200) {Object} data 数据
  * @apiSuccess (200) {String} data.userId 用户id
- * @apiSuccess (200) {String} data.userName 用户名称
+ * @apiSuccess (200) {String} data.account 账号
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
 router.get('/user', JoiUtil.middleware(RbacJoi.getUser), RbacCtrl.getUser);
-// 查询所有用户
+/**
+ * @api {get} /rbac/users 查询所有用户
+ * @apiGroup 用户操作
+ * @apiUse findByPage
+ * @apiSuccess (200) {Array} data.list 数据列表
+ * @apiSuccess (200) {String} data.list.userId 用户id
+ * @apiSuccess (200) {String} data.list.account 账号
+ * @apiSuccess (200) {String} data.list.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.get('/users', JoiUtil.middleware(RbacJoi.getUsers), RbacCtrl.getUsers);
 
 // endregion
@@ -81,15 +78,57 @@ router.get('/getUsersByRole', JoiUtil.middleware(RbacJoi.getUsersByRole), RbacCt
 // endregion
 // region 角色操作
 
-// 创建角色
+/**
+ * @api {post} /rbac/role 创建角色
+ * @apiGroup 角色操作
+ * @apiParam {String} name 角色名
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.post('/role', JoiUtil.middleware(RbacJoi.addRole), RbacCtrl.addRole);
-// 删除角色
+/**
+ * @api {delete} /rbac/role 删除角色
+ * @apiGroup 角色操作
+ * @apiParam {String} roleId 角色id
+ * @apiUse responseSuccess
+ * @apiVersion 1.0.0
+ */
 router.delete('/role', JoiUtil.middleware(RbacJoi.deleteRole), RbacCtrl.deleteRole);
-// 修改角色
+/**
+ * @api {put} /rbac/role 修改角色
+ * @apiGroup 角色操作
+ * @apiParam {String} roleId 角色id
+ * @apiParam {String} [name] 角色名
+ * @apiUse responseSuccess
+ * @apiVersion 1.0.0
+ */
 router.put('/role', JoiUtil.middleware(RbacJoi.putRole), RbacCtrl.putRole);
-// 查询角色信息
+/**
+ * @api {get} /rbac/role 查询角色信息
+ * @apiGroup 角色操作
+ * @apiParam {String} roleId 角色id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.get('/role', JoiUtil.middleware(RbacJoi.getRole), RbacCtrl.getRole);
-// 查询所有角色
+/**
+ * @api {get} /rbac/roles 查询所有角色
+ * @apiGroup 角色操作
+ * @apiUse findByPage
+ * @apiSuccess (200) {Array} data.list 数据列表
+ * @apiSuccess (200) {String} data.list.roleId 角色id
+ * @apiSuccess (200) {String} data.list.name 角色名
+ * @apiSuccess (200) {String} data.list.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.get('/roles', JoiUtil.middleware(RbacJoi.getRoles), RbacCtrl.getRoles);
 
 // endregion
@@ -109,15 +148,72 @@ router.get('/getAuthsByRole', JoiUtil.middleware(RbacJoi.getAuthsByRole), RbacCt
 // endregion
 // region 权限操作
 
-// 创建权限
+/**
+ * @api {post} /rbac/auth 创建权限
+ * @apiGroup 权限操作
+ * @apiParam {String} type 大类（_router_）为路由的权限
+ * @apiParam {String} subType 小类
+ * @apiParam {String} name 权限名
+ * @apiParam {String} describe 权限描述
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.type 大类
+ * @apiSuccess (200) {String} data.subType 小类
+ * @apiSuccess (200) {String} data.name 权限名称
+ * @apiSuccess (200) {String} data.authId 权限id
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.post('/auth', JoiUtil.middleware(RbacJoi.addAuth), RbacCtrl.addAuth);
-// 删除权限
+//
+/**
+ * @api {delete} /rbac/auth 删除权限
+ * @apiGroup 权限操作
+ * @apiParam {String} authId 权限id
+ * @apiUse responseSuccess
+ * @apiVersion 1.0.0
+ */
 router.delete('/auth', JoiUtil.middleware(RbacJoi.deleteAuth), RbacCtrl.deleteAuth);
-// 修改权限
+/**
+ * @api {put} /rbac/auth 修改权限
+ * @apiGroup 权限操作
+ * @apiParam {String} authId 权限id
+ * @apiParam {String} [type] 大类
+ * @apiParam {String} [subType] 小类
+ * @apiParam {String} [name] 权限名
+ * @apiParam {String} [describe] 权限描述
+ * @apiUse responseSuccess
+ * @apiVersion 1.0.0
+ */
 router.put('/auth', JoiUtil.middleware(RbacJoi.putAuth), RbacCtrl.putAuth);
-// 查询权限信息
+/**
+ * @api {get} /rbac/auth 查询权限信息
+ * @apiGroup 权限操作
+ * @apiParam {String} authId 权限id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.type 大类
+ * @apiSuccess (200) {String} data.subType 小类
+ * @apiSuccess (200) {String} data.name 权限名称
+ * @apiSuccess (200) {String} data.describe 描述
+ * @apiSuccess (200) {String} data.authId 权限id
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.get('/auth', JoiUtil.middleware(RbacJoi.getAuth), RbacCtrl.getAuth);
-// 查询所有权限
+/**
+ * @api {get} /rbac/auths 查询所有权限
+ * @apiGroup 权限操作
+ * @apiUse findByPage
+ * @apiSuccess (200) {Array} data.list 数据列表
+ * @apiSuccess (200) {String} data.list.type 大类
+ * @apiSuccess (200) {String} data.list.subType 小类
+ * @apiSuccess (200) {String} data.list.name 权限名称
+ * @apiSuccess (200) {String} data.list.describe 描述
+ * @apiSuccess (200) {String} data.list.authId 权限id
+ * @apiSuccess (200) {String} data.list.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.get('/auths', JoiUtil.middleware(RbacJoi.getAuths), RbacCtrl.getAuths);
 
 // endregion
