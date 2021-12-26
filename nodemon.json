@@ -6,9 +6,7 @@
     "node_modules"
   ],
   "watch": [
-    "src",
-    "bin/www",
-    "env"
+    "src"
   ],
   "exec": "ts-node bin/www",
   "ext": "ts, *"

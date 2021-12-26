@@ -63,16 +63,68 @@ router.get('/users', JoiUtil.middleware(RbacJoi.getUsers), RbacCtrl.getUsers);
 
 // endregion
 // region 用户-角色操作
-
-// 为用户添加指定的角色
+/**
+ * @api {post} /rbac/addRolesByUser 为用户添加指定的角色
+ * @apiGroup 用户-角色操作
+ * @apiParam {String} userId 用户id
+ * @apiParam {Array} roles 角色id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.post('/addRolesByUser', JoiUtil.middleware(RbacJoi.addRolesByUser), RbacCtrl.addRolesByUser);
-// 为角色添加指定的用户
+/**
+ * @api {post} /rbac/addUsersByRole 为角色添加指定的用户
+ * @apiGroup 用户-角色操作
+ * @apiParam {String} roleId 角色id
+ * @apiParam {Array} users 用户id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.post('/addUsersByRole', JoiUtil.middleware(RbacJoi.addUsersByRole), RbacCtrl.addUsersByRole);
-// 删除用户角色的关系
+/**
+ * @api {delete} /rbac/deleteUserRole 删除用户角色的关系
+ * @apiGroup 用户-角色操作
+ * @apiParam {String} userId 用户id
+ * @apiParam {String} roleId 角色id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.delete('/deleteUserRole', JoiUtil.middleware(RbacJoi.deleteUserRole), RbacCtrl.deleteUserRole);
-// 根据用户id查询所有角色
+/**
+ * @api {get} /rbac/getRolesByUser 根据用户id查询所有角色
+ * @apiGroup 用户-角色操作
+ * @apiParam {String} userId 用户id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.get('/getRolesByUser', JoiUtil.middleware(RbacJoi.getRolesByUser), RbacCtrl.getRolesByUser);
-// 根据角色id查询所有用户
+/**
+ * @api {get} /rbac/getUsersByRole 根据角色id查询所有用户
+ * @apiGroup 用户-角色操作
+ * @apiParam {String} roleId 角色id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.get('/getUsersByRole', JoiUtil.middleware(RbacJoi.getUsersByRole), RbacCtrl.getUsersByRole);
 
 // endregion
@@ -133,16 +185,68 @@ router.get('/roles', JoiUtil.middleware(RbacJoi.getRoles), RbacCtrl.getRoles);
 
 // endregion
 // region 角色-权限操作
-
-// 为权限添加指定的角色
+/**
+ * @api {post} /rbac/addRolesByAuth 为权限添加指定的角色
+ * @apiGroup 角色-权限操作
+ * @apiParam {String} authId 权限id
+ * @apiParam {Array} roles 角色id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.post('/addRolesByAuth', JoiUtil.middleware(RbacJoi.addRolesByAuth), RbacCtrl.addRolesByAuth);
-// 为角色添加指定的权限
+/**
+ * @api {post} /rbac/addRolesByAuth 为角色添加指定的权限
+ * @apiGroup 角色-权限操作
+ * @apiParam {String} roleId 角色id
+ * @apiParam {Array} auths 权限id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.post('/addAuthsByRole', JoiUtil.middleware(RbacJoi.addAuthsByRole), RbacCtrl.addAuthsByRole);
-// 删除角色权限的关系
+/**
+ * @api {delete} /rbac/addRolesByAuth 删除角色权限的关系
+ * @apiGroup 角色-权限操作
+ * @apiParam {String} roleId 角色id
+ * @apiParam {String} authId 权限id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.delete('/deleteRoleAuth', JoiUtil.middleware(RbacJoi.deleteRoleAuth), RbacCtrl.deleteRoleAuth);
-// 根据权限id查询所有角色
+/**
+ * @api {get} /rbac/getRolesByAuth 根据权限id查询所有角色
+ * @apiGroup 角色-权限操作
+ * @apiParam {String} authId 权限id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.get('/getRolesByAuth', JoiUtil.middleware(RbacJoi.getRolesByAuth), RbacCtrl.getRolesByAuth);
-// 根据角色id查询所有权限
+/**
+ * @api {get} /rbac/getAuthsByRole 根据角色id查询所有权限
+ * @apiGroup 角色-权限操作
+ * @apiParam {String} roleId 角色id
+ * @apiUse responseSuccess
+ * @apiSuccess (200) {Object} data 数据
+ * @apiSuccess (200) {String} data.roleId 角色id
+ * @apiSuccess (200) {String} data.name 角色名称
+ * @apiSuccess (200) {String} data.createTime 创建时间
+ * @apiVersion 1.0.0
+ */
 router.get('/getAuthsByRole', JoiUtil.middleware(RbacJoi.getAuthsByRole), RbacCtrl.getAuthsByRole);
 
 // endregion
