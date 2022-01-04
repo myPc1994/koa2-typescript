@@ -49,6 +49,7 @@
     "@types/uuid": "^8.3.1",
     "apidoc": "^0.29.0",
     "cross-env": "^7.0.3",
+    "javascript-obfuscator": "^3.0.0",
     "nodemon": "^2.0.12",
     "ts-node": "^10.2.1",
     "tslint": "^6.1.3",

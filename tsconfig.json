@@ -5,12 +5,16 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "./dist/src",
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "sourceMap": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strictPropertyInitialization":false
   },
+  "exclude": [
+    "node_modules"
+  ],
   "include": [
     "src/**/*.ts"
   ]

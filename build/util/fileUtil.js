@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const fse = require('fs-extra');
-const exec = require('child_process').exec;
+const execSync = require('child_process').execSync;
 
 function loopCopy(target, source, regexp) {
     const exit = fs.existsSync(target);
@@ -129,16 +129,50 @@ exports.copyReplace = function (target, source, cb) {
         console.error("替换失败,target不是文件");
     }
 }
-//代码加密
-exports.encryption = function (target, source) {
-    let cmd = `javascript-obfuscator ${target}  --output ${source}`;
-    exec(cmd, function (error, stdout, stderr) {
-        if (error) {
-            console.log("javascript-obfuscator加密错误", error);
-        }
-        else {
-            console.log("javascript-obfuscator加密成功");
-        }
-    });
-}
 
+//路径下的文件加密
+function encryptionPath(target, source,regexp,cb){
+  const exit = fs.existsSync(target);
+  if (!exit) {
+    console.error("拷贝的目标不存在", target);
+    return;
+  }
+  const stats = fs.statSync(target);
+  if (!stats) {
+    console.error("无法读取stats!");
+    return;
+  }
+  if (stats.isFile()) {
+    if (!regexp || (regexp && regexp.test(target))) {
+      // 文件加密
+      encryptionFile(target,source)
+    }
+    return;
+  } else if (stats.isDirectory()) {
+    //目标文件夹是否存在，不存在则新建
+    if (!fs.existsSync(source)) {
+      mkdirs(source);
+    }
+    // 递归读取文件夹中的内容
+    fs.readdirSync(target).forEach(function (path) {
+      const _target = target + '/' + path;
+      const _source = source + '/' + path;
+      encryptionPath(_target, _source, regexp,cb);
+    });
+  }
+  //目标文件夹是否存在，不存在则新建
+  if (!fs.existsSync(source)) {
+    mkdirs(source);
+  }
+}
+exports.encryptionPath = encryptionPath;
+//代码文件加密
+function encryptionFile(target, source) {
+  try {
+    execSync(`javascript-obfuscator ${target}  --output ${source}`);
+    console.log(`文件:${target}------------加密成功`);
+  }catch (error) {
+    global.encryptionError[target] = error;
+  }
+}
+exports.encryptionFile = encryptionFile;
