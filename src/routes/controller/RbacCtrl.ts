@@ -1,6 +1,5 @@
 import {Context, Next} from 'koa';
 import {Schema} from 'mongoose';
-import Joi from 'joi'
 import {CryptoUtil} from "../../utils/CryptoUtil";
 import {IReturnInfo, ResponseBeautifier, ResponseInfo} from "../../utils/ResponseBeautifier";
 import {UserCtrl} from "../../db/controller/rbac/UserCtrl";
@@ -10,107 +9,6 @@ import {RoleCtrl} from "../../db/controller/rbac/RoleCtrl";
 import {UserRoleCtrl} from "../../db/controller/rbac/UserRoleCtrl";
 import {Auth, AuthCtrl} from "../../db/controller/rbac/AuthCtrl";
 import {RoleAuthCtrl} from "../../db/controller/rbac/RoleAuthCtrl";
-
-export const RbacJoi = {
-    // 用户
-    addUser: Joi.object({
-        account: Joi.string().alphanum().min(5).max(20).required(),
-        password: Joi.string().alphanum().min(6).max(20).required()
-    }),
-    deleteUser: Joi.object({
-        userId: Joi.string().required()
-    }),
-    putUser: Joi.object({
-        userId: Joi.string().required(),
-        name: Joi.string().min(1),
-    }),
-    getUser: Joi.object({
-        userId: Joi.string().required(),
-    }),
-    getUsers: Joi.object({
-        page: [Joi.number().integer().min(0)],
-        limit: [Joi.number().integer().min(1)]
-    }),
-    // 用户-角色
-    addRolesByUser: Joi.object({
-        userId: Joi.string().required(),
-        roles: Joi.array().required(),
-    }),
-    deleteUserRole: Joi.object({
-        userId: Joi.string().required(),
-        roleId: Joi.string().required()
-    }),
-    getUsersByRole: Joi.object({
-        roleId: Joi.string().required()
-    }),
-    getRolesByUser: Joi.object({
-        userId: Joi.string().required()
-    }),
-    addUsersByRole: Joi.object({
-        roleId: Joi.string().required(),
-        users: Joi.array().required(),
-    }),
-    // 角色
-    addRole: Joi.object({
-        name: Joi.string().min(1).max(20).required()
-    }),
-    deleteRole: Joi.object({
-        roleId: Joi.string().required()
-    }),
-    putRole: Joi.object({
-        roleId: Joi.string().required(),
-        name: Joi.string(),
-    }),
-    getRole: Joi.object({
-        roleId: Joi.string().required()
-    }),
-    getRoles: Joi.object({
-        page: [Joi.number().integer().min(0)],
-        limit: [Joi.number().integer().min(1)]
-    }),
-    // 角色-权限
-    addRolesByAuth: Joi.object({
-        authId: Joi.string().required(),
-        roles: Joi.array().required(),
-    }),
-    deleteRoleAuth: Joi.object({
-        authId: Joi.string().required(),
-        roleId: Joi.string().required()
-    }),
-    getAuthsByRole: Joi.object({
-        roleId: Joi.string().required()
-    }),
-    getRolesByAuth: Joi.object({
-        authId: Joi.string().required()
-    }),
-    addAuthsByRole: Joi.object({
-        roleId: Joi.string().required(),
-        auths: Joi.array().required(),
-    }),
-    // 权限
-    addAuth: Joi.object({
-        type: Joi.string().required(),
-        subType: Joi.string().required(),
-        name: Joi.string().required(),
-    }),
-    deleteAuth: Joi.object({
-        authId: Joi.string().required()
-    }),
-    putAuth: Joi.object({
-        authId: Joi.string().required(),
-        type: Joi.string(),
-        subType: Joi.string(),
-        name: Joi.string(),
-        describe: Joi.string(),
-    }),
-    getAuth: Joi.object({
-        authId: Joi.string().required(),
-    }),
-    getAuths: Joi.object({
-        page: [Joi.number().integer().min(0)],
-        limit: [Joi.number().integer().min(1)]
-    }),
-}
 
 export class RbacCtrl {
 // region 用户操作

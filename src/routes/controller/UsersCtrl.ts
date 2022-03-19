@@ -1,25 +1,10 @@
 import {Context, Next} from 'koa';
-import Joi from 'joi'
 import {IKeyValue} from "../../core/CpcInterface";
 import {CryptoUtil} from "../../utils/CryptoUtil";
 import {ResponseBeautifier, ResponseInfo} from "../../utils/ResponseBeautifier";
 import {CaptchaUtil} from "../../utils/CaptchaUtil";
 import {UserCtrl} from "../../db/controller/rbac/UserCtrl";
 import {JwtUtil} from "../../utils/token/JwtUtil";
-
-export const UsersJoi = {
-    login: Joi.object({
-        account: Joi.string().alphanum().min(5).max(20).required(),
-        password: Joi.string().alphanum().min(6).max(20).required(),
-        uuid: Joi.string().required(),
-        text: Joi.string().required()
-    }),
-    register: Joi.object({
-        account: Joi.string().required(),
-        password: Joi.string().required()
-    })
-}
-
 export class UsersCtrl {
     public static async register(ctx: Context, next: Next) {
         const {account, password} = ctx.request.body;

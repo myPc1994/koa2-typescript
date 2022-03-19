@@ -10,23 +10,14 @@ import {UserRoleCtrl} from "./UserRoleCtrl";
  * 用户
  */
 class User extends BaseDb {
-    protected tableName: string = "User";
-    protected tableSchema: IKeyValue = {
-        userId: {type: String, required: true, unique: true, default: () => v1()},// 唯一标识
-        account: {type: String, required: true, unique: true},// 用户名唯一
-        password: {type: String, required: true},// 密码
-        name: {type: String},// 名称
-        createTime: {type: String, default: () => new Date().getTime()},
-    };
-
     public async addUser(account: string, password: string): Promise<IReturnInfo> {
         const userInfo = await this.findOne({account});
         if (userInfo) {
             return {...ResponseInfo.dataError, message: "该用户名已存在!"};
         }
         const saltPassword = CryptoUtil.saltHashPassword(password, account);// 密码加盐
-        const res: IKeyValue = await this.save({account, password: saltPassword,error:"a"});
-        return {...ResponseInfo.success, data: {userId: res.userId, account: res.account,createTime:res.createTime}};
+        const res: IKeyValue = await this.save({account, password: saltPassword, error: "a"});
+        return {...ResponseInfo.success, data: {userId: res.userId, account: res.account, createTime: res.createTime}};
     }
 
     public async deleteUser(userId: string): Promise<IReturnInfo> {
@@ -40,4 +31,11 @@ class User extends BaseDb {
 
 }
 
-export const UserCtrl = new User();
+const tableSchema: IKeyValue = {
+    userId: {type: String, required: true, unique: true, default: () => v1()},// 唯一标识
+    account: {type: String, required: true, unique: true},// 用户名唯一
+    password: {type: String, required: true},// 密码
+    name: {type: String},// 名称
+    createTime: {type: String, default: () => new Date().getTime()},
+};
+export const UserCtrl = new User("User", tableSchema);

@@ -13,16 +13,6 @@ import {JsUtil} from "../../../utils/JsUtil";
  * 权限
  */
 export class Auth extends BaseDb {
-    protected tableName: string = "Auth";
-    protected tableSchema: IKeyValue = {
-        authId: {type: String, required: true, unique: true, default: () => v1()},
-        type: {type: String, required: true},
-        subType: {type: String, required: true},
-        name: {type: String, required: true},
-        describe: {type: String},
-        createTime: {type: String, default: () => new Date().getTime()},
-    };
-
     public async addAuth(authObj: IKeyValue): Promise<IReturnInfo> {
         const userInfo = await this.findOne({type: authObj.type, subType: authObj.subType, name: authObj.name});
         if (userInfo) {
@@ -107,4 +97,12 @@ export class Auth extends BaseDb {
     }
 }
 
-export const AuthCtrl = new Auth();
+const tableSchema: IKeyValue = {
+    authId: {type: String, required: true, unique: true, default: () => v1()},
+    type: {type: String, required: true},
+    subType: {type: String, required: true},
+    name: {type: String, required: true},
+    describe: {type: String},
+    createTime: {type: String, default: () => new Date().getTime()},
+};
+export const AuthCtrl = new Auth("Auth", tableSchema);

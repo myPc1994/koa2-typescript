@@ -6,10 +6,10 @@ const dest = path.resolve(__dirname, 'public/apidoc/');
 const doc = apidoc.createDoc({src, dest})
 if (typeof doc !== 'boolean') {
     replaceFile(dest + "/vendor/webfontloader.js","//fonts.googleapis.com/css","");
-    console.log("成功生成文档!")
+    console.log("成功生成文档!");
+    const config = require("./env/development.js");
+    console.log("访问地址：http://127.0.0.1:"+config.port+"/public/apidoc/index.html")
 }
-
-
 function replaceFile(filePath, sourceRegx, targetStr) {
     fs.readFile(filePath, function (err, data) {
         if (err) {

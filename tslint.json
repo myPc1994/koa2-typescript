@@ -66,7 +66,6 @@
     "no-duplicate-imports":true,// 禁止在一个文件内，多次引用同一module
 
     // 格式
-    "align":[true,"parameters","arguments","statements","members","elements"],// 定义对齐风格
     "array-type":[true,"array"],// 建议使用T[]方式声明一个数组对象
     "class-name":true,// 类名以大驼峰格式命名
     "comment-format":[true, "check-space"],// 定义注释格式

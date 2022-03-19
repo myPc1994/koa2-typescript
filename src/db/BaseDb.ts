@@ -7,13 +7,16 @@ import {IKeyValue} from "../core/CpcInterface";
  */
 export abstract class BaseDb {
     protected model: Model<Document>;
-    protected abstract tableName: string;
-    protected abstract tableSchema: IKeyValue;
 
-    constructor() {
+    /**
+     * 构建表的基类
+     * @param {string} tableName 表名称
+     * @param {IKeyValue} tableSchema 表结构
+     */
+    constructor(tableName: string, tableSchema: IKeyValue) {
         GlobalVariable.dbUtil.onConnected((mongooseInstance: Connection) => {
-            const schema = new Schema(this.tableSchema);
-            this.model = mongooseInstance.model(this.tableName, schema, this.tableName);
+            const schema = new Schema(tableSchema);
+            this.model = mongooseInstance.model(tableName, schema, tableName);
             this.createModelEnd(schema);
         });
     }

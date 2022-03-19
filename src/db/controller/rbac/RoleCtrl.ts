@@ -8,13 +8,6 @@ import {UserRoleCtrl} from "./UserRoleCtrl";
  * 角色
  */
 class Role extends BaseDb {
-    protected tableName: string = "Role";
-    protected tableSchema: IKeyValue = {
-        roleId: {type: String, required: true, unique: true, default: () => v1()},
-        name: {type: String, required: true, unique: true},
-        createTime: {type: String, default: () => new Date().getTime()},
-    };
-
     public async addRole(name: string): Promise<IReturnInfo> {
         const userInfo = await this.findOne({name});
         if (userInfo) {
@@ -33,5 +26,9 @@ class Role extends BaseDb {
         return ResponseInfo.success;
     }
 }
-
-export const RoleCtrl = new Role();
+const tableSchema: IKeyValue = {
+    roleId: {type: String, required: true, unique: true, default: () => v1()},
+    name: {type: String, required: true, unique: true},
+    createTime: {type: String, default: () => new Date().getTime()},
+};
+export const RoleCtrl = new Role("Role",tableSchema);

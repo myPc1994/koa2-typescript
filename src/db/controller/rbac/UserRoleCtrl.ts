@@ -6,13 +6,8 @@ import {IKeyValue} from "../../../core/CpcInterface";
  * 角色-用户
  */
 class UserRole extends BaseDb {
-    protected tableName: string = "UserRole";
-    protected tableSchema: IKeyValue = {
-        userId: {type: String, required: true},
-        roleId: {type: String, required: true},
-    };
 
-    public  getRolesByUser(userId: string) {
+    public getRolesByUser(userId: string) {
         return this.model.aggregate([
             {
                 $match: {userId}
@@ -32,7 +27,7 @@ class UserRole extends BaseDb {
         ]);
     }
 
-    public  getUsersByRole(roleId: string) {
+    public getUsersByRole(roleId: string) {
         return this.model.aggregate([
             {
                 $match: {roleId}
@@ -58,4 +53,8 @@ class UserRole extends BaseDb {
 
 }
 
-export const UserRoleCtrl = new UserRole();
+const tableSchema: IKeyValue = {
+    userId: {type: String, required: true},
+    roleId: {type: String, required: true},
+};
+export const UserRoleCtrl = new UserRole("UserRole", tableSchema);

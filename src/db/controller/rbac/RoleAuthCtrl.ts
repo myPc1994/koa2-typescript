@@ -6,12 +6,6 @@ import {IKeyValue} from "../../../core/CpcInterface";
  * 角色-资源
  */
 class RoleResources extends BaseDb {
-    protected tableName: string = "RoleAuth";
-    protected tableSchema: IKeyValue = {
-        roleId: {type: String, required: true},
-        authId: {type: String, required: true},
-    };
-
     public getRolesByAuth(authId: string) {
         return this.model.aggregate([
             {
@@ -65,4 +59,8 @@ class RoleResources extends BaseDb {
     }
 }
 
-export const RoleAuthCtrl = new RoleResources();
+const tableSchema: IKeyValue = {
+    roleId: {type: String, required: true},
+    authId: {type: String, required: true},
+};
+export const RoleAuthCtrl = new RoleResources("RoleAuth", tableSchema);

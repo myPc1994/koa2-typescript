@@ -1,6 +1,7 @@
 import Router from 'koa-router';
-import {RbacCtrl, RbacJoi} from "../controller/RbacCtrl";
+import {RbacCtrl} from "../controller/RbacCtrl";
 import {JoiUtil} from "../../utils/JoiUtil";
+import Joi from 'joi'
 
 const router = new Router({
     prefix: '/rbac'
@@ -19,7 +20,10 @@ const router = new Router({
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.post('/user', JoiUtil.middleware(RbacJoi.addUser), RbacCtrl.addUser);
+router.post('/user', JoiUtil.middlewareByObject({
+    account: Joi.string().alphanum().min(5).max(20).required(),
+    password: Joi.string().alphanum().min(6).max(20).required()
+}), RbacCtrl.addUser);
 /**
  * @api {delete} /rbac/user 删除用户
  * @apiGroup 用户操作
@@ -27,7 +31,9 @@ router.post('/user', JoiUtil.middleware(RbacJoi.addUser), RbacCtrl.addUser);
  * @apiUse responseSuccess
  * @apiVersion 1.0.0
  */
-router.delete('/user', JoiUtil.middleware(RbacJoi.deleteUser), RbacCtrl.deleteUser);
+router.delete('/user', JoiUtil.middlewareByObject({
+    userId: Joi.string().required()
+}), RbacCtrl.deleteUser);
 /**
  * @api {put} /rbac/user 修改用户
  * @apiGroup 用户操作
@@ -36,7 +42,10 @@ router.delete('/user', JoiUtil.middleware(RbacJoi.deleteUser), RbacCtrl.deleteUs
  * @apiUse responseSuccess
  * @apiVersion 1.0.0
  */
-router.put('/user', JoiUtil.middleware(RbacJoi.putUser), RbacCtrl.putUser);
+router.put('/user', JoiUtil.middlewareByObject({
+    userId: Joi.string().required(),
+    name: Joi.string().min(1),
+}), RbacCtrl.putUser);
 /**
  * @api {get} /rbac/user 查询用户信息
  * @apiGroup 用户操作
@@ -48,7 +57,9 @@ router.put('/user', JoiUtil.middleware(RbacJoi.putUser), RbacCtrl.putUser);
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.get('/user', JoiUtil.middleware(RbacJoi.getUser), RbacCtrl.getUser);
+router.get('/user', JoiUtil.middlewareByObject({
+    userId: Joi.string().required(),
+}), RbacCtrl.getUser);
 /**
  * @api {get} /rbac/users 查询所有用户
  * @apiGroup 用户操作
@@ -59,7 +70,10 @@ router.get('/user', JoiUtil.middleware(RbacJoi.getUser), RbacCtrl.getUser);
  * @apiSuccess (200) {String} data.list.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.get('/users', JoiUtil.middleware(RbacJoi.getUsers), RbacCtrl.getUsers);
+router.get('/users', JoiUtil.middlewareByObject({
+    page: [Joi.number().integer().min(0)],
+    limit: [Joi.number().integer().min(1)]
+}), RbacCtrl.getUsers);
 
 // endregion
 // region 用户-角色操作
@@ -75,7 +89,10 @@ router.get('/users', JoiUtil.middleware(RbacJoi.getUsers), RbacCtrl.getUsers);
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.post('/addRolesByUser', JoiUtil.middleware(RbacJoi.addRolesByUser), RbacCtrl.addRolesByUser);
+router.post('/addRolesByUser', JoiUtil.middlewareByObject({
+    userId: Joi.string().required(),
+    roles: Joi.array().required(),
+}), RbacCtrl.addRolesByUser);
 /**
  * @api {post} /rbac/addUsersByRole 为角色添加指定的用户
  * @apiGroup 用户-角色操作
@@ -88,7 +105,10 @@ router.post('/addRolesByUser', JoiUtil.middleware(RbacJoi.addRolesByUser), RbacC
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.post('/addUsersByRole', JoiUtil.middleware(RbacJoi.addUsersByRole), RbacCtrl.addUsersByRole);
+router.post('/addUsersByRole', JoiUtil.middlewareByObject({
+    roleId: Joi.string().required(),
+    users: Joi.array().required(),
+}), RbacCtrl.addUsersByRole);
 /**
  * @api {delete} /rbac/deleteUserRole 删除用户角色的关系
  * @apiGroup 用户-角色操作
@@ -101,7 +121,10 @@ router.post('/addUsersByRole', JoiUtil.middleware(RbacJoi.addUsersByRole), RbacC
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.delete('/deleteUserRole', JoiUtil.middleware(RbacJoi.deleteUserRole), RbacCtrl.deleteUserRole);
+router.delete('/deleteUserRole', JoiUtil.middlewareByObject({
+    userId: Joi.string().required(),
+    roleId: Joi.string().required()
+}), RbacCtrl.deleteUserRole);
 /**
  * @api {get} /rbac/getRolesByUser 根据用户id查询所有角色
  * @apiGroup 用户-角色操作
@@ -113,7 +136,9 @@ router.delete('/deleteUserRole', JoiUtil.middleware(RbacJoi.deleteUserRole), Rba
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.get('/getRolesByUser', JoiUtil.middleware(RbacJoi.getRolesByUser), RbacCtrl.getRolesByUser);
+router.get('/getRolesByUser', JoiUtil.middlewareByObject({
+    userId: Joi.string().required()
+}), RbacCtrl.getRolesByUser);
 /**
  * @api {get} /rbac/getUsersByRole 根据角色id查询所有用户
  * @apiGroup 用户-角色操作
@@ -125,7 +150,9 @@ router.get('/getRolesByUser', JoiUtil.middleware(RbacJoi.getRolesByUser), RbacCt
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.get('/getUsersByRole', JoiUtil.middleware(RbacJoi.getUsersByRole), RbacCtrl.getUsersByRole);
+router.get('/getUsersByRole', JoiUtil.middlewareByObject({
+    roleId: Joi.string().required()
+}), RbacCtrl.getUsersByRole);
 
 // endregion
 // region 角色操作
@@ -141,7 +168,9 @@ router.get('/getUsersByRole', JoiUtil.middleware(RbacJoi.getUsersByRole), RbacCt
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.post('/role', JoiUtil.middleware(RbacJoi.addRole), RbacCtrl.addRole);
+router.post('/role', JoiUtil.middlewareByObject({
+    name: Joi.string().min(1).max(20).required()
+}), RbacCtrl.addRole);
 /**
  * @api {delete} /rbac/role 删除角色
  * @apiGroup 角色操作
@@ -149,7 +178,9 @@ router.post('/role', JoiUtil.middleware(RbacJoi.addRole), RbacCtrl.addRole);
  * @apiUse responseSuccess
  * @apiVersion 1.0.0
  */
-router.delete('/role', JoiUtil.middleware(RbacJoi.deleteRole), RbacCtrl.deleteRole);
+router.delete('/role', JoiUtil.middlewareByObject({
+    roleId: Joi.string().required()
+}), RbacCtrl.deleteRole);
 /**
  * @api {put} /rbac/role 修改角色
  * @apiGroup 角色操作
@@ -158,7 +189,10 @@ router.delete('/role', JoiUtil.middleware(RbacJoi.deleteRole), RbacCtrl.deleteRo
  * @apiUse responseSuccess
  * @apiVersion 1.0.0
  */
-router.put('/role', JoiUtil.middleware(RbacJoi.putRole), RbacCtrl.putRole);
+router.put('/role', JoiUtil.middlewareByObject({
+    roleId: Joi.string().required(),
+    name: Joi.string(),
+}), RbacCtrl.putRole);
 /**
  * @api {get} /rbac/role 查询角色信息
  * @apiGroup 角色操作
@@ -170,7 +204,9 @@ router.put('/role', JoiUtil.middleware(RbacJoi.putRole), RbacCtrl.putRole);
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.get('/role', JoiUtil.middleware(RbacJoi.getRole), RbacCtrl.getRole);
+router.get('/role', JoiUtil.middlewareByObject({
+    roleId: Joi.string().required()
+}), RbacCtrl.getRole);
 /**
  * @api {get} /rbac/roles 查询所有角色
  * @apiGroup 角色操作
@@ -181,7 +217,10 @@ router.get('/role', JoiUtil.middleware(RbacJoi.getRole), RbacCtrl.getRole);
  * @apiSuccess (200) {String} data.list.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.get('/roles', JoiUtil.middleware(RbacJoi.getRoles), RbacCtrl.getRoles);
+router.get('/roles', JoiUtil.middlewareByObject({
+    page: [Joi.number().integer().min(0)],
+    limit: [Joi.number().integer().min(1)]
+}), RbacCtrl.getRoles);
 
 // endregion
 // region 角色-权限操作
@@ -197,7 +236,10 @@ router.get('/roles', JoiUtil.middleware(RbacJoi.getRoles), RbacCtrl.getRoles);
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.post('/addRolesByAuth', JoiUtil.middleware(RbacJoi.addRolesByAuth), RbacCtrl.addRolesByAuth);
+router.post('/addRolesByAuth', JoiUtil.middlewareByObject({
+    authId: Joi.string().required(),
+    roles: Joi.array().required(),
+}), RbacCtrl.addRolesByAuth);
 /**
  * @api {post} /rbac/addRolesByAuth 为角色添加指定的权限
  * @apiGroup 角色-权限操作
@@ -210,7 +252,10 @@ router.post('/addRolesByAuth', JoiUtil.middleware(RbacJoi.addRolesByAuth), RbacC
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.post('/addAuthsByRole', JoiUtil.middleware(RbacJoi.addAuthsByRole), RbacCtrl.addAuthsByRole);
+router.post('/addAuthsByRole', JoiUtil.middlewareByObject({
+    roleId: Joi.string().required(),
+    auths: Joi.array().required(),
+}), RbacCtrl.addAuthsByRole);
 /**
  * @api {delete} /rbac/addRolesByAuth 删除角色权限的关系
  * @apiGroup 角色-权限操作
@@ -223,7 +268,10 @@ router.post('/addAuthsByRole', JoiUtil.middleware(RbacJoi.addAuthsByRole), RbacC
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.delete('/deleteRoleAuth', JoiUtil.middleware(RbacJoi.deleteRoleAuth), RbacCtrl.deleteRoleAuth);
+router.delete('/deleteRoleAuth', JoiUtil.middlewareByObject({
+    authId: Joi.string().required(),
+    roleId: Joi.string().required()
+}), RbacCtrl.deleteRoleAuth);
 /**
  * @api {get} /rbac/getRolesByAuth 根据权限id查询所有角色
  * @apiGroup 角色-权限操作
@@ -235,7 +283,9 @@ router.delete('/deleteRoleAuth', JoiUtil.middleware(RbacJoi.deleteRoleAuth), Rba
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.get('/getRolesByAuth', JoiUtil.middleware(RbacJoi.getRolesByAuth), RbacCtrl.getRolesByAuth);
+router.get('/getRolesByAuth', JoiUtil.middlewareByObject({
+    authId: Joi.string().required()
+}), RbacCtrl.getRolesByAuth);
 /**
  * @api {get} /rbac/getAuthsByRole 根据角色id查询所有权限
  * @apiGroup 角色-权限操作
@@ -247,7 +297,9 @@ router.get('/getRolesByAuth', JoiUtil.middleware(RbacJoi.getRolesByAuth), RbacCt
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.get('/getAuthsByRole', JoiUtil.middleware(RbacJoi.getAuthsByRole), RbacCtrl.getAuthsByRole);
+router.get('/getAuthsByRole', JoiUtil.middlewareByObject({
+    roleId: Joi.string().required()
+}), RbacCtrl.getAuthsByRole);
 
 // endregion
 // region 权限操作
@@ -268,7 +320,11 @@ router.get('/getAuthsByRole', JoiUtil.middleware(RbacJoi.getAuthsByRole), RbacCt
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.post('/auth', JoiUtil.middleware(RbacJoi.addAuth), RbacCtrl.addAuth);
+router.post('/auth', JoiUtil.middlewareByObject({
+    type: Joi.string().required(),
+    subType: Joi.string().required(),
+    name: Joi.string().required(),
+}), RbacCtrl.addAuth);
 //
 /**
  * @api {delete} /rbac/auth 删除权限
@@ -277,7 +333,9 @@ router.post('/auth', JoiUtil.middleware(RbacJoi.addAuth), RbacCtrl.addAuth);
  * @apiUse responseSuccess
  * @apiVersion 1.0.0
  */
-router.delete('/auth', JoiUtil.middleware(RbacJoi.deleteAuth), RbacCtrl.deleteAuth);
+router.delete('/auth', JoiUtil.middlewareByObject({
+    authId: Joi.string().required()
+}), RbacCtrl.deleteAuth);
 /**
  * @api {put} /rbac/auth 修改权限
  * @apiGroup 权限操作
@@ -289,7 +347,13 @@ router.delete('/auth', JoiUtil.middleware(RbacJoi.deleteAuth), RbacCtrl.deleteAu
  * @apiUse responseSuccess
  * @apiVersion 1.0.0
  */
-router.put('/auth', JoiUtil.middleware(RbacJoi.putAuth), RbacCtrl.putAuth);
+router.put('/auth', JoiUtil.middlewareByObject({
+    authId: Joi.string().required(),
+    type: Joi.string(),
+    subType: Joi.string(),
+    name: Joi.string(),
+    describe: Joi.string(),
+}), RbacCtrl.putAuth);
 /**
  * @api {get} /rbac/auth 查询权限信息
  * @apiGroup 权限操作
@@ -304,7 +368,9 @@ router.put('/auth', JoiUtil.middleware(RbacJoi.putAuth), RbacCtrl.putAuth);
  * @apiSuccess (200) {String} data.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.get('/auth', JoiUtil.middleware(RbacJoi.getAuth), RbacCtrl.getAuth);
+router.get('/auth', JoiUtil.middlewareByObject({
+    authId: Joi.string().required(),
+}), RbacCtrl.getAuth);
 /**
  * @api {get} /rbac/auths 查询所有权限
  * @apiGroup 权限操作
@@ -318,7 +384,10 @@ router.get('/auth', JoiUtil.middleware(RbacJoi.getAuth), RbacCtrl.getAuth);
  * @apiSuccess (200) {String} data.list.createTime 创建时间
  * @apiVersion 1.0.0
  */
-router.get('/auths', JoiUtil.middleware(RbacJoi.getAuths), RbacCtrl.getAuths);
+router.get('/auths', JoiUtil.middlewareByObject({
+    page: [Joi.number().integer().min(0)],
+    limit: [Joi.number().integer().min(1)]
+}), RbacCtrl.getAuths);
 
 // endregion
 export default router;
