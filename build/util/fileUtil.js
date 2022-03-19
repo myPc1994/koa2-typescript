@@ -166,6 +166,7 @@ function encryptionPath(target, source,regexp,cb){
   }
 }
 exports.encryptionPath = encryptionPath;
+let index = 0;
 //代码文件加密
 function encryptionFile(target, source) {
   try {

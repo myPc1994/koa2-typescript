@@ -2,9 +2,9 @@
     |-- .dockerignore
     |-- .gitignore
     |-- apidoc.js
-    |-- directoryList.md
     |-- docker-compose.yml
     |-- Dockerfile
+    |-- LICENSE
     |-- nodemon.json
     |-- package.json
     |-- pm2.config.js
@@ -15,15 +15,88 @@
     |-- bin
     |   |-- www
     |-- build
+    |   |-- encryption.js
     |   |-- end.js
     |   |-- start.js
     |   |-- util
     |       |-- fileUtil.js
     |-- dist
+    |   |-- .dockerignore
+    |   |-- docker-compose.yml
+    |   |-- Dockerfile
+    |   |-- package.json
+    |   |-- pm2.config.js
+    |   |-- bin
+    |   |   |-- www
+    |   |-- env
+    |   |   |-- development.js
+    |   |   |-- index.js
+    |   |   |-- production.js
+    |   |-- src
+    |   |   |-- app.js
+    |   |   |-- GlobalVariable.js
+    |   |   |-- core
+    |   |   |   |-- CpcInterface.js
+    |   |   |-- db
+    |   |   |   |-- BaseDb.js
+    |   |   |   |-- index.js
+    |   |   |   |-- mongoseTest.md
+    |   |   |   |-- controller
+    |   |   |       |-- GeojsonCtrl.js
+    |   |   |       |-- rbac
+    |   |   |           |-- AuthCtrl.js
+    |   |   |           |-- RoleAuthCtrl.js
+    |   |   |           |-- RoleCtrl.js
+    |   |   |           |-- UserCtrl.js
+    |   |   |           |-- UserRoleCtrl.js
+    |   |   |-- log
+    |   |   |   |-- ILogUtil.js
+    |   |   |   |-- LogUtil.js
+    |   |   |   |-- console
+    |   |   |   |   |-- LogConsole.js
+    |   |   |   |-- log4js
+    |   |   |   |   |-- log4js.js
+    |   |   |   |   |-- Log4jsUtil.js
+    |   |   |   |-- logDB
+    |   |   |       |-- LogDB.js
+    |   |   |-- routes
+    |   |   |   |-- controller
+    |   |   |   |   |-- IndexCtrl.js
+    |   |   |   |   |-- RbacCtrl.js
+    |   |   |   |   |-- UsersCtrl.js
+    |   |   |   |-- routers
+    |   |   |       |-- index.js
+    |   |   |       |-- rbac.js
+    |   |   |       |-- users.js
+    |   |   |-- utils
+    |   |       |-- CaptchaUtil.js
+    |   |       |-- CryptoUtil.js
+    |   |       |-- Excel2dbFormatUtil.js
+    |   |       |-- FileUtil.js
+    |   |       |-- JoiUtil.js
+    |   |       |-- JsUtil.js
+    |   |       |-- MulterUtil.js
+    |   |       |-- NetUtil.js
+    |   |       |-- Pm2FlushUtil.js
+    |   |       |-- ResponseBeautifier.js
+    |   |       |-- token
+    |   |           |-- JwtUtil.js
+    |   |           |-- pem
+    |   |               |-- private_key.pem
+    |   |               |-- public_key.pem
+    |   |-- static
+    |       |-- county.json
+    |       |-- mobileApp.pdman.json
     |-- env
     |   |-- development.js
     |   |-- index.js
     |   |-- production.js
+    |-- logs
+    |   |-- net
+    |   |   |-- netError.2021-11-27.log
+    |   |   |-- netResponse.2021-11-27.log
+    |   |-- system
+    |       |-- systemInfo.2021-11-27.log
     |-- src
     |   |-- app.ts
     |   |-- GlobalVariable.ts
@@ -34,6 +107,7 @@
     |   |   |-- index.ts
     |   |   |-- mongoseTest.md
     |   |   |-- controller
+    |   |       |-- GeojsonCtrl.ts
     |   |       |-- rbac
     |   |           |-- AuthCtrl.ts
     |   |           |-- RoleAuthCtrl.ts
