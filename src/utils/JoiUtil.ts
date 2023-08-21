@@ -1,7 +1,7 @@
-import Joi from 'joi'
+import Joi, {AnySchema} from 'joi'
 import {Context, Next} from 'koa';
 import {ResponseBeautifier, ResponseInfo} from "./ResponseBeautifier";
-import {IKeyValue} from "../core/CpcInterface";
+import {IKeyValue} from "../types/types";
 
 export class JoiUtil {
     /**
@@ -11,18 +11,22 @@ export class JoiUtil {
      * @param {"query" | "body" | "auto"} method 参数是放在query还是body中
      *                                      query：强制使用query方式解析
      *                                      body：强制使用body方式解析
-     *                                      auto：默认的，只有get方式使用query，其他使用body解析
+     *                                       auto：默认的，get|delete方式使用query，其他使用body解析
      */
     public static middleware(schema: Joi.Schema, method: "query" | "body" | "auto" = "auto") {
-        Joi.object({
-            engine: Joi.string().valid("bdMap", "aMap").required().error(new Error('只能填写引擎:dbMap|aMap')),
-            types: Joi.string().required()
-        })
+        // Joi.object({
+        //     engine: Joi.string().valid("bdMap", "aMap").required().error(new Error('只能填写引擎:dbMap|aMap')),
+        //     types: Joi.string().required()
+        // })
         return async function (ctx: Context, next: Next) {
             let parameName: "query" | "body";
             if (method === "auto") {
                 const methodType: string = ctx.method.toLocaleLowerCase();
-                parameName = methodType === "get" ? "query" : "body"
+                if (methodType === "get" || methodType == "delete") {
+                    parameName = "query";
+                } else {
+                    parameName = "body";
+                }
             } else {
                 parameName = method;
             }
@@ -34,6 +38,7 @@ export class JoiUtil {
             return next();
         };
     }
+
     /**
      * joi参数识别的中间件
      * @param {IKeyValue} obj 需要判断的参数JOI格式
@@ -41,15 +46,19 @@ export class JoiUtil {
      * @param {"query" | "body" | "auto"} method 参数是放在query还是body中
      *                                      query：强制使用query方式解析
      *                                      body：强制使用body方式解析
-     *                                      auto：默认的，只有get方式使用query，其他使用body解析
+     *                                      auto：默认的，get|delete方式使用query，其他使用body解析
      */
-    public static middlewareByObject(obj: IKeyValue, method: "query" | "body" | "auto" = "auto") {
-        const schema = Joi.object(obj);
+    public static middlewareByObject(obj: IKeyValue<AnySchema>, method: "query" | "body" | "auto" = "auto") {
+        const schema = Joi.object(obj).options({ allowUnknown: true });
         return async function (ctx: Context, next: Next) {
             let parameName: "query" | "body";
             if (method === "auto") {
                 const methodType: string = ctx.method.toLocaleLowerCase();
-                parameName = methodType === "get" ? "query" : "body"
+                if (methodType === "get" || methodType == "delete") {
+                    parameName = "query";
+                } else {
+                    parameName = "body";
+                }
             } else {
                 parameName = method;
             }

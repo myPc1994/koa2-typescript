@@ -15,9 +15,9 @@ export class NetUtil {
 
     public static getClinetInfo(ctx: Context) {
         const ip = NetUtil.getClientIp(ctx.req);// 客户端ip地址
-        let {originalUrl, method} = ctx;
-        let params = JSON.stringify(method === "GET" ? ctx.query : (ctx.request as any).body);
-        let browserType = ctx.req.headers['user-agent'];
+        const {originalUrl, method} = ctx;
+        const params = JSON.stringify(method === "GET" ? ctx.query : (ctx.request as any).body);
+        const browserType = ctx.req.headers['user-agent'];
         return {originalUrl, method, ip, params, browserType};
     }
 }

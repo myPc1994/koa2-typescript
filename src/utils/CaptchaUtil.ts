@@ -1,11 +1,11 @@
 import svgCaptcha from "svg-captcha";
-import {IKeyValue} from "../core/CpcInterface";
 import {v1} from 'uuid';
 import schedule from 'node-schedule';
 import {ResponseBeautifier, ResponseInfo} from "./ResponseBeautifier";
 import {Context, Next} from 'koa';
+import {IKeyValue} from "../types/types";
 
-let uuidMapCode: IKeyValue = {};
+let uuidMapCode: IKeyValue<string> = {};
 // 每天3点30分0秒，刷新容器
 schedule.scheduleJob('0 30 3 * * *', () => {
     uuidMapCode = {};
@@ -28,7 +28,7 @@ export class CaptchaUtil {
      */
     public static createMath(): ICaptchaInfo {
         // 数学表算式验证码
-        let codeConfig = {
+        const codeConfig = {
             mathMin: 1, // 数学表达式的最小值
             mathMax: 20, // 数学表达式的最大值
             mathOperator: '+', // 使用的运算符:+、-或+-(用于随机的+或-)
@@ -49,7 +49,7 @@ export class CaptchaUtil {
      */
     public static createLetter(): ICaptchaInfo {
         // 字母验数字证码
-        let codeConfig = {
+        const codeConfig = {
             size: 4,// 验证码长度
             ignoreChars: '0o1i', // 验证码字符中排除 0o1i
             noise: 5, // 干扰线条的数量
@@ -64,9 +64,9 @@ export class CaptchaUtil {
         return CaptchaUtil.saveMap(obj)
     }
 
-    public static middleware(uuidField: string = "uuid", textField: string = "text") {
+    public static middleware(uuidField = "uuid", textField = "text") {
         return async function (ctx: Context, next: Next) {
-            let data = null;
+            let data:any = null;
             if (ctx.method.toLocaleLowerCase() === "get") {
                 data = ctx.request.query
             } else {
@@ -83,10 +83,9 @@ export class CaptchaUtil {
     public static verify(uuid: string, text: string) {
         if (uuidMapCode[uuid]) {
             if (uuidMapCode[uuid] === text) {
-                delete uuidMapCode[uuid];// 不管验证成功与否，都要清除记录
+                delete uuidMapCode[uuid];
                 return true;
             }
-            delete uuidMapCode[uuid];// 不管验证成功与否，都要清除记录
         }
         return false;
     }

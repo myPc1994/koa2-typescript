@@ -177,3 +177,16 @@ function encryptionFile(target, source) {
   }
 }
 exports.encryptionFile = encryptionFile;
+
+
+exports.createFile = function(path,content){
+    console.log(path,content)
+    // 写入内容到 bat 文件
+    fs.writeFile(path,content, (err) => {
+        if (err) {
+            console.error('出现错误：', err);
+        } else {
+            console.log(`bat 文件已成功创建：${path}`);
+        }
+    });
+}

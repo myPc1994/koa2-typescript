@@ -1,128 +1,47 @@
 {
   "modules": [
     {
-      "name": "mobileApp",
-      "chnname": "手机地图APP",
+      "name": "谷歌插件模块",
+      "chnname": "谷歌插件模块",
       "entities": [
         {
-          "title": "nucleicAcid",
+          "title": "shop",
           "fields": [
             {
-              "name": "everyDay",
-              "type": "number",
+              "name": "id",
+              "type": "TEXT",
               "remark": "",
-              "chnname": "日常送检合计"
+              "chnname": "id",
+              "pk": true,
+              "notNull": true
             },
             {
-              "name": "createTime",
-              "type": "Date",
+              "name": "name",
+              "type": "TEXT",
               "remark": "",
-              "chnname": "创建时间"
+              "chnname": "店铺名称"
             },
             {
-              "name": "allPeople",
-              "type": "number",
+              "name": "phone",
+              "type": "TEXT",
               "remark": "",
-              "chnname": "全民送检合计"
+              "chnname": "手机号"
+            },
+            {
+              "name": "email",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "邮箱"
+            },
+            {
+              "name": "description",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "描述"
             },
             {
               "name": "updateTime",
-              "type": "Date",
-              "remark": "",
-              "chnname": "更新日期"
-            },
-            {
-              "name": "county",
-              "type": "string",
-              "remark": "",
-              "chnname": "区县"
-            }
-          ],
-          "indexs": [],
-          "headers": [
-            {
-              "fieldName": "chnname",
-              "relationNoShow": false
-            },
-            {
-              "fieldName": "name",
-              "relationNoShow": false
-            },
-            {
-              "fieldName": "type",
-              "relationNoShow": false
-            },
-            {
-              "fieldName": "dataType",
-              "relationNoShow": true
-            },
-            {
-              "fieldName": "remark",
-              "relationNoShow": true
-            },
-            {
-              "fieldName": "pk",
-              "relationNoShow": false
-            },
-            {
-              "fieldName": "notNull",
-              "relationNoShow": true
-            },
-            {
-              "fieldName": "autoIncrement",
-              "relationNoShow": true
-            },
-            {
-              "fieldName": "defaultValue",
-              "relationNoShow": true
-            },
-            {
-              "fieldName": "relationNoShow",
-              "relationNoShow": true
-            },
-            {
-              "fieldName": "uiHint",
-              "relationNoShow": true
-            }
-          ],
-          "chnname": "核酸"
-        },
-        {
-          "title": "keyArea",
-          "fields": [
-            {
-              "name": "county",
-              "type": "DefaultString",
-              "remark": "",
-              "chnname": "区县"
-            },
-            {
-              "name": "receivingNum",
-              "type": "DefaultString",
-              "remark": "",
-              "chnname": "接收人数"
-            },
-            {
-              "name": "haveCheck",
-              "type": "DefaultString",
-              "remark": "",
-              "chnname": "已核查"
-            },
-            {
-              "name": "notCheck",
-              "type": "DefaultString",
-              "remark": "",
-              "chnname": "未核查"
-            },
-            {
-              "name": "createTime",
-              "type": "DefaultString",
-              "remark": "",
-              "chnname": "创建时间"
-            },
-            {
-              "name": "updateTime",
-              "type": "DefaultString",
+              "type": "DATETIME DEFAULT CURRENT_TIMESTAMP",
               "remark": "",
               "chnname": "更新时间"
             }
@@ -174,104 +93,75 @@
               "relationNoShow": true
             }
           ],
-          "chnname": "时空伴随-重点区域"
+          "chnname": "店铺信息表"
         },
         {
-          "title": "cluesMoPai",
+          "title": "chromePlugin",
           "fields": [
             {
-              "name": "county",
-              "type": "string",
+              "name": "REVISION",
+              "type": "Integer",
               "remark": "",
-              "chnname": "区县"
+              "chnname": "乐观锁"
             },
             {
-              "name": "receivingNum",
-              "type": "number",
+              "name": "CREATED_BY",
+              "type": "IdOrKey",
               "remark": "",
-              "chnname": "接收人数"
+              "chnname": "创建人"
             },
             {
-              "name": "haveCheck",
-              "type": "number",
-              "remark": "",
-              "chnname": "已核查"
-            },
-            {
-              "name": "notCheck",
-              "type": "number",
-              "remark": "",
-              "chnname": "未核查"
-            },
-            {
-              "name": "verifyNum",
-              "type": "number",
-              "remark": "",
-              "chnname": "核实人数(有效)"
-            },
-            {
-              "name": "invalidCombin",
-              "type": "number",
-              "remark": "",
-              "chnname": "无效合计"
-            },
-            {
-              "name": "duplicateData",
-              "type": "number",
-              "remark": "",
-              "chnname": "重复数据"
-            },
-            {
-              "name": "notToAffectedArea",
-              "type": "number",
-              "remark": "",
-              "chnname": "未到疫区"
-            },
-            {
-              "name": "infoNotComplete",
-              "type": "number",
-              "remark": "",
-              "chnname": "信息不全"
-            },
-            {
-              "name": "outProvinceNum",
-              "type": "number",
-              "remark": "",
-              "chnname": "在省外总数"
-            },
-            {
-              "name": "inProvinceNum",
-              "type": "DefaultString",
-              "remark": "",
-              "chnname": "在省内总数"
-            },
-            {
-              "name": "highRisk",
-              "type": "number",
-              "remark": "",
-              "chnname": "高风险来闽"
-            },
-            {
-              "name": "middleRisk",
-              "type": "number",
-              "remark": "",
-              "chnname": "中风险来闽"
-            },
-            {
-              "name": "lowRisk",
-              "type": "number",
-              "remark": "",
-              "chnname": "低风险来闽"
-            },
-            {
-              "name": "createTime",
-              "type": "Date",
+              "name": "CREATED_TIME",
+              "type": "DateTime",
               "remark": "",
               "chnname": "创建时间"
             },
             {
+              "name": "UPDATED_BY",
+              "type": "IdOrKey",
+              "remark": "",
+              "chnname": "更新人"
+            },
+            {
+              "name": "UPDATED_TIME",
+              "type": "DateTime",
+              "remark": "",
+              "chnname": "更新时间"
+            }
+          ]
+        },
+        {
+          "title": "goods",
+          "fields": [
+            {
+              "name": "id",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "id",
+              "pk": true,
+              "notNull": true
+            },
+            {
+              "name": "name",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "商品名称"
+            },
+            {
+              "name": "shopId",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "店铺id"
+            },
+            {
+              "name": "description",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "描述"
+            },
+            {
               "name": "updateTime",
-              "type": "Date",
+              "type": "DATETIME DEFAULT CURRENT_TIMESTAMP",
               "remark": "",
               "chnname": "更新时间"
             }
@@ -323,39 +213,713 @@
               "relationNoShow": true
             }
           ],
-          "chnname": "线索摸排"
+          "chnname": "商品信息表"
+        },
+        {
+          "title": "order",
+          "fields": [
+            {
+              "name": "id",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "订单编号",
+              "pk": true,
+              "notNull": true
+            },
+            {
+              "name": "goodsId",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "商品id"
+            },
+            {
+              "name": "num",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "订单数量"
+            },
+            {
+              "name": "totalPrice",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "商品总价"
+            },
+            {
+              "name": "realMoney",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "实收金额"
+            },
+            {
+              "name": "dealTime",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "成交时间"
+            },
+            {
+              "name": "description",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "描述"
+            },
+            {
+              "name": "updateTime",
+              "type": "DATETIME DEFAULT CURRENT_TIMESTAMP",
+              "remark": "",
+              "chnname": "更新时间"
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "订单信息表"
+        },
+        {
+          "title": "promotionUnit",
+          "fields": [
+            {
+              "name": "id",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "id",
+              "pk": true,
+              "notNull": true
+            },
+            {
+              "name": "shopId",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "店铺id"
+            },
+            {
+              "name": "planeId",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "计划id"
+            },
+            {
+              "name": "goodsId",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "商品id"
+            },
+            {
+              "name": "spend",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "花费"
+            },
+            {
+              "name": "sum",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "交易额"
+            },
+            {
+              "name": "inOutRatio",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "投入产出比"
+            },
+            {
+              "name": "dealNum",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "成交笔数"
+            },
+            {
+              "name": "oneCost",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "每笔成交花费"
+            },
+            {
+              "name": "oneTurnover",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "每笔成交金额"
+            },
+            {
+              "name": "exposureNum",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "曝光量"
+            },
+            {
+              "name": "clickNum",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "点击量"
+            },
+            {
+              "name": "clickConvRate",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "点击转化率"
+            },
+            {
+              "name": "oneClickCost",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "平均点击花费"
+            },
+            {
+              "name": "updateTime",
+              "type": "DATETIME DEFAULT CURRENT_TIMESTAMP",
+              "remark": "",
+              "chnname": "更新时间"
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "推广单元表"
+        },
+        {
+          "title": "promotionPlane",
+          "fields": [
+            {
+              "name": "id",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "id",
+              "pk": true,
+              "notNull": true
+            },
+            {
+              "name": "name",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "计划名"
+            },
+            {
+              "name": "shopId",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "店铺id"
+            },
+            {
+              "name": "price",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "当前价格"
+            },
+            {
+              "name": "factor",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "浮动值"
+            },
+            {
+              "name": "limitUpper",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "价格上限"
+            },
+            {
+              "name": "limitLower",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "价格下限"
+            },
+            {
+              "name": "priority",
+              "type": "INTEGER",
+              "remark": "",
+              "chnname": "优先级"
+            },
+            {
+              "name": "updateTime",
+              "type": "DATETIME DEFAULT CURRENT_TIMESTAMP",
+              "remark": "",
+              "chnname": "更新时间"
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "推广计划表"
+        },
+        {
+          "title": "goodsPlane",
+          "fields": [
+            {
+              "name": "goodsId",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "商品id"
+            },
+            {
+              "name": "planeId",
+              "type": "TEXT",
+              "remark": "",
+              "chnname": "计划id"
+            }
+          ],
+          "indexs": [],
+          "headers": [
+            {
+              "fieldName": "chnname",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "name",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "type",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "dataType",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "remark",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "pk",
+              "relationNoShow": false
+            },
+            {
+              "fieldName": "notNull",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "autoIncrement",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "defaultValue",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "relationNoShow",
+              "relationNoShow": true
+            },
+            {
+              "fieldName": "uiHint",
+              "relationNoShow": true
+            }
+          ],
+          "chnname": "商品计划关联表"
         }
       ],
       "graphCanvas": {
         "nodes": [
           {
             "shape": "table",
-            "title": "nucleicAcid",
+            "title": "shop",
             "moduleName": false,
-            "x": 460,
-            "y": 210,
-            "id": "bd9e4b11"
+            "x": 190,
+            "y": 190,
+            "id": "859a95c3"
           },
           {
             "shape": "table",
-            "title": "keyArea",
+            "title": "promotionUnit",
             "moduleName": false,
-            "x": 388.40625,
-            "y": 434,
-            "id": "be96c50d"
+            "x": 1220,
+            "y": 270,
+            "id": "19a97042"
           },
           {
             "shape": "table",
-            "title": "cluesMoPai",
+            "title": "order",
             "moduleName": false,
-            "x": 824.40625,
-            "y": 277,
-            "id": "37bb7c5e"
+            "x": 1180,
+            "y": 600,
+            "id": "54af0ea2",
+            "size": [
+              258.7050687896601,
+              165.24613895444793
+            ]
+          },
+          {
+            "shape": "table",
+            "title": "goods",
+            "moduleName": false,
+            "x": 640,
+            "y": 640,
+            "id": "2fc473cf",
+            "size": [
+              179.9284573706168,
+              125.01970192460959
+            ]
+          },
+          {
+            "shape": "table",
+            "title": "promotionPlane",
+            "moduleName": false,
+            "x": 710,
+            "y": 310,
+            "id": "85288b9e"
+          },
+          {
+            "shape": "table",
+            "title": "goodsPlane",
+            "moduleName": false,
+            "x": 240,
+            "y": 470,
+            "id": "a5dabea0"
           }
         ],
-        "edges": []
+        "edges": [
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "859a95c3",
+            "target": "2fc473cf",
+            "id": "1aab3b3b",
+            "controlPoints": [
+              {
+                "x": 335.5576171875,
+                "y": 152.25
+              },
+              {
+                "x": 494.4423828125,
+                "y": 652.5895314387298
+              }
+            ],
+            "sourceAnchor": 1,
+            "targetAnchor": 4
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "2fc473cf",
+            "target": "54af0ea2",
+            "id": "9bc80935",
+            "controlPoints": [
+              {
+                "x": 785.5576171875,
+                "y": 607.4607135463455
+              },
+              {
+                "x": 1024.14746560517,
+                "y": 564.731629745375
+              }
+            ],
+            "sourceAnchor": 1,
+            "targetAnchor": 2
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "859a95c3",
+            "target": "19a97042",
+            "id": "c74241f9",
+            "controlPoints": [
+              {
+                "x": 335.5576171875,
+                "y": 152.25
+              },
+              {
+                "x": 1064.8916015625,
+                "y": 162.17424242424244
+              }
+            ],
+            "sourceAnchor": 1,
+            "targetAnchor": 2
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "85288b9e",
+            "target": "19a97042",
+            "id": "dd50056d",
+            "controlPoints": [
+              {
+                "x": 855.5576171875,
+                "y": 242.17857142857144
+              },
+              {
+                "x": 1064.8916015625,
+                "y": 182.2348484848485
+              }
+            ],
+            "sourceAnchor": 1,
+            "targetAnchor": 4
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "2fc473cf",
+            "target": "19a97042",
+            "id": "37fe073e",
+            "controlPoints": [
+              {
+                "x": 785.5576171875,
+                "y": 607.4607135463455
+              },
+              {
+                "x": 1064.8916015625,
+                "y": 202.29545454545456
+              }
+            ],
+            "sourceAnchor": 1,
+            "targetAnchor": 6
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "2fc473cf",
+            "target": "a5dabea0",
+            "id": "38a732e0",
+            "controlPoints": [
+              {
+                "x": 494.4423828125,
+                "y": 607.4607135463455
+              },
+              {
+                "x": 332.0283203125,
+                "y": 472.5357142857143
+              }
+            ],
+            "sourceAnchor": 0,
+            "targetAnchor": 1
+          },
+          {
+            "shape": "erdRelation",
+            "relation": "0,n:1",
+            "source": "859a95c3",
+            "target": "85288b9e",
+            "id": "9791a3ce",
+            "controlPoints": [
+              {
+                "x": 335.5576171875,
+                "y": 152.25
+              },
+              {
+                "x": 564.4423828125,
+                "y": 282.3690476190476
+              }
+            ],
+            "sourceAnchor": 1,
+            "targetAnchor": 4
+          }
+        ]
       },
-      "associations": []
+      "associations": [
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "shop",
+            "field": "id"
+          },
+          "to": {
+            "entity": "goods",
+            "field": "shopId"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "goods",
+            "field": "id"
+          },
+          "to": {
+            "entity": "order",
+            "field": "goodsId"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "shop",
+            "field": "id"
+          },
+          "to": {
+            "entity": "promotionUnit",
+            "field": "shopId"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "promotionPlane",
+            "field": "id"
+          },
+          "to": {
+            "entity": "promotionUnit",
+            "field": "planeId"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "goods",
+            "field": "id"
+          },
+          "to": {
+            "entity": "promotionUnit",
+            "field": "goodsId"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "goods",
+            "field": "id"
+          },
+          "to": {
+            "entity": "goodsPlane",
+            "field": "goodsId"
+          }
+        },
+        {
+          "relation": "0,n:1",
+          "from": {
+            "entity": "shop",
+            "field": "id"
+          },
+          "to": {
+            "entity": "promotionPlane",
+            "field": "shopId"
+          }
+        }
+      ]
+    },
+    {
+      "name": "接口爬取模块",
+      "chnname": "接口爬取模块",
+      "entities": [],
+      "graphCanvas": {
+        "edges": []
+      }
     }
   ],
   "dataTypeDomains": {
@@ -672,9 +1236,6 @@
           },
           "PostgreSQL": {
             "type": "VARCHAR(1)"
-          },
-          "mongodb": {
-            "type": "Boolean"
           }
         }
       },
@@ -763,50 +1324,29 @@
         }
       },
       {
-        "name": "number",
-        "code": "number",
+        "name": "sqlite文本",
+        "code": "TEXT",
         "apply": {
-          "MYSQL": {
-            "type": "number"
-          },
-          "ORACLE": {
-            "type": "number"
-          },
-          "SQLServer": {
-            "type": "number"
-          },
-          "PostgreSQL": {
-            "type": "number"
-          },
-          "JAVA": {
-            "type": "number"
-          },
-          "mongodb": {
-            "type": "Number"
+          "sqlite3": {
+            "type": "TEXT"
           }
         }
       },
       {
-        "name": "string",
-        "code": "string",
+        "name": "sqlite数字",
+        "code": "INTEGER",
         "apply": {
-          "MYSQL": {
-            "type": "string"
-          },
-          "ORACLE": {
-            "type": "string"
-          },
-          "SQLServer": {
-            "type": "string"
-          },
-          "PostgreSQL": {
-            "type": "string"
-          },
-          "JAVA": {
-            "type": "string"
-          },
-          "mongodb": {
-            "type": "String"
+          "sqlite3": {
+            "type": "INTEGER"
+          }
+        }
+      },
+      {
+        "name": "最后更新时间",
+        "code": "DATETIME DEFAULT CURRENT_TIMESTAMP",
+        "apply": {
+          "sqlite3": {
+            "type": "DATETIME DEFAULT CURRENT_TIMESTAMP"
           }
         }
       }
@@ -879,7 +1419,16 @@
         "updateTableComment": ""
       },
       {
-        "code": "mongodb"
+        "code": "sqlite3",
+        "createTableTemplate": "{{~it.entity.fields:field:index}}\n    \"{{=field.name}}\": \"{{=field.type}} {{= field.notNull ? 'NOT NULL' : '' }}\",//{{=it.func.join(field.chnname,field.remark,' ')}}\n{{~}}",
+        "deleteTableTemplate": "DROP TABLE {{=it.entity.title}}{{=it.separator}}",
+        "rebuildTableTemplate": "create table PDMAN_UP_{{=it.oldEntity.title}}\nas select * from {{=it.oldEntity.title}}{{=it.separator}}\n$blankline\n\ndrop table {{=it.oldEntity.title}}{{=it.separator}}\n$blankline\n\nCREATE TABLE {{=it.newEntity.title}}(\n{{ pkList = [] ; }}\n{{~it.newEntity.fields:field:index}}\n    {{? field.pk }}{{ pkList.push(field.name) }}{{?}}\n    {{=field.name}} {{=field.type}} {{= field.notNull ? 'NOT NULL' : '' }} COMMENT '{{=it.func.join(field.chnname,field.remark,';')}}' {{= index < it.newEntity.fields.length-1 ? ',' : ( pkList.length>0 ? ',' :'' ) }}\n{{~}}\n{{? pkList.length >0 }}\n    PRIMARY KEY ({{~pkList:pkName:i}}{{= pkName }}{{= i<pkList.length-1 ? ',' : '' }}{{~}})\n{{?}}\n) COMMENT = '{{=it.func.join(it.newEntity.chnname,it.newEntity.remark,';') }}'{{=it.separator}}\n$blankline\n\n{{ sameCols = it.func.intersect(it.newEntity.fields,it.oldEntity.fields) ;}}\ninsert into {{=it.newEntity.title}}(\n{{~sameCols:field:index}}\n    {{=field.name}}{{? index<sameCols.length-1}},{{?}}\n{{~}}\n) \nselect \n{{~sameCols:field:index}}\n    {{=field.name}}{{? index<sameCols.length-1}},{{?}}\n{{~}}\nfrom PDMAN_UP_{{=it.oldEntity.title}}{{=it.separator}}\n$blankline\n\ndrop table PDMAN_UP_{{=it.oldEntity.title}}{{=it.separator}}\n$blankline\n{{~it.newEntity.indexs:index}}\nALTER TABLE {{=it.newEntity.title}} ADD {{? index.isUnique}}UNIQUE{{??}}INDEX{{?}} {{=index.name}}({{=it.func.join(...index.fields,',')}}){{=it.separator}}\n{{~}}",
+        "createFieldTemplate": "ALTER TABLE {{=it.entity.title}} ADD COLUMN {{=it.field.name}} {{=it.field.type}} {{? it.field.notNull}}NOT NULL{{?}} {{? it.field.defaultValue}}DEFAULT {{? null==it.field.defaultValue}}NULL{{??}}'{{=it.field.defaultValue}}'{{?}}{{?}} {{? it.field.autoIncrement}}AUTO_INCREMENT{{?}} {{? it.field.pk}}PRIMARY KEY{{?}} {{? it.field.chnname}}COMMENT '{{=it.field.chnname}}'{{?}} {{? it.field.addAfter}}AFTER {{=it.field.addAfter}}{{?}}{{=it.separator}}",
+        "updateFieldTemplate": "ALTER TABLE {{=it.entity.title}} MODIFY COLUMN {{=it.field.name}} {{=it.field.type}} {{? it.field.notNull}}NOT NULL{{?}} {{? it.field.defaultValue}}DEFAULT {{? null==it.field.defaultValue}}NULL{{??}}'{{=it.field.defaultValue}}'{{?}}{{?}} {{? it.field.autoIncrement}}AUTO_INCREMENT{{?}} {{? it.field.chnname}}COMMENT '{{=it.field.chnname}}'{{?}}{{=it.separator}}",
+        "deleteFieldTemplate": "ALTER TABLE {{=it.entity.title}} DROP {{=it.field.name}}{{=it.separator}}",
+        "deleteIndexTemplate": "ALTER TABLE {{=it.entity.title}} DROP INDEX {{=it.index.name}}{{=it.separator}}",
+        "createIndexTemplate": "ALTER TABLE {{=it.entity.title}} ADD {{? it.index.isUnique}}UNIQUE{{??}}INDEX{{?}} {{=it.index.name}}({{=it.func.join(...it.index.fields,',')}}){{=it.separator}}",
+        "updateTableComment": "ALTER TABLE {{=it.entity.title}} COMMENT '{{=it.entity.chnname}}'{{=it.separator}}"
       }
     ]
   }

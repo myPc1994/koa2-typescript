@@ -1,59 +1,24 @@
-import {createConnection, Connection} from 'mongoose';
-import {logUtil} from "../log/LogUtil";
-import {ELevel} from "../log/ILogUtil";
+import BetterSqlite3 from "better-sqlite3";
+import path from "path";
+import fs from "fs";
 
-/**
- * mongose连接工具类
- */
-export class DbUtil {
-    private mongooseInstance: Connection;
-    private uri: string;
-    private openCbArr: Function[] = [];// 需要等待数据连接成功后执行的函数集合
-    constructor(config: any) {
-        let {user, pass, host, port, database, option} = config;
-        let uri: string;
-        if (user && pass) {
-            // mongodb://user:pass@localhost:port/database
-            // mongodb://127.0.0.1:27017/admin?compressors=disabled&gssapiServiceName=mongodb
-            uri = `mongodb://${user}:${pass}@${host}:${port}/?authSource=admin`;
-        } else {
-            uri = `mongodb://${host}:${port}/${database}`;
-        }
-        this.uri = uri;
-        const instance = createConnection(uri, option);
-        instance.on('error', err => {
-            this.saveErrorInfo(uri, err);
-        });
-        instance.on('connected', (err) => {
-            if (err) {
-                this.saveErrorInfo(uri, err);
-            } else {
-                this.mongooseInstance = instance;
-                console.log("连接数据库成功")
-                logUtil.log(ELevel.info, '连接数据库成功:' + uri)
-                this.runCallBack();
-            }
-        });
+function connectDb(): BetterSqlite3.Database {
+    let db: any;
+    const options: BetterSqlite3.Options = {};
+    if (process.env.NODE_ENV === "development") {
+        options.verbose = console.log
     }
-
-
-    public onConnected(cb: Function) {
-        if (this.mongooseInstance) {
-            cb(this.mongooseInstance);
-        } else {
-            this.openCbArr.push(cb);
-        }
+    try {
+        const directoryPath = path.join(__dirname, '../../public/db');
+        const dbPath = path.join(directoryPath, 'database.db');
+        fs.mkdirSync(directoryPath, {recursive: true});
+        db = new BetterSqlite3(dbPath, options)
+        console.log('数据库连接成功!', dbPath);
+    } catch (err) {
+        console.error('数据库连接发生过程中发生了错误!', err);
     }
-
-    private saveErrorInfo(uri: string, err: any) {
-        console.error("连接数据库失败:", uri, err);
-        logUtil.log(ELevel.error, '连接数据库失败:' + uri + ":" + err);
-    }
-
-    private runCallBack() {
-        for (let cb of this.openCbArr) {
-            cb(this.mongooseInstance);
-        }
-        this.openCbArr = [];
-    }
+    return db;
 }
+
+export const database = connectDb();
+process.on('exit', () => database.close());

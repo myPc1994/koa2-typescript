@@ -1,12 +1,11 @@
-// 引入模块依赖
 import {IReturnInfo, ResponseBeautifier, ResponseInfo} from "../ResponseBeautifier";
 import {Context, Next} from 'koa';
 
 const fs = require('fs');
 const path = require('path');
 import jsonwebtoken from 'jsonwebtoken';// JSON Web令牌签名和验证
-let cert_public = fs.readFileSync(path.join(__dirname, './pem/public_key.pem'));// 公钥 可以自己生成
-let cert_private = fs.readFileSync(path.join(__dirname, './pem/private_key.pem'));// 私钥 可以自己生成
+const cert_public = fs.readFileSync(path.join(__dirname, './pem/public_key.pem'));// 公钥 可以自己生成
+const cert_private = fs.readFileSync(path.join(__dirname, './pem/private_key.pem'));// 私钥 可以自己生成
 // 创建 token 类
 export class JwtUtil {
     /**
@@ -15,7 +14,7 @@ export class JwtUtil {
      * @param {number} expiresIn 过期时间  number类型单位:秒,字符串类型:无单位默认为毫秒,带单位的话："10h", "7d"分别代表10小时，7天
      * @returns {Promise<string>}
      */
-    public static generateToken(data: string | Buffer | object, expiresIn: string | number | undefined = 6000): Promise<string> {
+    public static generateToken(data: string | Buffer | object, expiresIn: string | number | undefined = '7d'): Promise<string> {
         return new Promise((resolve, reject) => {
             jsonwebtoken.sign(data, cert_private, {algorithm: 'RS256', expiresIn}, function (err, token) {
                 if (err) {
@@ -31,8 +30,11 @@ export class JwtUtil {
      * @param {string} token 需要验证的token
      * @returns {Promise<IReturnInfo>}
      */
-    public static verifyToken(token: string): Promise<IReturnInfo> {
+    public static verifyToken(token?: string): Promise<IReturnInfo> {
         return new Promise((resolve, reject) => {
+            if(!token){
+                return resolve({...ResponseInfo.tokenError, message: "token不能为空!"});
+            }
             jsonwebtoken.verify(token, cert_public, {algorithms: ['RS256']}, (error, data) => {
                 if (!error) {
                     return resolve({...ResponseInfo.success, message: "验证通过", data});

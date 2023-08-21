@@ -1,8 +1,8 @@
-|-- node
+|-- cpc
     |-- .dockerignore
-    |-- .gitignore
+    |-- .eslintrc.js
     |-- apidoc.js
-    |-- docker-compose.yml
+    |-- directoryList.md
     |-- Dockerfile
     |-- LICENSE
     |-- nodemon.json
@@ -10,8 +10,14 @@
     |-- pm2.config.js
     |-- printDir.js
     |-- README.md
+    |-- rm.bat
+    |-- rm.sh
+    |-- start.bat
+    |-- start.sh
+    |-- table.pdman.json
     |-- tsconfig.json
-    |-- tslint.json
+    |-- yarn-error.log
+    |-- yarn.lock
     |-- bin
     |   |-- www
     |-- build
@@ -22,10 +28,13 @@
     |       |-- fileUtil.js
     |-- dist
     |   |-- .dockerignore
-    |   |-- docker-compose.yml
     |   |-- Dockerfile
     |   |-- package.json
     |   |-- pm2.config.js
+    |   |-- rm.bat
+    |   |-- rm.sh
+    |   |-- start.bat
+    |   |-- start.sh
     |   |-- bin
     |   |   |-- www
     |   |-- env
@@ -34,50 +43,39 @@
     |   |   |-- production.js
     |   |-- src
     |   |   |-- app.js
-    |   |   |-- GlobalVariable.js
-    |   |   |-- core
-    |   |   |   |-- CpcInterface.js
     |   |   |-- db
-    |   |   |   |-- BaseDb.js
+    |   |   |   |-- BaseTable.js
+    |   |   |   |-- BaseView.js
     |   |   |   |-- index.js
-    |   |   |   |-- mongoseTest.md
-    |   |   |   |-- controller
-    |   |   |       |-- GeojsonCtrl.js
-    |   |   |       |-- rbac
-    |   |   |           |-- AuthCtrl.js
-    |   |   |           |-- RoleAuthCtrl.js
-    |   |   |           |-- RoleCtrl.js
-    |   |   |           |-- UserCtrl.js
-    |   |   |           |-- UserRoleCtrl.js
-    |   |   |-- log
-    |   |   |   |-- ILogUtil.js
-    |   |   |   |-- LogUtil.js
-    |   |   |   |-- console
-    |   |   |   |   |-- LogConsole.js
-    |   |   |   |-- log4js
-    |   |   |   |   |-- log4js.js
-    |   |   |   |   |-- Log4jsUtil.js
-    |   |   |   |-- logDB
-    |   |   |       |-- LogDB.js
+    |   |   |   |-- tables
+    |   |   |   |   |-- business
+    |   |   |   |   |   |-- TableShop.js
+    |   |   |   |   |-- rbac
+    |   |   |   |       |-- TableResource.js
+    |   |   |   |       |-- TableRole.js
+    |   |   |   |       |-- TableUser.js
+    |   |   |   |       |-- Table_role_resource.js
+    |   |   |   |       |-- Table_user_role.js
+    |   |   |   |-- views
+    |   |   |       |-- ViewPermission.js
     |   |   |-- routes
     |   |   |   |-- controller
-    |   |   |   |   |-- IndexCtrl.js
-    |   |   |   |   |-- RbacCtrl.js
-    |   |   |   |   |-- UsersCtrl.js
+    |   |   |   |   |-- rbacCtrl.js
     |   |   |   |-- routers
     |   |   |       |-- index.js
     |   |   |       |-- rbac.js
-    |   |   |       |-- users.js
+    |   |   |-- types
+    |   |   |   |-- types.js
     |   |   |-- utils
+    |   |       |-- AntiUtil.js
+    |   |       |-- AxiosUtil.js
     |   |       |-- CaptchaUtil.js
     |   |       |-- CryptoUtil.js
-    |   |       |-- Excel2dbFormatUtil.js
     |   |       |-- FileUtil.js
     |   |       |-- JoiUtil.js
     |   |       |-- JsUtil.js
-    |   |       |-- MulterUtil.js
     |   |       |-- NetUtil.js
-    |   |       |-- Pm2FlushUtil.js
+    |   |       |-- NodemailerUtil.js
     |   |       |-- ResponseBeautifier.js
     |   |       |-- token
     |   |           |-- JwtUtil.js
@@ -85,64 +83,45 @@
     |   |               |-- private_key.pem
     |   |               |-- public_key.pem
     |   |-- static
-    |       |-- county.json
-    |       |-- mobileApp.pdman.json
     |-- env
     |   |-- development.js
     |   |-- index.js
     |   |-- production.js
-    |-- logs
-    |   |-- net
-    |   |   |-- netError.2021-11-27.log
-    |   |   |-- netResponse.2021-11-27.log
-    |   |-- system
-    |       |-- systemInfo.2021-11-27.log
     |-- src
     |   |-- app.ts
-    |   |-- GlobalVariable.ts
-    |   |-- core
-    |   |   |-- CpcInterface.ts
     |   |-- db
-    |   |   |-- BaseDb.ts
+    |   |   |-- BaseTable.ts
+    |   |   |-- BaseView.ts
     |   |   |-- index.ts
-    |   |   |-- mongoseTest.md
-    |   |   |-- controller
-    |   |       |-- GeojsonCtrl.ts
-    |   |       |-- rbac
-    |   |           |-- AuthCtrl.ts
-    |   |           |-- RoleAuthCtrl.ts
-    |   |           |-- RoleCtrl.ts
-    |   |           |-- UserCtrl.ts
-    |   |           |-- UserRoleCtrl.ts
-    |   |-- log
-    |   |   |-- ILogUtil.ts
-    |   |   |-- LogUtil.ts
-    |   |   |-- console
-    |   |   |   |-- LogConsole.ts
-    |   |   |-- log4js
-    |   |   |   |-- log4js.ts
-    |   |   |   |-- Log4jsUtil.ts
-    |   |   |-- logDB
-    |   |       |-- LogDB.ts
+    |   |   |-- tables
+    |   |   |   |-- business
+    |   |   |   |   |-- TableShop.ts
+    |   |   |   |-- rbac
+    |   |   |       |-- TableResource.ts
+    |   |   |       |-- TableRole.ts
+    |   |   |       |-- TableUser.ts
+    |   |   |       |-- Table_role_resource.ts
+    |   |   |       |-- Table_user_role.ts
+    |   |   |-- views
+    |   |       |-- ViewPermission.ts
     |   |-- routes
     |   |   |-- controller
-    |   |   |   |-- IndexCtrl.ts
-    |   |   |   |-- RbacCtrl.ts
-    |   |   |   |-- UsersCtrl.ts
+    |   |   |   |-- rbacCtrl.ts
     |   |   |-- routers
     |   |       |-- index.ts
     |   |       |-- rbac.ts
-    |   |       |-- users.ts
+    |   |-- types
+    |   |   |-- types.ts
     |   |-- utils
+    |       |-- AntiUtil.ts
+    |       |-- AxiosUtil.ts
     |       |-- CaptchaUtil.ts
     |       |-- CryptoUtil.ts
-    |       |-- Excel2dbFormatUtil.ts
     |       |-- FileUtil.ts
     |       |-- JoiUtil.ts
     |       |-- JsUtil.ts
-    |       |-- MulterUtil.ts
     |       |-- NetUtil.ts
-    |       |-- Pm2FlushUtil.ts
+    |       |-- NodemailerUtil.ts
     |       |-- ResponseBeautifier.ts
     |       |-- token
     |           |-- JwtUtil.ts
@@ -150,5 +129,3 @@
     |               |-- private_key.pem
     |               |-- public_key.pem
     |-- static
-        |-- county.json
-        |-- mobileApp.pdman.json

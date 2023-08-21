@@ -1,5 +1,4 @@
-import {ICpcVersion, IKeyValue} from "../core/CpcInterface";
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 /**
  * js工具类
@@ -20,69 +19,70 @@ export class JsUtil {
      * @returns {moment.Moment}
      */
     public static moment(str: string) {
-        if (str.indexOf("/")) {
-            return moment(str, "YYYY/MM/DD HH:mm", true);
+        if (str.indexOf("/") !== -1) {
+            return dayjs(str, "YYYY/MM/DD HH:mm", true);
         } else {
-            return moment(str, true);
+            return dayjs(str);
         }
     }
 
     /**
-     * 根据唯一值field判断数据1中和数组2的内容差异性
-     * @param arr1 数组1
-     * @param arr2 数组2
-     * @param fields 用于判断唯一的字段名称数组
-     * @returns {{
-     *              meet: Array, 数组1和数组2中都存在
-     *              noMeet: Array, 只有数组1中存在
-     *              noMeet2:Array  只有数组2中存在
-     *           }}
+     * 过滤掉数组中的相同数据
+     * @param {any[]} arr 原始数组
+     * @param {string[]} fields 唯一标识的的字段数组
+     * @returns {any[]}
      */
-    public static splitArrayMeet(arr1: any, arr2: any, fields: string[]) {
-        const meet = [];
-        const noMeet = [];
-        let isMeet;
-        for (const item of arr1) {
-            isMeet = false;
-            for (const v of arr2) {
-                let isMeet2 = true;
-                for (const field of fields) {
-                    if (item[field] !== v[field]) {
-                        isMeet2 = false;
-                        break;
-                    }
-                }
-                if (isMeet2) {
-                    isMeet = true;
-                    break;
-                }
+    public static nodupArray(arr: any[], fields: string[]): any[] {
+        const cacheObj: any = {};
+        return arr.filter(item => {
+            let uuid = "";
+            for (const field of fields) {
+                uuid += item[field];
             }
-            if (isMeet) {
-                meet.push(item);
+            if (cacheObj[uuid] === true) {
+                return false
             } else {
-                noMeet.push(item);
+                cacheObj[uuid] = true;
+                return true
+            }
+        })
+    }
+
+
+    public static getQuery(url?: string) {
+        const result: any = {}
+        if (!url) {
+            return result;
+        }
+        const str = url.substring(url.indexOf('?') + 1)
+        const arr = str.split('&')
+        for (let i = 0; i < arr.length; i++) {
+            // item的两个元素分别为参数名和参数值
+            const item = arr[i].split('=')
+            result[item[0]] = decodeURIComponent(item[1]);
+        }
+        return result
+    }
+
+    public static findIndex(arr: any[], field: string, value: any) {
+        for (let i = 0; i < arr.length; i++) {
+            const item = arr[i];
+            if (item[field] === value) {
+                return i;
             }
         }
-        const noMeet2 = [];
-        for (const item of arr2) {
-            isMeet = false;
-            for (const v of meet) {
-                let isMeet2 = true;
-                for (const field of fields) {
-                    if (item[field] !== v[field]) {
-                        isMeet2 = false;
-                        break;
-                    }
-                }
-                if (isMeet2) {
-                    isMeet = true;
-                    break;
-                }
-            }
-            if (!isMeet) {
-                noMeet2.push(item);
-            }
-        }
-        return {meet, noMeet, noMeet2};
+        return -1;
+    }
+
+    public static getPrice(price: number, factor: number, limitLower: number, limitUpper: number) {
+        price = price + factor
+        price = Math.max(price, limitLower);
+        price = Math.min(price, limitUpper);
+        return price;
+    }
+    public static sleep(delay = 800) {
+        return new Promise(resolve => {
+           setTimeout(resolve, delay)
+        })
     }
 }
