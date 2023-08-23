@@ -1,4 +1,5 @@
 import {BaseTable} from "../../BaseTable";
+import {database} from "../../index";
 // 店铺信息表
 const table = {
     "id": "TEXT PRIMARY KEY UNIQUE NOT NULL",
@@ -26,7 +27,7 @@ class Table extends BaseTable<ITableShop> {
         if (userId !== "admin") {
             sql += ` WHERE t_user_role.userId = '${userId}'`
         }
-        return this.prepare(sql).all();
+        return database.prepare(sql).all();
     }
 }
 

@@ -28,80 +28,80 @@ class Table extends BaseTable<ITableUser> {
     }
 
     public findByLeftJoin(name?:string, page = 0, size = 10) {
-        const where = `where name like '%${name}%'`;
-        const countRes: any = this.prepare(this._count(where, "id")).get();
-        if (!countRes || countRes.count === 0) {
-            return {
-                total: 0,
-                data: []
-            }
-        }
-        const sql = `SELECT *, COALESCE((SELECT '[' || GROUP_CONCAT(JSON_OBJECT('id',id,'name',name)) || ']'
-                                FROM ${tableRole.tableName} AS t_role
-                                LEFT JOIN ${table_user_role.tableName} AS t_user_role ON t_role.id = t_user_role.roleId
-                                WHERE t_user_role.userId=t_user.id AND t_role.id IS NOT NULL
-                                ),'[]') AS roles
-                            FROM ${this.tableName} AS t_user
-                            ${where}
-                            ORDER BY updateTime DESC LIMIT ? OFFSET ?
-                   `
-        const data: any[] = this.prepare(sql).all(size, page * size);
-        data.forEach(item => item.roles = JSON.parse(item.roles))
-        return {
-            data: data,
-            total: countRes.count
-        }
+        // const where = `where name like '%${name}%'`;
+        // const countRes: any = this.prepare(this._count(where, "id")).get();
+        // if (!countRes || countRes.count === 0) {
+        //     return {
+        //         total: 0,
+        //         data: []
+        //     }
+        // }
+        // const sql = `SELECT *, COALESCE((SELECT '[' || GROUP_CONCAT(JSON_OBJECT('id',id,'name',name)) || ']'
+        //                         FROM ${tableRole.tableName} AS t_role
+        //                         LEFT JOIN ${table_user_role.tableName} AS t_user_role ON t_role.id = t_user_role.roleId
+        //                         WHERE t_user_role.userId=t_user.id AND t_role.id IS NOT NULL
+        //                         ),'[]') AS roles
+        //                     FROM ${this.tableName} AS t_user
+        //                     ${where}
+        //                     ORDER BY updateTime DESC LIMIT ? OFFSET ?
+        //            `
+        // const data: any[] = this.prepare(sql).all(size, page * size);
+        // data.forEach(item => item.roles = JSON.parse(item.roles))
+        // return {
+        //     data: data,
+        //     total: countRes.count
+        // }
     }
 
     public createUser(data: ITableUser){
-        this.transaction(() => {
-            const allowData = this.allowFields(data);
-            this.insert(allowData)
-            const roles = (data as any).roles;
-            if (roles && roles.length > 0) {
-                const items = roles.map((roleId: string) => ({
-                    "userId": data.id,
-                    "roleId": roleId,
-                }))
-                table_user_role.inserts(items)
-            }
-        })
+        // this.transaction(() => {
+        //     const allowData = this.allowFields(data);
+        //     this.insert(allowData)
+        //     const roles = (data as any).roles;
+        //     if (roles && roles.length > 0) {
+        //         const items = roles.map((roleId: string) => ({
+        //             "userId": data.id,
+        //             "roleId": roleId,
+        //         }))
+        //         table_user_role.inserts(items)
+        //     }
+        // })
     }
     public updateUser(data: ITableUser){
-        this.transaction(() => {
-            const allowData = this.allowFields(data, ["id", "shopId"], true);
-            this.update({id: data.id}, allowData);
-            //超级管理员拥有所有权限，不需要配置这个
-            if(data.id === "admin"){
-                return;
-            }
-            const roles = (data as any).roles;
-            table_user_role.delete({userId: data.id})
-            if (roles && roles.length > 0) {
-                const items = roles.map((roleId: string) => ({
-                    "userId": data.id,
-                    "roleId": roleId,
-                }))
-                table_user_role.inserts(items)
-            }
-        })
+        // this.transaction(() => {
+        //     const allowData = this.allowFields(data, ["id", "shopId"], true);
+        //     this.update({id: data.id}, allowData);
+        //     //超级管理员拥有所有权限，不需要配置这个
+        //     if(data.id === "admin"){
+        //         return;
+        //     }
+        //     const roles = (data as any).roles;
+        //     table_user_role.delete({userId: data.id})
+        //     if (roles && roles.length > 0) {
+        //         const items = roles.map((roleId: string) => ({
+        //             "userId": data.id,
+        //             "roleId": roleId,
+        //         }))
+        //         table_user_role.inserts(items)
+        //     }
+        // })
     }
     public delete2(id:string){
-        this.transaction(()=>{
-            this.delete({id});
-            table_user_role.delete({userId:id});
-        })
+        // this.transaction(()=>{
+        //     this.delete({id});
+        //     table_user_role.delete({userId:id});
+        // })
     }
 
     public findPermissions(where:string|ITableUser){
-        const sql = `SELECT DISTINCT permission.*
-                      FROM ${viewPermission.viewName} AS permission 
-                      LEFT  JOIN ${table_role_resource.tableName} AS roleResource ON permission.id = roleResource.resourceId
-                      LEFT  JOIN ${table_user_role.tableName} AS userRole ON userRole.roleId = roleResource.roleId
-                      LEFT  JOIN ${this.tableName} AS user ON user.id = userRole.userId
-                      ${this._where(where,"user.")}
-                   `
-        return this.prepare(sql).all();
+        // const sql = `SELECT DISTINCT permission.*
+        //               FROM ${viewPermission.viewName} AS permission
+        //               LEFT  JOIN ${table_role_resource.tableName} AS roleResource ON permission.id = roleResource.resourceId
+        //               LEFT  JOIN ${table_user_role.tableName} AS userRole ON userRole.roleId = roleResource.roleId
+        //               LEFT  JOIN ${this.tableName} AS user ON user.id = userRole.userId
+        //               ${this._where(where,"user.")}
+        //            `
+        // return this.prepare(sql).all();
     }
 
 }

@@ -10,7 +10,7 @@ export const rbacCtrl = {
     //用户登录
     async login(ctx: Context) {
         const body = ctx.request.body as ITableUser;
-        const user = tableUser.findOne({account: body.account, password: body.password}, undefined, ["id"]);
+        const user = tableUser.findOne(body, undefined, ["id"]);
         if (!user) {
             return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.badRequest, "账号或者密码错误!");
         }
@@ -21,13 +21,14 @@ export const rbacCtrl = {
     //获取用户信息
     async getUser(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
+        //超级管理员才有权限
         if(tokenInfo.id !== "admin"){
             return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
         }
-        const query = ctx.query as any;
-        const data = tableUser.findByLeftJoin(query.name, query.page, query.size);
-        data.data.forEach(item => item.password = "***");
-        ResponseBeautifier.success(ctx, data);
+        // const query = ctx.query as any;
+        // const data = tableUser.findByLeftJoin(query.name, query.page, query.size);
+        // data.data.forEach(item => item.password = "***");
+        // ResponseBeautifier.success(ctx, data);
     },
     //创建用户
     async postUser(ctx: Context) {
@@ -78,7 +79,7 @@ export const rbacCtrl = {
             return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
         }
         const query = ctx.query as any;
-        const where = tableRole.allowFields(query, undefined, undefined, false);
+        const where = tableRole.allowFields(query, undefined, undefined);
         const data = tableRole.findByLeftJoin(where, query.page, query.size);
         ResponseBeautifier.success(ctx, data);
     },
@@ -147,13 +148,13 @@ export const rbacCtrl = {
     },
     //获取自己的权限
     async getSelfPermission(ctx: Context) {
-        const tokenInfo: any = ctx.req.headers.token_info;
-        let permissions = [];
-        if (tokenInfo.id === "admin") {
-            permissions = viewPermission.find();
-        } else {
-            permissions = tableUser.findPermissions({id: tokenInfo.id});
-        }
-        ResponseBeautifier.success(ctx, permissions);
+        // const tokenInfo: any = ctx.req.headers.token_info;
+        // let permissions = [];
+        // if (tokenInfo.id === "admin") {
+        //     permissions = viewPermission.find();
+        // } else {
+        //     permissions = tableUser.findPermissions({id: tokenInfo.id});
+        // }
+        // ResponseBeautifier.success(ctx, permissions);
     }
 }
