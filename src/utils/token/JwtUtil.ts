@@ -1,9 +1,11 @@
-import {IReturnInfo, ResponseBeautifier, ResponseInfo} from "../ResponseBeautifier";
 import {Context, Next} from 'koa';
+import jsonwebtoken from 'jsonwebtoken';
+import {ResponseBeautifier} from "../ResponseBeautifier";
+import {EResponseCode, IResponse} from "../../types/types";
 
 const fs = require('fs');
 const path = require('path');
-import jsonwebtoken from 'jsonwebtoken';// JSON Web令牌签名和验证
+// JSON Web令牌签名和验证
 const cert_public = fs.readFileSync(path.join(__dirname, './pem/public_key.pem'));// 公钥 可以自己生成
 const cert_private = fs.readFileSync(path.join(__dirname, './pem/private_key.pem'));// 私钥 可以自己生成
 // 创建 token 类
@@ -28,47 +30,48 @@ export class JwtUtil {
     /**
      * 校验token
      * @param {string} token 需要验证的token
-     * @returns {Promise<IReturnInfo>}
+     * @returns {Promise<IResponse>}
      */
-    public static verifyToken(token?: string): Promise<IReturnInfo> {
-        return new Promise((resolve, reject) => {
-            if(!token){
-                return resolve({...ResponseInfo.tokenError, message: "token不能为空!"});
+    public static verifyToken(token?: string): Promise<IResponse> {
+        return new Promise((resolve) => {
+            if (!token) {
+                return resolve(ResponseBeautifier.format(EResponseCode.Unauthorized, "token不能为空!"));
             }
             jsonwebtoken.verify(token, cert_public, {algorithms: ['RS256']}, (error, data) => {
                 if (!error) {
-                    return resolve({...ResponseInfo.success, message: "验证通过", data});
+                    return resolve(ResponseBeautifier.format(EResponseCode.Success, undefined, data));
                 }
                 switch (error.name) {
                     case 'TokenExpiredError':// token过期错误
-                        return resolve({...ResponseInfo.tokenError, message: "token过期了"});
+                        return resolve(ResponseBeautifier.format(EResponseCode.Unauthorized, "token过期了!"));
                     case 'NotBeforeError':// 当前时间超过nbf的值时抛出该错误,一般是由于服务端修改了系统时间引起的
-                        return resolve({...ResponseInfo.tokenError, message: "token早于签发时间"});
+                        return resolve(ResponseBeautifier.format(EResponseCode.Unauthorized, "token早于签发时间!"));
                     case 'JsonWebTokenError':// 令牌有问题
-                        return resolve({...ResponseInfo.tokenError, message: "token被篡改"});
+                        return resolve(ResponseBeautifier.format(EResponseCode.Unauthorized, "token被篡改!"));
                     default:
-                        return resolve({...ResponseInfo.tokenError, message: "token解析到未知错误"});
+                        return resolve(ResponseBeautifier.format(EResponseCode.Unauthorized, "token解析到未知错误!"));
                 }
             });
         })
     }
 
     /**
-     * token验证中间件------将验证成功的信息放在了 ctx.req.headers.token_info
-     * @param {Koa.Context} ctx
-     * @param {Koa.Next} next
+     * token验证头部access_token中间件将验证成功的信息放在了 ctx.req.headers.token_info
+     * @param {Context} ctx
+     * @param {Next} next
      * @returns {Promise<any>}
      */
     public static async middleware(ctx: Context, next: Next) {
+        // 可以根据需求自行修改对应逻辑，比如需要path携带token等等
         const access_token = ctx.header.access_token;
         if (!access_token) {
-            return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.parameterError, "缺少token");
+            return ResponseBeautifier.response(ctx, EResponseCode.Unauthorized, "缺少token!");
         }
-        const info: IReturnInfo = await JwtUtil.verifyToken(access_token as string);
+        const info = await JwtUtil.verifyToken(access_token as string);
         if (info.code === 200) {
             ctx.req.headers.token_info = info.data;
             return next();
         }
-        ResponseBeautifier.response(ctx, info);
+        ctx.body = info;
     }
 }

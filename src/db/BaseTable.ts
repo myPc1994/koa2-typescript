@@ -31,7 +31,9 @@ function _updateTable(tableName: string, table: IKeyValue<string>, other?: strin
         // console.log(tableName, '表字段已经是最新的，无需更新');
     }
 }
-type TypeAction = IKeyValue<"="|"<>"|">"|"<"|">="|"<="|"IN"|"NOT IN"|"LIKE">
+
+type TypeAction = IKeyValue<"=" | "<>" | ">" | "<" | ">=" | "<=" | "IN" | "NOT IN" | "LIKE">
+
 export abstract class BaseTable<T extends IKeyValue<any>> {
     public tableName: string;//表名
     protected allFields: string[] = [];//表的所有字段
@@ -48,7 +50,7 @@ export abstract class BaseTable<T extends IKeyValue<any>> {
      * @param fields 允许的字段，不传，数据库表字段存在的全部都允许
      * @param isReverse 是否反向过滤
      */
-    public allowFields(data: T, fields?: string[], isReverse = false):T {
+    public allowFields(data: T, fields?: string[], isReverse = false, allowValue = [0, ""]): T {
         if (!fields) {
             fields = this.allFields
         } else if (isReverse) {
@@ -57,11 +59,20 @@ export abstract class BaseTable<T extends IKeyValue<any>> {
         const result: any = {};
         for (const field of fields) {
             const v = data[field];
-            if (v || v === 0 || v === '') {
+            if (v || allowValue.indexOf(v) !== -1) {
                 result[field] = data[field];
             }
         }
         return result;
+    }
+
+    public getFields(noField?: string[]) {
+        if (!noField) {
+            return this.allFields;
+        }
+        return this.allFields.filter(field => {
+            return noField.indexOf(field) === -1;
+        })
     }
 
     /**
@@ -71,48 +82,55 @@ export abstract class BaseTable<T extends IKeyValue<any>> {
      * @param action 不写的话默认使用=关联
      * @param ASName 带前缀别名   例如：ASName="A"需要转换为 A.id=1 and A.name=2
      */
-    public parseWhere(where?:T|T[],action?:TypeAction|TypeAction[],ASName=""){
-        if(!where){
-            return  ""
+    public parseWhere(where?: T | T[], action?: TypeAction | TypeAction[], ASName = "") {
+        if (!where) {
+            return ""
         }
-        let result = " WHERE ";
-        if(Array.isArray(where)){
-            if(!Array.isArray(action)){
+        let result = "";
+        if (Array.isArray(where)) {
+            if (!Array.isArray(action)) {
                 throw new Error("where是个数组，action也必须是个数组!");
             }
             const subAction = action || [];
-            result = where.map((item,index)=>this._parseWhere(item,subAction[index],ASName)).join("OR");
-        }else{
-            result = this._parseWhere(where,action as TypeAction,ASName);
+            result = where.map((item, index) => this._parseWhere(item, subAction[index], ASName)).join("OR");
+        } else {
+            result =  this._parseWhere(where, action as TypeAction, ASName);
         }
-        return result;
+        if(!result){
+            return "";
+        }
+        return " WHERE " + result;
     }
-    private _parseWhere(where:T,action:TypeAction={},ASName=""){
-        where = this.allowFields(where);
-        //TODO 安全考虑
+
+    private _parseWhere(where: T, action: TypeAction = {}, ASName = "") {
+        where = this.allowFields(where,undefined,undefined,[0]);
+        //TODO 后续需要安全考虑
         // const stmt = db.prepare('SELECT * FROM users WHERE username = :username');
         // const user = stmt.get({ username: 'example_user' });
-        return  Object.keys(where).map(field => {
+        return Object.keys(where).map(field => {
             const ac = action[field] || "=";
-            return `${ASName}${field}${ac}'${where[field]}'`
+            return `${ASName}${field} ${ac} '${where[field]}'`
         }).join(" AND ")
     }
+
     /**
      * 查询单个数据
      * @param where 条件
      * @param fields 返回的字段名
      */
-    public findOne(where?: T|T[],action?:TypeAction|TypeAction[], fields = ["*"]) {
-       return  database.prepare(`SELECT ${fields.join(",")} FROM ${this.tableName} ${this.parseWhere(where,action)}`).get() as T;
+    public findOne(where?: T | T[], action?: TypeAction | TypeAction[], fields = ["*"]) {
+        return database.prepare(`SELECT ${fields.join(",")} FROM ${this.tableName} ${this.parseWhere(where,action)}`).get() as T;
     }
+
     /**
      * 查询单个数据
      * @param where 条件
      * @param fields 返回的字段名
      */
-    public find(where?: T|T[],action?:TypeAction|TypeAction[], fields = ["*"]) {
-        return  database.prepare(`SELECT ${fields.join(",")} FROM ${this.tableName} ${this.parseWhere(where,action)}`).all() as T[];
+    public find(where?: T | T[], action?: TypeAction | TypeAction[], fields = ["*"]) {
+        return database.prepare(`SELECT ${fields.join(",")} FROM ${this.tableName} ${this.parseWhere(where,action)}`).all() as T[];
     }
+
     /**
      * 分页查询
      * @param orderBy 按什么排序
@@ -121,26 +139,26 @@ export abstract class BaseTable<T extends IKeyValue<any>> {
      * @param where 条件
      * @param fields 返回字段名
      */
-    public findByPage(orderBy?: string, page = 0, size = 10,where?:T|T[],action?:TypeAction|TypeAction[], fields = ["*"]) {
-        const filedsStr = fields.join(",");
-        const whereStr = this.parseWhere(where,action);
-        const countRes:any = database.prepare(`SELECT COUNT(${filedsStr}) AS count FROM ${this.tableName} ${whereStr}`).get();
+    public findByPage(orderBy?: string, page = 0, size = 10, where?: T | T[], action?: TypeAction | TypeAction[], fields = ["*"]) {
+        const whereStr = this.parseWhere(where, action);
+        const countRes: any = database.prepare(`SELECT COUNT(*) AS count FROM ${this.tableName} ${whereStr}`).get();
         if (!countRes || countRes.count === 0) {
             return {
                 total: 0,
                 data: []
             }
         }
-        let sql =  `SELECT ${filedsStr} FROM ${this.tableName} ${whereStr}`
+        let sql = `SELECT ${fields.join(",")} FROM ${this.tableName} ${whereStr}`
         if (orderBy) {
             sql += ` ORDER BY ${orderBy}`;
         }
         sql += " LIMIT ? OFFSET ?";
-        return  {
+        return {
             data: database.prepare(sql).all(size, page * size) as T[],
             total: countRes.count as number
         }
     }
+
     /**
      * 插入数据
      * @param data
@@ -156,12 +174,13 @@ export abstract class BaseTable<T extends IKeyValue<any>> {
      * @param where 条件
      * @param data 数据
      */
-    public update(where: T|T[], data: T) {
+    public update(where: T | T[], data: T) {
         data = this.allowFields(data);
         const updateField = Object.keys(data).map(field => `${field}=:${field}`).join(",")
-        const stmt = database.prepare( `UPDATE ${this.tableName} SET ${updateField} ${this.parseWhere(where)}`);
+        const stmt = database.prepare(`UPDATE ${this.tableName} SET ${updateField} ${this.parseWhere(where)}`);
         return stmt.run(data);
     }
+
     /**
      * 判断主键的值是否存在，不存在创建，存在更新
      * @param data
@@ -173,11 +192,12 @@ export abstract class BaseTable<T extends IKeyValue<any>> {
         const stmt = database.prepare(sql);
         return stmt.run(data);
     }
+
     /**
      * 删除数据
      * @param where 条件
      */
-    public delete(where?: T | T[],action?:TypeAction|TypeAction[],) {
+    public delete(where?: T | T[], action?: TypeAction | TypeAction[],) {
         const stmt = database.prepare(`DELETE FROM ${this.tableName} ${this.parseWhere(where,action)}`);
         return stmt.run();
     }

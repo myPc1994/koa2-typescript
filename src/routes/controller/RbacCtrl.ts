@@ -1,5 +1,5 @@
 import {Context} from "koa";
-import { ResponseBeautifier, ResponseInfo} from "../../utils/ResponseBeautifier";
+import {ResponseBeautifier} from "../../utils/ResponseBeautifier";
 import {ITableUser, tableUser} from "../../db/tables/rbac/TableUser";
 import {JwtUtil} from "../../utils/token/JwtUtil";
 import {ITableRole, tableRole} from "../../db/tables/rbac/TableRole";
@@ -12,120 +12,125 @@ export const rbacCtrl = {
         const body = ctx.request.body as ITableUser;
         const user = tableUser.findOne(body, undefined, ["id"]);
         if (!user) {
-            return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.badRequest, "账号或者密码错误!");
+            return ResponseBeautifier.BadRequest(ctx, "账号或者密码错误!");
         }
         const token = await JwtUtil.generateToken({id: user.id})
-        ResponseBeautifier.success(ctx, {token});
+        ResponseBeautifier.Success(ctx, {token});
     },
 
     //获取用户信息
     async getUser(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
         //超级管理员才有权限
-        if(tokenInfo.id !== "admin"){
-            return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
         }
-        // const query = ctx.query as any;
-        // const data = tableUser.findByLeftJoin(query.name, query.page, query.size);
-        // data.data.forEach(item => item.password = "***");
-        // ResponseBeautifier.success(ctx, data);
+        const query = ctx.query as any;
+        const fields = tableUser.getFields(["password"]);//不要输出密码
+        const data = tableUser.findByPage(undefined,
+            query.page,
+            query.size,
+            {name: `%${query.name}%`},
+            {name: "LIKE"}, fields);
+        ResponseBeautifier.Success(ctx, data);
     },
     //创建用户
     async postUser(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
-        if(tokenInfo.id !== "admin"){
-            return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
         }
         const body = ctx.request.body as ITableUser
-        body.id = v1()
-        tableUser.createUser(body);
-        ResponseBeautifier.success(ctx, null);
+        const userInfo = tableUser.findOne({account: body.account});
+        if (userInfo) {
+            return ResponseBeautifier.BadRequest(ctx, "账号已存在!");
+        }
+        body.id = v1();
+        tableUser.insert(body);
+        ResponseBeautifier.Success(ctx);
     },
     //修改用户
     async putUser(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
-        if(tokenInfo.id !== "admin"){
-            return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
         }
         const body = ctx.request.body as ITableUser
         const finRes = tableUser.findOne({id: body.id});
         if (!finRes) {
-            return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "数据库中不存在该id");
+            return ResponseBeautifier.BadRequest(ctx, "不存在该用户");
         }
-        // ‘***’ 是我的加密方式，不做修改，与返回的结果一一对应
-        if (body.password === "***") {
-            delete body.password;
-        }
-        tableUser.updateUser(body)
-        ResponseBeautifier.success(ctx, null);
+        delete body.account;//不允许修改账户名
+        tableUser.update({id: body.id}, body)
+        ResponseBeautifier.Success(ctx);
     },
     //删除用户
     async deleteUser(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
-        if(tokenInfo.id !== "admin"){
-            return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx);
         }
         const id = ctx.query.id as string;
         if (id === "admin") {
-            return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.badRequest, "超级管理员不允许删除")
+            return ResponseBeautifier.BadRequest(ctx, "超级管理员不允许删除")
         }
         tableUser.delete2(id)
-        ResponseBeautifier.success(ctx, null);
+        ResponseBeautifier.Success(ctx);
     },
     //获取角色列表
     async getRole(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
-        if(tokenInfo.id !== "admin"){
-            return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
         }
         const query = ctx.query as any;
         const where = tableRole.allowFields(query, undefined, undefined);
         const data = tableRole.findByLeftJoin(where, query.page, query.size);
-        ResponseBeautifier.success(ctx, data);
+        ResponseBeautifier.Success(ctx, data);
     },
     //创建角色
     async postRole(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
-        if(tokenInfo.id !== "admin"){
-            return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
         }
         const body = ctx.request.body as ITableRole;
         body.id = v1();
         tableRole.createRole(body);
-        ResponseBeautifier.success(ctx, null);
+        ResponseBeautifier.Success(ctx);
     },
     //修改角色
     async putRole(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
-        if(tokenInfo.id !== "admin"){
-            return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
         }
         const body = ctx.request.body as ITableRole;
         const finRes = tableRole.findOne({id: body.id});
         if (!finRes) {
-            return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "数据库中不存在该id");
+            return ResponseBeautifier.BadRequest(ctx, "不存在该角色");
         }
         tableRole.updateRole(body);
-        ResponseBeautifier.success(ctx, null);
+        ResponseBeautifier.Success(ctx);
     },
     //删除角色
     async deleteRole(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
-        if(tokenInfo.id !== "admin"){
-            return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
         }
         const id = ctx.query.id as string;
         tableRole.delete2(id)
-        ResponseBeautifier.success(ctx, null);
+        ResponseBeautifier.Success(ctx);
     },
     //获取权限列表
     async getPermission(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
-        if(tokenInfo.id !== "admin"){
-            return ResponseBeautifier.responseByStatus(ctx,ResponseInfo.permissionError)
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
         }
         const data = viewPermission.find();
-        ResponseBeautifier.success(ctx, data);
+        ResponseBeautifier.Success(ctx, data);
     },
 
     //获取自己的信息
@@ -133,7 +138,7 @@ export const rbacCtrl = {
         const tokenInfo: any = ctx.req.headers.token_info;
         const user = tableUser.findOne({id: tokenInfo.id}) as ITableUser;
         user.password = "***";
-        ResponseBeautifier.success(ctx, user);
+        ResponseBeautifier.Success(ctx, user);
     },
     //修改自己的信息
     async putSelfUser(ctx: Context) {
@@ -144,7 +149,7 @@ export const rbacCtrl = {
         }
         const tokenInfo: any = ctx.req.headers.token_info;
         tableUser.update({id: tokenInfo.id}, updateData);
-        ResponseBeautifier.success(ctx, null);
+        ResponseBeautifier.Success(ctx, null);
     },
     //获取自己的权限
     async getSelfPermission(ctx: Context) {

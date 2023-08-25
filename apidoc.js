@@ -1,3 +1,4 @@
+/* eslint-disable */
 const path = require("path");
 const apidoc = require("apidoc");
 const fs = require('fs');

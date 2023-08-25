@@ -21,7 +21,7 @@ class Table extends BaseTable<ITableUser> {
        this.insertOrUpdate({
            id:"admin",
            account:"admin",
-           password:"8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",//admin
+           password:"admin",
            name:"超级管理员",
            description:"权限最高拥有者",
        })
@@ -52,41 +52,8 @@ class Table extends BaseTable<ITableUser> {
         //     total: countRes.count
         // }
     }
-
-    public createUser(data: ITableUser){
-        // this.transaction(() => {
-        //     const allowData = this.allowFields(data);
-        //     this.insert(allowData)
-        //     const roles = (data as any).roles;
-        //     if (roles && roles.length > 0) {
-        //         const items = roles.map((roleId: string) => ({
-        //             "userId": data.id,
-        //             "roleId": roleId,
-        //         }))
-        //         table_user_role.inserts(items)
-        //     }
-        // })
-    }
-    public updateUser(data: ITableUser){
-        // this.transaction(() => {
-        //     const allowData = this.allowFields(data, ["id", "shopId"], true);
-        //     this.update({id: data.id}, allowData);
-        //     //超级管理员拥有所有权限，不需要配置这个
-        //     if(data.id === "admin"){
-        //         return;
-        //     }
-        //     const roles = (data as any).roles;
-        //     table_user_role.delete({userId: data.id})
-        //     if (roles && roles.length > 0) {
-        //         const items = roles.map((roleId: string) => ({
-        //             "userId": data.id,
-        //             "roleId": roleId,
-        //         }))
-        //         table_user_role.inserts(items)
-        //     }
-        // })
-    }
     public delete2(id:string){
+        console.error("还没写")
         // this.transaction(()=>{
         //     this.delete({id});
         //     table_user_role.delete({userId:id});

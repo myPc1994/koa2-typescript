@@ -9,7 +9,7 @@ function connectDb(): BetterSqlite3.Database {
         options.verbose = console.log
     }
     try {
-        const directoryPath = path.join(__dirname, '../../public/db');
+        const directoryPath = path.join(__dirname, '../../db');
         const dbPath = path.join(directoryPath, 'database.db');
         fs.mkdirSync(directoryPath, {recursive: true});
         db = new BetterSqlite3(dbPath, options)

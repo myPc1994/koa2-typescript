@@ -1,8 +1,11 @@
 import Joi, {AnySchema} from 'joi'
 import {Context, Next} from 'koa';
-import {ResponseBeautifier, ResponseInfo} from "./ResponseBeautifier";
 import {IKeyValue} from "../types/types";
+import {ResponseBeautifier} from "./ResponseBeautifier";
 
+/**
+ * JOI工具类
+ */
 export class JoiUtil {
     /**
      * joi参数识别的中间件
@@ -14,10 +17,6 @@ export class JoiUtil {
      *                                       auto：默认的，get|delete方式使用query，其他使用body解析
      */
     public static middleware(schema: Joi.Schema, method: "query" | "body" | "auto" = "auto") {
-        // Joi.object({
-        //     engine: Joi.string().valid("bdMap", "aMap").required().error(new Error('只能填写引擎:dbMap|aMap')),
-        //     types: Joi.string().required()
-        // })
         return async function (ctx: Context, next: Next) {
             let parameName: "query" | "body";
             if (method === "auto") {
@@ -33,7 +32,7 @@ export class JoiUtil {
             const data = ctx.request[parameName];
             const {error} = schema.validate(data);
             if (error) {
-                return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.parameterError, error.message);
+                return ResponseBeautifier.BadRequest(ctx, error.message);
             }
             return next();
         };
@@ -49,25 +48,7 @@ export class JoiUtil {
      *                                      auto：默认的，get|delete方式使用query，其他使用body解析
      */
     public static middlewareByObject(obj: IKeyValue<AnySchema>, method: "query" | "body" | "auto" = "auto") {
-        const schema = Joi.object(obj).options({ allowUnknown: true });
-        return async function (ctx: Context, next: Next) {
-            let parameName: "query" | "body";
-            if (method === "auto") {
-                const methodType: string = ctx.method.toLocaleLowerCase();
-                if (methodType === "get" || methodType == "delete") {
-                    parameName = "query";
-                } else {
-                    parameName = "body";
-                }
-            } else {
-                parameName = method;
-            }
-            const data = ctx.request[parameName];
-            const {error} = schema.validate(data);
-            if (error) {
-                return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.parameterError, error.message);
-            }
-            return next();
-        };
+        const schema = Joi.object(obj).options({allowUnknown: true});
+        return this.middleware(schema,method)
     }
 }

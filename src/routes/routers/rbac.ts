@@ -5,18 +5,42 @@ import {rbacCtrl} from "../controller/rbacCtrl";
 import {JwtUtil} from "../../utils/token/JwtUtil";
 
 const router = new Router({prefix: "/rbac"});
-//登录
+/**
+ * @api {post} /rbac/login 用户-登录
+ * @apiGroup rbac
+ * @apiParam {String} account 用户名
+ * @apiParam {String}  password 密码
+ * @apiUse responseCodeMsg
+ */
 router.post("/login", JoiUtil.middlewareByObject({
-        account: Joi.string().required(),
-        password: Joi.string().required()
+        account: Joi.string().required().error(new Error("账号必填")),
+        password: Joi.string().required().error(new Error("密码必填"))
     }
 ), rbacCtrl.login);
-//获取用户信息
+/**
+ * @api {get} /rbac/user 用户-获取
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} name 用户名
+ * @apiUse apiParamPage
+ * @apiUse responseCodeMsg
+ */
 router.get("/user", JoiUtil.middlewareByObject({
         name: Joi.string().optional().allow("", null),
     }
 ), JwtUtil.middleware, rbacCtrl.getUser);
-//创建用户
+/**
+ * @api {post} /rbac/user 用户-创建
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} account 用户名
+ * @apiParam {String}  password 密码
+ * @apiParam {String}  [name] 昵称
+ * @apiParam {String}  [description] 描述
+ * @apiUse responseCodeMsg
+ */
 router.post("/user", JoiUtil.middlewareByObject({
         account: Joi.string().required(),
         password: Joi.string().required(),
@@ -24,25 +48,58 @@ router.post("/user", JoiUtil.middlewareByObject({
         description: Joi.string().optional().allow("", null),
     }
 ), JwtUtil.middleware, rbacCtrl.postUser);
-//更新用户信息
+/**
+ * @api {put} /rbac/user 用户-更新
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} id 用户id
+ * @apiParam {String}  [password] 密码
+ * @apiParam {String}  [name] 昵称
+ * @apiParam {String}  [description] 描述
+ * @apiUse responseCodeMsg
+ */
 router.put("/user", JoiUtil.middlewareByObject({
         id: Joi.string().required(),
-        account: Joi.string().optional().allow("", null),
         password: Joi.string().optional().allow("", null),
         name: Joi.string().optional().allow("", null),
         description: Joi.string().optional().allow("", null),
     }
 ),  JwtUtil.middleware,rbacCtrl.putUser);
-//删除用户
+/**
+ * @api {delete} /rbac/user 用户-删除
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} id 用户id
+ * @apiUse responseCodeMsg
+ */
 router.delete("/user", JoiUtil.middlewareByObject({
         id: Joi.string().required(),
     }
 ), JwtUtil.middleware, rbacCtrl.deleteUser);
-//角色的增删改查
+/**
+ * @api {get} /rbac/role 角色-获取
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} [name] 角色名称
+ * @apiUse apiParamPage
+ * @apiUse responseCodeMsg
+ */
 router.get("/role", JoiUtil.middlewareByObject({
         name: Joi.string().optional().allow("", null),
     }
 ), JwtUtil.middleware, rbacCtrl.getRole);
+/**
+ * @api {post} /rbac/role 角色-创建
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} [name] 角色名称
+ * @apiParam {String} [description] 角色描述
+ * @apiUse responseCodeMsg
+ */
 router.post("/role", JoiUtil.middlewareByObject({
         name: Joi.string().optional().allow("", null),
         description: Joi.string().optional().allow("", null),
