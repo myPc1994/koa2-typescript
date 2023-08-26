@@ -2,8 +2,9 @@
  * 定义统一的{key:value}格式
  */
 export interface IKeyValue<T> {
-    [key: string|number]: T
+    [key: string | number]: T
 }
+
 
 /**
  * 枚举所有的返回状态码，与EResponseMsg消息一一对应，如果没有自定义提示信息，将使用这里面的
@@ -27,6 +28,7 @@ export const ResponseCodeToMsg: Record<EResponseCode, string> = {
     [EResponseCode.TooManyRequests]: "请求过多",
     [EResponseCode.InternalServerError]: "服务器内部错误",
 };
+
 export interface IResponse {
     code: number,
     msg?: string,

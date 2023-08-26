@@ -8,10 +8,12 @@ const router = new Router({prefix: "/"});
  * @apiDefine responseCodeMsg 请求结果的基础格式
  * @apiSuccess {Number} code 状态码
  * @apiSuccess {String} message 状态码说明
+ * @apiSuccess {Any} data 具体数据内容
  * @apiSuccessExample  {json} Success:
  *      {
  *        "code": 200,
  *        "msg": "请求成功",
+ *        "data": null,
  *      }
  * @apiErrorExample  {json} BadRequest:
  *      {
@@ -52,7 +54,7 @@ const router = new Router({prefix: "/"});
 
 
 /**
- * @api {get} / 初始页面
+ * @api {get} / 请求参数和返回参数的模板页面
  * @apiVersion 0.0.0
  * @apiGroup index
  * @apiUse responseCodeMsg

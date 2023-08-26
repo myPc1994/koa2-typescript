@@ -1,33 +1,32 @@
 import {BaseTable} from "../../BaseTable";
 import {table_user_role} from "./Table_user_role";
-import {tableRole} from "./TableRole";
-import {viewPermission} from "../../views/ViewPermission";
-import {table_role_resource} from "./Table_role_resource";
+import {database} from "../../index";
 // 用户表
 const table = {
     "id": "TEXT PRIMARY KEY UNIQUE NOT NULL",//id
-    "account":"TEXT NOT NULL",//账号
-    "password":"TEXT NOT NULL",//密码
-    "name":"TEXT",//名称
+    "account": "TEXT NOT NULL",//账号
+    "password": "TEXT NOT NULL",//密码
+    "name": "TEXT",//名称
     "description": "TEXT ",// 描述
 }
 export type ITableUser = {
     [key in keyof typeof table]?: any
 }
+
 class Table extends BaseTable<ITableUser> {
     constructor(tableName: string) {
         super(tableName, table);
         // 如果不存在超级管理员，就插入一个
-       this.insertOrUpdate({
-           id:"admin",
-           account:"admin",
-           password:"admin",
-           name:"超级管理员",
-           description:"权限最高拥有者",
-       })
+        this.insertOrUpdate({
+            id: "admin",
+            account: "admin",
+            password: "admin",
+            name: "超级管理员",
+            description: "权限最高拥有者",
+        })
     }
 
-    public findByLeftJoin(name?:string, page = 0, size = 10) {
+    public findByLeftJoin(name?: string, page = 0, size = 10) {
         // const where = `where name like '%${name}%'`;
         // const countRes: any = this.prepare(this._count(where, "id")).get();
         // if (!countRes || countRes.count === 0) {
@@ -52,23 +51,12 @@ class Table extends BaseTable<ITableUser> {
         //     total: countRes.count
         // }
     }
-    public delete2(id:string){
-        console.error("还没写")
-        // this.transaction(()=>{
-        //     this.delete({id});
-        //     table_user_role.delete({userId:id});
-        // })
-    }
 
-    public findPermissions(where:string|ITableUser){
-        // const sql = `SELECT DISTINCT permission.*
-        //               FROM ${viewPermission.viewName} AS permission
-        //               LEFT  JOIN ${table_role_resource.tableName} AS roleResource ON permission.id = roleResource.resourceId
-        //               LEFT  JOIN ${table_user_role.tableName} AS userRole ON userRole.roleId = roleResource.roleId
-        //               LEFT  JOIN ${this.tableName} AS user ON user.id = userRole.userId
-        //               ${this._where(where,"user.")}
-        //            `
-        // return this.prepare(sql).all();
+    public delete2(id: string) {
+        database.transaction(() => {
+            this.delete({id}, "WHERE id=:id");
+            table_user_role.delete({userId: id}, "WHERE userId=:userId");
+        })
     }
 
 }

@@ -1,4 +1,6 @@
 import {BaseTable} from "../../BaseTable";
+import {database} from "../../index";
+import {table_role_resource} from "./Table_role_resource";
 // 资源表
 const table = {
     "id": "TEXT PRIMARY KEY UNIQUE NOT NULL",//id
@@ -15,6 +17,12 @@ class Table extends BaseTable<ITableResource> {
         super(tableName, table);
     }
 
+    delete2(id: string) {
+        database.transaction(() => {
+            this.delete({id}, "WHERE id=:id");
+            table_role_resource.delete({resourceId: id}, "WHERE resourceId=:resourceId");
+        })
+    }
 }
 
 export const tableResource = new Table("tableResource");
