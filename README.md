@@ -6,7 +6,8 @@
 
 > 开发语言：Nodejs、TypeScript
 
-> 数 据 库：Sqlite3
+> 数 据 库：Sqlite3 (选择原因：1、安装简单；2、占用小；)
+
 >  数据库操作插件：better-sqlite3
 
 > token生成与验证：jsonwebtoken
