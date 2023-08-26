@@ -11,7 +11,7 @@ export const rbacCtrl = {
     //用户登录
     async login(ctx: Context) {
         const body = ctx.request.body as ITableUser;
-        const user = tableUser.findOne(body, undefined, ["id"]);
+        const user = tableUser.findOne(body, "WHERE account=:account AND password=:password", ["id"]);
         if (!user) {
             return ResponseBeautifier.BadRequest(ctx, "账号或者密码错误!");
         }
@@ -28,7 +28,7 @@ export const rbacCtrl = {
         }
         const query = ctx.query as any;
         const fields = tableUser.getFields(["password"]);//不要输出密码
-        const data = tableUser.findByPage(query,"WHERE name LIKE '%' || :name || '%'",fields);
+        const data = tableUser.findByPage(query, "WHERE name LIKE '%' || :name || '%'", fields);
         ResponseBeautifier.Success(ctx, data);
     },
     //创建用户
@@ -38,7 +38,7 @@ export const rbacCtrl = {
             return ResponseBeautifier.Forbidden(ctx)
         }
         const body = ctx.request.body as ITableUser
-        const userInfo = tableUser.findOne({account: body.account});
+        const userInfo = tableUser.findOne({account: body.account}, "WHERE account=:account");
         if (userInfo) {
             return ResponseBeautifier.BadRequest(ctx, "账号已存在!");
         }
@@ -53,7 +53,7 @@ export const rbacCtrl = {
             return ResponseBeautifier.Forbidden(ctx)
         }
         const body = ctx.request.body as ITableUser
-        const finRes = tableUser.findOne({id: body.id});
+        const finRes = tableUser.findOne(body, "WHERE id=:id");
         if (!finRes) {
             return ResponseBeautifier.BadRequest(ctx, "不存在该用户");
         }
@@ -81,7 +81,7 @@ export const rbacCtrl = {
             return ResponseBeautifier.Forbidden(ctx)
         }
         const query = ctx.query as any;
-        const data = tableRole.findByPage(query,"WHERE name LIKE '%' || :name || '%'");
+        const data = tableRole.findByPage(query, "WHERE name LIKE '%' || :name || '%'");
         ResponseBeautifier.Success(ctx, data);
     },
     //创建角色
@@ -102,7 +102,7 @@ export const rbacCtrl = {
             return ResponseBeautifier.Forbidden(ctx)
         }
         const body = ctx.request.body as ITableRole;
-        const finRes = tableRole.findOne({id: body.id});
+        const finRes = tableRole.findOne(body, "WHERE id=:id");
         if (!finRes) {
             return ResponseBeautifier.BadRequest(ctx, "不存在该角色");
         }
@@ -127,7 +127,7 @@ export const rbacCtrl = {
         }
         const query = ctx.query as any;
         query.name = query.name || "";
-        const data = tableResource.findByPage(query,"WHERE name LIKE '%' || :name || '%'");
+        const data = tableResource.findByPage(query, "WHERE name LIKE '%' || :name || '%'");
         ResponseBeautifier.Success(ctx, data);
     },
     //创建资源
@@ -148,7 +148,7 @@ export const rbacCtrl = {
             return ResponseBeautifier.Forbidden(ctx)
         }
         const body = ctx.request.body as ITableResource;
-        const finRes = tableResource.findOne({id: body.id});
+        const finRes = tableResource.findOne(body, "WHERE id=:id");
         if (!finRes) {
             return ResponseBeautifier.BadRequest(ctx, "不存在该资源");
         }
@@ -179,14 +179,14 @@ export const rbacCtrl = {
     async getSelfUser(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
         const fields = tableUser.getFields(["password"]);//不要输出密码
-        const user = tableUser.findOne({id: tokenInfo.id}, undefined, fields);
+        const user = tableUser.findOne(tokenInfo, "WHERE id=:id", fields);
         ResponseBeautifier.Success(ctx, user);
     },
     //修改自己的信息
     async putSelfUser(ctx: Context) {
         const body = ctx.request.body as ITableUser
         const tokenInfo: any = ctx.req.headers.token_info;
-        delete body.id;
+        body.id = tokenInfo.id;
         delete body.password;
         tableUser.update(body, "WHERE id=:id");
         ResponseBeautifier.Success(ctx, null);
