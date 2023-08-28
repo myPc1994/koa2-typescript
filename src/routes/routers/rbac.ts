@@ -138,7 +138,7 @@ router.get("/resource", JoiUtil.middlewareByObject({
     }
 ), JwtUtil.middleware, rbacCtrl.getResource);
 /**
- * @api {post} /rbac/permission 资源-创建
+ * @api {post} /rbac/resource 资源-创建
  * @apiGroup rbac
  * @apiPermission admin
  * @apiHeader {String} access_token 授权token
@@ -153,7 +153,7 @@ router.post("/resource", JoiUtil.middlewareByObject({
     }
 ), JwtUtil.middleware, rbacCtrl.postResource);
 /**
- * @api {put} /rbac/permission 资源-更新
+ * @api {put} /rbac/resource 资源-更新
  * @apiGroup rbac
  * @apiPermission admin
  * @apiHeader {String} access_token 授权token
@@ -170,7 +170,7 @@ router.put("/resource", JoiUtil.middlewareByObject({
     }
 ), JwtUtil.middleware, rbacCtrl.putResource);
 /**
- * @api {delete} /rbac/permission?id=:id 资源-删除
+ * @api {delete} /rbac/resource?id=:id 资源-删除
  * @apiGroup rbac
  * @apiPermission admin
  * @apiHeader {String} access_token 授权token
@@ -188,6 +188,58 @@ router.delete("/resource", JoiUtil.middlewareByObject({
  * @apiUse apiParamPage
  */
 router.get("/permission", JwtUtil.middleware, rbacCtrl.getPermission);
+/**
+ * @api {get} /rbac/bindUserRole 绑定（用户-角色）
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} id 用户id
+ * @apiParam {Array} roles 角色id数组
+ */
+router.post("/bindUserRoles", JoiUtil.middlewareByObject({
+        id: Joi.string().required(),
+        roles: Joi.array().items(Joi.string()).required(),
+    }
+), JwtUtil.middleware, rbacCtrl.bindUserRoles);
+/**
+ * @api {get} /rbac/bindRoleUsers 绑定（角色-用户）
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} id 用户id
+ * @apiParam {Array} users 用户id数组
+ */
+router.post("/bindRoleUsers", JoiUtil.middlewareByObject({
+        id: Joi.string().required(),
+        users: Joi.array().items(Joi.string()).required(),
+    }
+), JwtUtil.middleware, rbacCtrl.bindRoleUsers);
+/**
+ * @api {get} /rbac/bindRoleResources 绑定（角色-资源）
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} id 用户id
+ * @apiParam {Array} resources 角色id数组
+ */
+router.post("/bindRoleResources", JoiUtil.middlewareByObject({
+        id: Joi.string().required(),
+        resources: Joi.array().items(Joi.string()).required(),
+    }
+), JwtUtil.middleware, rbacCtrl.bindRoleResources);
+/**
+ * @api {get} /rbac/bindResourceRoles 绑定（资源-角色）
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} id 用户id
+ * @apiParam {Array} roles 角色id数组
+ */
+router.post("/bindResourceRoles", JoiUtil.middlewareByObject({
+        id: Joi.string().required(),
+        roles: Joi.array().items(Joi.string()).required(),
+    }
+), JwtUtil.middleware, rbacCtrl.bindResourceRoles);
 /**
  * @api {get} /rbac/selfUser 个人-获取自己的信息
  * @apiGroup rbac

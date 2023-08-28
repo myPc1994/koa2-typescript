@@ -19,6 +19,9 @@ export enum EResponseCode {
     InternalServerError = 500,
 }
 
+/**
+ * 状态码对应的默认提示信息
+ */
 export const ResponseCodeToMsg: Record<EResponseCode, string> = {
     [EResponseCode.Success]: "请求成功",
     [EResponseCode.BadRequest]: "请求无效",
@@ -29,6 +32,9 @@ export const ResponseCodeToMsg: Record<EResponseCode, string> = {
     [EResponseCode.InternalServerError]: "服务器内部错误",
 };
 
+/**
+ * 统一返回
+ */
 export interface IResponse {
     code: number,
     msg?: string,

@@ -76,7 +76,8 @@ export abstract class BaseTable<T extends IKeyValue<any>> {
         }
         const result: any = data || {};
         new Set(str.matchAll(/:(\w+)/g)).forEach(match => {
-            result[match[1]] = defV
+            const field = match[1];
+            result[field] = (data as any)[field] || defV;
         })
         return result;
     }
@@ -160,6 +161,18 @@ export abstract class BaseTable<T extends IKeyValue<any>> {
         data = this.allowFields(data);
         const keys = Object.keys(data);
         return database.prepare(`INSERT INTO ${this.tableName} (${keys.join(",")}) VALUES (${keys.map(field=>`:${field}`).join(",")})`).run(data);
+    }
+
+    /**
+     * 批量插入数据
+     * @param datas 数据
+     */
+    public inserts(datas: T[]) {
+        database.transaction(() => {
+            for (const data of datas) {
+                this.insert(data);
+            }
+        })();
     }
 
     /**

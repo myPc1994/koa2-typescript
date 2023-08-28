@@ -52,11 +52,18 @@ class Table extends BaseTable<ITableUser> {
         // }
     }
 
-    public delete2(id: string) {
+    public bindRoles(id: string, roles: string[]) {
         database.transaction(() => {
+            table_user_role.delete({userId: id}, "WHERE userId=:userId");
+            table_user_role.inserts(roles.map(roleId => ({userId: id, roleId})))
+        })()
+    }
+
+    public delete2(id: string) {
+        return database.transaction(() => {
             this.delete({id}, "WHERE id=:id");
             table_user_role.delete({userId: id}, "WHERE userId=:userId");
-        })
+        })();
     }
 
 }

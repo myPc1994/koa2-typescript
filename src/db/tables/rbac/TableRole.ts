@@ -1,7 +1,5 @@
 import {BaseTable} from "../../BaseTable";
 import {table_role_resource} from "./Table_role_resource";
-import {tableResource} from "./TableResource";
-import {viewPermission} from "../../views/ViewPermission";
 import {table_user_role} from "./Table_user_role";
 import {database} from "../../index";
 // 角色表
@@ -44,14 +42,24 @@ class Table extends BaseTable<ITableRole> {
         //     total: countRes.count
         // }
     }
-
-
+    public bindUsers(id: string, users: string[]) {
+        database.transaction(() => {
+            table_user_role.delete({roleId: id}, "WHERE roleId=:roleId");
+            table_user_role.inserts(users.map(userId => ({roleId: id, userId})))
+        })()
+    }
+    public bindResources(id: string, resources: string[]) {
+        database.transaction(() => {
+            table_role_resource.delete({roleId: id}, "WHERE roleId=:roleId");
+            table_role_resource.inserts(resources.map(resourceId => ({roleId: id, resourceId})))
+        })()
+    }
     public delete2(id: string) {
         database.transaction(() => {
             this.delete({id},"WHERE id=:id");
             table_role_resource.delete({roleId: id},"WHERE roleId=:roleId");
             table_user_role.delete({roleId: id},"WHERE roleId=:roleId");
-        })
+        })()
     }
 }
 

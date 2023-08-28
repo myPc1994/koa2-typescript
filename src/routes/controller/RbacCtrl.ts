@@ -175,6 +175,57 @@ export const rbacCtrl = {
         const data = viewPermission.find();
         ResponseBeautifier.Success(ctx, data);
     },
+    // 绑定（用户-角色）
+    async bindUserRoles(ctx: Context) {
+        const tokenInfo: any = ctx.req.headers.token_info;
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
+        const {id, roles} = ctx.request.body as { id: string, roles: string[] };
+        if(id === "admin"){
+            return ResponseBeautifier.BadRequest(ctx, "超级管理员无法绑定角色");
+        }
+        const finRes = tableUser.findOne({id}, "WHERE id=:id");
+        if (!finRes) {
+            return ResponseBeautifier.BadRequest(ctx, "不存在该用户");
+        }
+        tableUser.bindRoles(id, roles);
+        ResponseBeautifier.Success(ctx);
+    },
+    // 绑定（角色-用户）
+    async bindRoleUsers(ctx: Context) {
+        const tokenInfo: any = ctx.req.headers.token_info;
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
+        const {id, users} = ctx.request.body as { id: string, users: string[] };
+        const admins = users.filter(id=>id==="admin");
+        if(admins.length > 0){
+            return ResponseBeautifier.BadRequest(ctx, "角色无法绑定超级管理员");
+        }
+        tableRole.bindUsers(id, users);
+        ResponseBeautifier.Success(ctx);
+    },
+    // 绑定（角色-资源）
+    async bindRoleResources(ctx: Context) {
+        const tokenInfo: any = ctx.req.headers.token_info;
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
+        const {id, resources} = ctx.request.body as { id: string, resources: string[] };
+        tableRole.bindResources(id, resources);
+        ResponseBeautifier.Success(ctx);
+    },
+    // 绑定（资源-角色）
+    async bindResourceRoles(ctx: Context) {
+        const tokenInfo: any = ctx.req.headers.token_info;
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
+        const {id, roles} = ctx.request.body as { id: string, roles: string[] };
+        tableResource.bindRoles(id, roles);
+        ResponseBeautifier.Success(ctx);
+    },
     //获取自己的信息
     async getSelfUser(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;

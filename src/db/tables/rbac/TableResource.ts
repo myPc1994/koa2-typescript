@@ -16,12 +16,17 @@ class Table extends BaseTable<ITableResource> {
     constructor(tableName: string) {
         super(tableName, table);
     }
-
+    public bindRoles(id: string, roles: string[]) {
+        database.transaction(() => {
+            table_role_resource.delete({resourceId: id}, "WHERE userId=:userId");
+            table_role_resource.inserts(roles.map(roleId => ({resourceId: id, roleId})))
+        })()
+    }
     delete2(id: string) {
         database.transaction(() => {
             this.delete({id}, "WHERE id=:id");
             table_role_resource.delete({resourceId: id}, "WHERE resourceId=:resourceId");
-        })
+        })()
     }
 }
 
