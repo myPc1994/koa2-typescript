@@ -19,13 +19,23 @@ export class ResponseBeautifier {
     /**
      * 返回结果
      * @param ctx koa的上下文对象
+     * @param body 返回结果
+     */
+    public static responseByFormat(ctx: Context, body: IResponse) {
+        ctx.body = body
+    }
+
+    /**
+     * 返回结果
+     * @param ctx koa的上下文对象
      * @param code 状态码
      * @param data 数据
      * @param message 自定义的提示信息
      */
     public static response(ctx: Context, code: EResponseCode, message?: string, data?: any) {
-        ctx.body = this.format(code, message,data)
+        this.responseByFormat(ctx, this.format(code, message, data))
     }
+
 
     /**
      * 处理成功，状态码为200

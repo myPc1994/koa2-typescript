@@ -1,20 +1,14 @@
 import {database} from "./index";
 import {IKeyValue} from "../types/types";
+import {Base} from "./Base";
 
-export abstract class BaseView<T extends IKeyValue<any>> {
-    public viewName: string;
-
-    constructor(viewName: string, sql: string) {
-        this.viewName = viewName;
+export abstract class BaseView<T extends IKeyValue<any>> extends Base<T>{
+    constructor(name: string, fieldInfo:T,sql: string) {
+        super(name,fieldInfo);
         database.exec(`
         -- 删除视图（如果存在）
-        DROP VIEW IF EXISTS ${this.viewName};
+        DROP VIEW IF EXISTS ${name};
         -- 创建视图
-        CREATE VIEW ${this.viewName} AS ${sql}`);
+        CREATE VIEW ${name} AS ${sql}`);
     }
-
-    public find(where = '', fields = ["*"]) {
-        return database.prepare(`SELECT ${fields.join(",")} FROM ${this.viewName} ${where}`).all() as T[];
-    }
-
 }

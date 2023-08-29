@@ -6,6 +6,7 @@ import {ITableRole, tableRole} from "../../db/tables/rbac/TableRole";
 import {v1} from "uuid";
 import {viewPermission} from "../../db/views/ViewPermission";
 import {ITableResource, tableResource} from "../../db/tables/rbac/TableResource";
+import {EResponseCode} from "../../types/types";
 
 export const rbacCtrl = {
     //用户登录
@@ -26,7 +27,7 @@ export const rbacCtrl = {
         if (tokenInfo.id !== "admin") {
             return ResponseBeautifier.Forbidden(ctx)
         }
-        const query = ctx.query as any;
+        const query = ctx.query as { name?: string, page?: number, size?: number };
         const fields = tableUser.getFields(["password"]);//不要输出密码
         const data = tableUser.findByPage(query, "WHERE name LIKE '%' || :name || '%'", fields);
         ResponseBeautifier.Success(ctx, data);
@@ -38,7 +39,7 @@ export const rbacCtrl = {
             return ResponseBeautifier.Forbidden(ctx)
         }
         const body = ctx.request.body as ITableUser
-        const userInfo = tableUser.findOne({account: body.account}, "WHERE account=:account");
+        const userInfo = tableUser.findOne({account: body.account}, "WHERE account=:account", ["id"]);
         if (userInfo) {
             return ResponseBeautifier.BadRequest(ctx, "账号已存在!");
         }
@@ -53,7 +54,7 @@ export const rbacCtrl = {
             return ResponseBeautifier.Forbidden(ctx)
         }
         const body = ctx.request.body as ITableUser
-        const finRes = tableUser.findOne(body, "WHERE id=:id");
+        const finRes = tableUser.findOne(body, "WHERE id=:id", ["id"]);
         if (!finRes) {
             return ResponseBeautifier.BadRequest(ctx, "不存在该用户");
         }
@@ -80,7 +81,7 @@ export const rbacCtrl = {
         if (tokenInfo.id !== "admin") {
             return ResponseBeautifier.Forbidden(ctx)
         }
-        const query = ctx.query as any;
+        const query = ctx.query as { name?: string, page?: number, size?: number };
         const data = tableRole.findByPage(query, "WHERE name LIKE '%' || :name || '%'");
         ResponseBeautifier.Success(ctx, data);
     },
@@ -125,7 +126,7 @@ export const rbacCtrl = {
         if (tokenInfo.id !== "admin") {
             return ResponseBeautifier.Forbidden(ctx)
         }
-        const query = ctx.query as any;
+        const query = ctx.query as { name?: string, page?: number, size?: number };
         query.name = query.name || "";
         const data = tableResource.findByPage(query, "WHERE name LIKE '%' || :name || '%'");
         ResponseBeautifier.Success(ctx, data);
@@ -166,15 +167,6 @@ export const rbacCtrl = {
         ResponseBeautifier.Success(ctx);
     },
 
-    //获取权限列表
-    async getPermission(ctx: Context) {
-        const tokenInfo: any = ctx.req.headers.token_info;
-        if (tokenInfo.id !== "admin") {
-            return ResponseBeautifier.Forbidden(ctx)
-        }
-        const data = viewPermission.find();
-        ResponseBeautifier.Success(ctx, data);
-    },
     // 绑定（用户-角色）
     async bindUserRoles(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
@@ -182,10 +174,10 @@ export const rbacCtrl = {
             return ResponseBeautifier.Forbidden(ctx)
         }
         const {id, roles} = ctx.request.body as { id: string, roles: string[] };
-        if(id === "admin"){
+        if (id === "admin") {
             return ResponseBeautifier.BadRequest(ctx, "超级管理员无法绑定角色");
         }
-        const finRes = tableUser.findOne({id}, "WHERE id=:id");
+        const finRes = tableUser.findOne({id}, "WHERE id=:id", ["id"]);
         if (!finRes) {
             return ResponseBeautifier.BadRequest(ctx, "不存在该用户");
         }
@@ -199,8 +191,8 @@ export const rbacCtrl = {
             return ResponseBeautifier.Forbidden(ctx)
         }
         const {id, users} = ctx.request.body as { id: string, users: string[] };
-        const admins = users.filter(id=>id==="admin");
-        if(admins.length > 0){
+        const admins = users.filter(id => id === "admin");
+        if (admins.length > 0) {
             return ResponseBeautifier.BadRequest(ctx, "角色无法绑定超级管理员");
         }
         tableRole.bindUsers(id, users);
@@ -225,6 +217,102 @@ export const rbacCtrl = {
         const {id, roles} = ctx.request.body as { id: string, roles: string[] };
         tableResource.bindRoles(id, roles);
         ResponseBeautifier.Success(ctx);
+    },
+    // 根据用户id获取所有角色
+    async getRolesByUser(ctx: Context) {
+        const tokenInfo: any = ctx.req.headers.token_info;
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
+        const query = ctx.query as ITableUser;
+        if (query.id === "admin") {
+            return ResponseBeautifier.Success(ctx, tableRole.find());
+        }
+        const finRes = tableUser.findOne(query, "WHERE id=:id", ["id"]);
+        if (!finRes) {
+            return ResponseBeautifier.BadRequest(ctx, "不存在该用户");
+        }
+        const data = tableUser.getRoles(query.id);
+        return ResponseBeautifier.Success(ctx, data);
+    },
+    // 根据用户id获取所有资源
+    async getResourcesByUser(ctx: Context) {
+        const tokenInfo: any = ctx.req.headers.token_info;
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
+        const query = ctx.query as ITableUser;
+        if (query.id === "admin") {
+            return ResponseBeautifier.Success(ctx, tableResource.find());
+        }
+        const finRes = tableUser.findOne(query, "WHERE id=:id", ["id"]);
+        if (!finRes) {
+            return ResponseBeautifier.BadRequest(ctx, "不存在该用户");
+        }
+        const data = tableUser.getResources(query.id);
+        return ResponseBeautifier.Success(ctx, data);
+    },
+    //根据角色id获取所有资源
+    async getResourcesByRole(ctx: Context){
+        const tokenInfo: any = ctx.req.headers.token_info;
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
+        const query = ctx.query as ITableRole;
+        const finRes = tableRole.findOne(query, "WHERE id=:id", ["id"]);
+        if (!finRes) {
+            return ResponseBeautifier.BadRequest(ctx, "不存在该角色");
+        }
+        const data = tableRole.getResources(query.id);
+        return ResponseBeautifier.Success(ctx, data);
+    },
+    // 根据角色id获取所有用户
+    async getUsersByRole(ctx: Context){
+        const tokenInfo: any = ctx.req.headers.token_info;
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
+        const query = ctx.query as ITableRole;
+        const finRes = tableRole.findOne(query, "WHERE id=:id", ["id"]);
+        if (!finRes) {
+            return ResponseBeautifier.BadRequest(ctx, "不存在该角色");
+        }
+        const data = tableRole.getUsers(query.id);
+        return ResponseBeautifier.Success(ctx, data);
+    },
+    // 根据资源id获取所有角色
+    async getRolesByResource(ctx: Context){
+        const tokenInfo: any = ctx.req.headers.token_info;
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
+        const query = ctx.query as ITableUser;
+        if (query.id === "admin") {
+            return ResponseBeautifier.Success(ctx, tableResource.find());
+        }
+        const finRes = tableResource.findOne(query, "WHERE id=:id", ["id"]);
+        if (!finRes) {
+            return ResponseBeautifier.BadRequest(ctx, "不存在该资源");
+        }
+        const data = tableResource.getRoles(query.id);
+        return ResponseBeautifier.Success(ctx, data);
+    },
+    // 根据资源id获取所有角色
+    async getUsersByResource(ctx: Context){
+        const tokenInfo: any = ctx.req.headers.token_info;
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
+        const query = ctx.query as ITableUser;
+        if (query.id === "admin") {
+            return ResponseBeautifier.Success(ctx, tableResource.find());
+        }
+        const finRes = tableResource.findOne(query, "WHERE id=:id", ["id"]);
+        if (!finRes) {
+            return ResponseBeautifier.BadRequest(ctx, "不存在该资源");
+        }
+        const data = tableResource.getUsers(query.id);
+        return ResponseBeautifier.Success(ctx, data);
     },
     //获取自己的信息
     async getSelfUser(ctx: Context) {

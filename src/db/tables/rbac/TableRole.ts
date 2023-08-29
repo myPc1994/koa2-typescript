@@ -2,6 +2,8 @@ import {BaseTable} from "../../BaseTable";
 import {table_role_resource} from "./Table_role_resource";
 import {table_user_role} from "./Table_user_role";
 import {database} from "../../index";
+import {ITableResource, tableResource} from "./TableResource";
+import {ITableUser, tableUser} from "./TableUser";
 // 角色表
 const table = {
     "id": "TEXT PRIMARY KEY UNIQUE NOT NULL",//id
@@ -27,10 +29,10 @@ class Table extends BaseTable<ITableRole> {
         // }
         // const sql = `SELECT *, COALESCE((SELECT '[' || GROUP_CONCAT(JSON_OBJECT('id',id,'name',name,'type',type)) || ']'
         //                         FROM ${viewPermission.viewName} AS permission
-        //                         LEFT JOIN ${table_role_resource.tableName} AS roleResource ON permission.id = roleResource.resourceId
+        //                         LEFT JOIN ${table_role_resource.name} AS roleResource ON permission.id = roleResource.resourceId
         //                         WHERE roleResource.roleId = role.id AND permission.id IS NOT NULL
         //                         ),'[]') AS permissions
-        //                     FROM ${this.tableName} AS role
+        //                     FROM ${this.name} AS role
         //                     ${this._where(where)}
         //                     ORDER BY updateTime DESC
         //                     LIMIT ? OFFSET ?
@@ -42,23 +44,40 @@ class Table extends BaseTable<ITableRole> {
         //     total: countRes.count
         // }
     }
+
     public bindUsers(id: string, users: string[]) {
         database.transaction(() => {
             table_user_role.delete({roleId: id}, "WHERE roleId=:roleId");
             table_user_role.inserts(users.map(userId => ({roleId: id, userId})))
         })()
     }
+
     public bindResources(id: string, resources: string[]) {
         database.transaction(() => {
             table_role_resource.delete({roleId: id}, "WHERE roleId=:roleId");
             table_role_resource.inserts(resources.map(resourceId => ({roleId: id, resourceId})))
         })()
     }
+
+    public getResources(id: string) {
+        const sql = `SELECT t_resource.* FROM ${tableResource.name} AS t_resource
+                            INNER JOIN ${table_role_resource.name} AS t_role_resource 
+                            ON t_role_resource.roleId='${id}' AND t_resource.id =t_role_resource.resourceId`;
+        return database.prepare(sql).all() as ITableResource[];
+    }
+
+    public getUsers(id: string) {
+        const sql = `SELECT t_user.* FROM ${tableUser.name} AS t_user
+                            INNER JOIN ${table_user_role.name} AS t_user_role 
+                            ON t_user_role.roleId='${id}' AND t_user.id =t_user_role.userId`;
+        return database.prepare(sql).all() as ITableUser[];
+    }
+
     public delete2(id: string) {
         database.transaction(() => {
-            this.delete({id},"WHERE id=:id");
-            table_role_resource.delete({roleId: id},"WHERE roleId=:roleId");
-            table_user_role.delete({roleId: id},"WHERE roleId=:roleId");
+            this.delete({id}, "WHERE id=:id");
+            table_role_resource.delete({roleId: id}, "WHERE roleId=:roleId");
+            table_user_role.delete({roleId: id}, "WHERE roleId=:roleId");
         })()
     }
 }
