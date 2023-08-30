@@ -1,7 +1,10 @@
 # koa2+ts+apidoc的起手式项目
 ### 整体介绍
 
-博客地址：[博客地址](https://blog.csdn.net/chen_p_cheng/article/details/132591279)
+CSDN地址：[博客地址](https://blog.csdn.net/chen_p_cheng/article/details/132591279)
+
+掘金地址：[掘金地址](https://juejin.cn/spost/7273026570941005863#heading-0)
+
 项目地址：[项目地址](https://gitee.com/CPC1994/koa2-typescript)
 
 > 开发框架：koa2
