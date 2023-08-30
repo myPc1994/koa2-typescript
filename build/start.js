@@ -1,3 +1,4 @@
+/* eslint-disable */
 const path = require('path');
 const fileUtil = require('./util/fileUtil');
 //清空输出文件

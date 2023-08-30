@@ -1,3 +1,4 @@
+/* eslint-disable */
 const pkg = require("../package.json");
 const path = require('path');
 const fileUtil = require('./util/fileUtil');
@@ -14,8 +15,6 @@ fileUtil.copyAll(path.resolve(__dirname, '..\\bin'), path.resolve(__dirname, '..
 fileUtil.copyAll(path.resolve(__dirname, '..\\env'), path.resolve(__dirname, '..\\dist\\env'));
 //拷贝static
 fileUtil.copyAll(path.resolve(__dirname, '..\\static'), path.resolve(__dirname, '..\\dist\\static'));
-//拷贝apidoc
-fileUtil.copyAll(path.resolve(__dirname, '..\\public\\apidoc'), path.resolve(__dirname, '..\\dist\\public\\apidoc'));
 //拷贝src内除了.ts文件外的其他文件
 fileUtil.copyAll(path.resolve(__dirname, '..\\src'), path.resolve(__dirname, '..\\dist\\src'), /^.*\.(?!ts).*$/);
 // 拷贝package.json,同时去除开发环境包，替换sript标签内容

@@ -1,8 +1,6 @@
 import {BaseTable} from "../../BaseTable";
 import {table_user_role} from "./Table_user_role";
 import {database} from "../../index";
-import {ResponseBeautifier} from "../../../utils/ResponseBeautifier";
-import {EResponseCode, IResponse} from "../../../types/types";
 import {ITableRole, tableRole} from "./TableRole";
 import {ITableResource, tableResource} from "./TableResource";
 import {table_role_resource} from "./Table_role_resource";

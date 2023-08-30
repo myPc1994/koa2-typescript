@@ -37,7 +37,7 @@ export abstract class Base<T extends IKeyValue<any>> {
     }
 
     /**
-     * 解析占位符，如果不存在，就自动补上默认值
+     * 解析占位符，如果不存在，就自动补上默认值（因为查询的对象中不存在，就是sql执行报错，所以只能补充完善）
      * @param str 字符串，这里解析的占位符只有 :开头的字段
      * @param data 数据
      * @param defV 默认值

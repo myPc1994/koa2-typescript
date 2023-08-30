@@ -48,34 +48,40 @@
 
 # 构建生产环境包+代码不加密
     npm run build
+    
 # 构建API接口文档
     npm run apidoc
     
 # 构建加密混淆包+代码加密
 	npm run obfuscator
+	
+# 代码格式化
+	npm run eslint:fix
 ```
 ## 生成环境部署包
-### 打包优势：允许对源代码加密混淆（javascript-obfuscator）
+### 打包优势：允许对源代码加密混淆（防止源码泄露）
 ### windows系统部署
 ```
-    1. npm run build 后生成dist文件夹
+    1.运行npm run build或者npm run obfuscator(加密打包) 会把所有的文件构建到dist文件夹中
     2.拷贝dist文件夹所有内容到windows服务器上
     3.项目根目录下运行 npm install
-    4.在根目录下运行 npm run start 或者 双击运行start.bat
-    5.移除 rm.bat
+    4.安装完成后，在根目录下运行 npm run init 设置pm2的相关参数设置（例如日志分割，分割大小等等）
+    5.初始化完成后，运行 npm run start 或者 双击运行start.bat，即可使用pm2方式启动应用
+    6.停止并移除项目 rm.bat
 ```
 ### docker环境部署
 ```
-    1. npm run build 后生成dist文件夹
+    1.运行npm run build或者npm run obfuscator(加密打包) 会把所有的文件构建到dist文件夹中
     2. 拷贝dist文件夹所有内容到linux服务器上
-    3. 在根目录下运行 ./start.sh
-    4.移除 ./rm.sh
+    3. 在根目录下运行 ./start.sh，即可使用pm2方式启动应用
+    4.停止并移除项目 ./rm.sh
 ```
 ## 项目结构说明
   ```
  |-- cpc
     |-- .dockerignore
     |-- .eslintrc.js
+    |-- .gitignore
     |-- apidoc.js
     |-- directoryList.md
     |-- Dockerfile
@@ -101,6 +107,8 @@
     |   |-- start.js
     |   |-- util
     |       |-- fileUtil.js
+    |-- db
+    |   |-- database.db
     |-- dist
     |   |-- .dockerignore
     |   |-- Dockerfile
@@ -163,55 +171,78 @@
     |   |-- index.js
     |   |-- production.js
     |-- src
-    |   |-- app.ts
-    |   |-- db
-    |   |   |-- BaseTable.ts
-    |   |   |-- BaseView.ts
-    |   |   |-- index.ts
-    |   |   |-- tables
-    |   |   |   |-- business
-    |   |   |   |   |-- TableShop.ts
-    |   |   |   |-- rbac
-    |   |   |       |-- TableResource.ts
-    |   |   |       |-- TableRole.ts
-    |   |   |       |-- TableUser.ts
-    |   |   |       |-- Table_role_resource.ts
-    |   |   |       |-- Table_user_role.ts
-    |   |   |-- views
-    |   |       |-- ViewPermission.ts
-    |   |-- routes
-    |   |   |-- controller
-    |   |   |   |-- rbacCtrl.ts
-    |   |   |-- routers
-    |   |       |-- index.ts
-    |   |       |-- rbac.ts
-    |   |-- types
-    |   |   |-- types.ts
-    |   |-- utils
-    |       |-- AntiUtil.ts
-    |       |-- AxiosUtil.ts
-    |       |-- CaptchaUtil.ts
-    |       |-- CryptoUtil.ts
-    |       |-- FileUtil.ts
-    |       |-- JoiUtil.ts
-    |       |-- JsUtil.ts
-    |       |-- NetUtil.ts
-    |       |-- NodemailerUtil.ts
-    |       |-- ResponseBeautifier.ts
-    |       |-- token
-    |           |-- JwtUtil.ts
-    |           |-- pem
-    |               |-- private_key.pem
-    |               |-- public_key.pem
-    |-- static
-
+        |-- app.ts
+        |-- apidoc
+        |-- db
+        |   |-- Base.ts
+        |   |-- BaseTable.ts
+        |   |-- BaseView.ts
+        |   |-- index.ts
+        |   |-- tables
+        |   |   |-- business
+        |   |   |   |-- TableShop.ts
+        |   |   |-- rbac
+        |   |       |-- TableResource.ts
+        |   |       |-- TableRole.ts
+        |   |       |-- TableUser.ts
+        |   |       |-- Table_role_resource.ts
+        |   |       |-- Table_user_role.ts
+        |   |-- views
+        |       |-- ViewPermission.ts
+        |-- routes
+        |   |-- controller
+        |   |   |-- RbacCtrl.ts
+        |   |-- routers
+        |       |-- index.ts
+        |       |-- rbac.ts
+        |-- types
+        |   |-- types.ts
+        |-- utils
+            |-- AntiUtil.ts
+            |-- AxiosUtil.ts
+            |-- CaptchaUtil.ts
+            |-- CryptoUtil.ts
+            |-- FileUtil.ts
+            |-- JoiUtil.ts
+            |-- JsUtil.ts
+            |-- NetUtil.ts
+            |-- NodemailerUtil.ts
+            |-- ResponseBeautifier.ts
+            |-- token
+                |-- JwtUtil.ts
+                |-- pem
+                    |-- private_key.pem
+                    |-- public_key.pem
   ```
   
   
 ## 其他说明
-### 数据库的封装说明
- ```
-      后面在写描述吧
+### 数据库的封装说明--增强对ts类型的约束
+> 代码目录:/src/db/   
+> Base.ts 封装了一堆查询的基础用法，可以加快开发效率    
+> BaseTable.ts 建表基类--继承于Base.ts 封装了一堆通用的语句，比如分页查询等   
+> BaseView.ts  建视图基类--继承于Base.ts   
+> tables: 所有的表   
+> views: 所有的视图   
+
+建表示例：
+ ```typescript
+    // key：就是字段,value:就是字段的定义
+    const table = {
+        "id": "TEXT PRIMARY KEY UNIQUE NOT NULL",//id
+        "account": "TEXT NOT NULL",//账号
+        "password": "TEXT NOT NULL",//密码
+        "name": "TEXT",//名称
+        "description": "TEXT ",// 描述
+    }
+    //上面的等价于sqlite3的语句如下
+    `CREATE TABLE IF NOT EXISTS 表名 (
+        id TEXT PRIMARY KEY UNIQUE NOT NULL,
+        account TEXT NOT NULL,
+        password TEXT NOT NULL,
+        name TEXT TEXT,
+        description TEXT
+    )`;
 ```
     
 ###  路由设计方式，分为接入层（routes/routers）和业务控制层(routes/controller)
@@ -242,9 +273,9 @@
 ```typescript
     // 创建用户
     public static async addUser(ctx: Context, next: Next) {
-        const {account, password} = ctx.request.body;
-        const data: IReturnInfo = await UserCtrl.addUser(account, password);
-        ResponseBeautifier.response(ctx, data);
+        const body = ctx.request.body as ITableUser;
+        tableUser.insert(body);//会自动过滤不是user表的字段
+        ResponseBeautifier.Success(ctx);
     }
 ```
 ### token的认证机制
@@ -255,16 +286,32 @@
 > 需要token校验的方法，直接使用token中间件即可，例如：   
 ```typescript
     // 需要验证的方法前，加入JwtUtil.middleware即可
- 	//获取用户信息
-    router.get("/user", JwtUtil.middleware, rbacCtrl.getUser);
+    /**
+     * @api {get} /rbac/user 用户-获取
+     * @apiGroup rbac
+     * @apiPermission admin
+     * @apiHeader {String} access_token 授权token
+     * @apiParam {String} name 用户名
+     * @apiUse apiParamPage
+     */
+    router.get("/user", JoiUtil.middlewareByObject({
+            name: Joi.string().optional().allow("", null),
+            page: Joi.number().optional().allow("", null),
+            size: Joi.number().optional().allow("", null),
+        }
+    ), JwtUtil.middleware, rbacCtrl.getUser);
     // 同时会把token中的信息解析出来后，放到headers的token_info里面，向下传递
     //获取用户信息
     async getUser(ctx: Context) {
         const tokenInfo: any = ctx.req.headers.token_info;
+        //超级管理员才有权限
+        if (tokenInfo.id !== "admin") {
+            return ResponseBeautifier.Forbidden(ctx)
+        }
         const query = ctx.query;
-        //从token中获取用户id
-        const data = tableUser.findByLeftJoin({id:tokenInfo.id}, query.page, query.size);
-        ResponseBeautifier.success(ctx, data);
+        const fields = tableUser.getFields(["password"]);//不要输出密码
+        const data = tableUser.findByPage(query, "WHERE name LIKE '%' || :name || '%'", fields);
+        ResponseBeautifier.Success(ctx, data);
     }
 ```
 #### 生成公钥私钥
@@ -304,7 +351,7 @@
 ```
 ### 接口参数校验
 具体查看：utils/JoiUtil.ts文件
-> 对参数的校验做了中间件的封装
+> 对参数的校验做了中间件的封装，详细请看源码
 
 > 需要验证的方法前，加入JoiUtil.middlewareByObject即可 （需要自己去熟悉JOI的语法了）
 ```typescript
@@ -314,4 +361,29 @@
             password: Joi.string().required()
         }
     ), rbacCtrl.login);
+```
+
+### api接口文档生成
+> 使用apidoc自动将注释生成api文档
+```shell
+   npm run apidoc  # 生成api文档，生成的文档放在/public/apidoc目录下
+```
+
+> 示例如下：
+```typescript
+/**
+ * @api {get} /rbac/user 用户-获取
+ * @apiGroup rbac
+ * @apiPermission admin
+ * @apiHeader {String} access_token 授权token
+ * @apiParam {String} name 用户名
+ * @apiParam {Number} [page=0] 页面索引
+ * @apiParam {Number} [size=10] 每页个数
+ */
+router.get("/user", JoiUtil.middlewareByObject({
+        name: Joi.string().optional().allow("", null),
+        page: Joi.number().optional().default(10),
+        size: Joi.number().optional().default(10),
+    }
+), JwtUtil.middleware, rbacCtrl.getUser);
 ```

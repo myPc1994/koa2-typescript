@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use strict';
 const development = require('./development');//开发环境 可查看"EnvConfig"的定义说明   位于src/core/CpcInterface.ts
 const production = require('./production');//生产环境   可查看"EnvConfig"的定义说明   位于src/core/CpcInterface.ts

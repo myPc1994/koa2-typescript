@@ -1,3 +1,4 @@
+/* eslint-disable */
 const path = require('path');
 const fileUtil = require('./util/fileUtil');
 console.log("开始加密中....")

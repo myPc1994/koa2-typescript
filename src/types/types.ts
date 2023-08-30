@@ -1,3 +1,16 @@
+declare global {
+    // eslint-disable-next-line no-var
+    var _envConfig: {
+        env: 'development'|'production', //环境名称
+        agreement: "http",//协议
+        port: string,//端口
+        db:{//数据库配置
+            path:string,
+            options?:any
+        }
+    }
+}
+
 /**
  * 定义统一的{key:value}格式
  */

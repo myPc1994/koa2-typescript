@@ -26,6 +26,8 @@ router.post("/login", JoiUtil.middlewareByObject({
  */
 router.get("/user", JoiUtil.middlewareByObject({
         name: Joi.string().optional().allow("", null),
+        page: Joi.number().optional().default(10),
+        size: Joi.number().optional().default(10),
     }
 ), JwtUtil.middleware, rbacCtrl.getUser);
 /**
@@ -83,6 +85,8 @@ router.delete("/user", JoiUtil.middlewareByObject({
  */
 router.get("/role", JoiUtil.middlewareByObject({
         name: Joi.string().optional().allow("", null),
+        page: Joi.number().optional().allow("", null),
+        size: Joi.number().optional().allow("", null),
     }
 ), JwtUtil.middleware, rbacCtrl.getRole);
 /**
@@ -135,6 +139,8 @@ router.delete("/role", JoiUtil.middlewareByObject({
  */
 router.get("/resource", JoiUtil.middlewareByObject({
         name: Joi.string().optional().allow("", null),
+        page: Joi.number().optional().allow("", null),
+        size: Joi.number().optional().allow("", null),
     }
 ), JwtUtil.middleware, rbacCtrl.getResource);
 /**

@@ -1,3 +1,4 @@
+/* eslint-disable */
 // copy此代码
 var done = function(data){
     return data

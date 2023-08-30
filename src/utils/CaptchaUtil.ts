@@ -1,9 +1,9 @@
 import svgCaptcha from "svg-captcha";
 import {v1} from 'uuid';
 import schedule from 'node-schedule';
-import {ResponseBeautifier, ResponseInfo} from "./ResponseBeautifier";
+import {ResponseBeautifier} from "./ResponseBeautifier";
 import {Context, Next} from 'koa';
-import {IKeyValue} from "../types/types";
+import {EResponseCode, IKeyValue} from "../types/types";
 
 let uuidMapCode: IKeyValue<string> = {};
 // 每天3点30分0秒，刷新容器
@@ -75,7 +75,7 @@ export class CaptchaUtil {
             if (CaptchaUtil.verify(data[uuidField], data[textField])) {
                 return next();
             } else {
-                return ResponseBeautifier.responseByStatus(ctx, ResponseInfo.dataError, "验证码错误!");
+                return ResponseBeautifier.response(ctx, EResponseCode.BadRequest, "验证码错误!");
             }
         };
     }

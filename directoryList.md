@@ -1,6 +1,7 @@
 |-- cpc
     |-- .dockerignore
     |-- .eslintrc.js
+    |-- .gitignore
     |-- apidoc.js
     |-- directoryList.md
     |-- Dockerfile
@@ -26,6 +27,8 @@
     |   |-- start.js
     |   |-- util
     |       |-- fileUtil.js
+    |-- db
+    |   |-- database.db
     |-- dist
     |   |-- .dockerignore
     |   |-- Dockerfile
@@ -88,44 +91,45 @@
     |   |-- index.js
     |   |-- production.js
     |-- src
-    |   |-- app.ts
-    |   |-- db
-    |   |   |-- BaseTable.ts
-    |   |   |-- BaseView.ts
-    |   |   |-- index.ts
-    |   |   |-- tables
-    |   |   |   |-- business
-    |   |   |   |   |-- TableShop.ts
-    |   |   |   |-- rbac
-    |   |   |       |-- TableResource.ts
-    |   |   |       |-- TableRole.ts
-    |   |   |       |-- TableUser.ts
-    |   |   |       |-- Table_role_resource.ts
-    |   |   |       |-- Table_user_role.ts
-    |   |   |-- views
-    |   |       |-- ViewPermission.ts
-    |   |-- routes
-    |   |   |-- controller
-    |   |   |   |-- rbacCtrl.ts
-    |   |   |-- routers
-    |   |       |-- index.ts
-    |   |       |-- rbac.ts
-    |   |-- types
-    |   |   |-- types.ts
-    |   |-- utils
-    |       |-- AntiUtil.ts
-    |       |-- AxiosUtil.ts
-    |       |-- CaptchaUtil.ts
-    |       |-- CryptoUtil.ts
-    |       |-- FileUtil.ts
-    |       |-- JoiUtil.ts
-    |       |-- JsUtil.ts
-    |       |-- NetUtil.ts
-    |       |-- NodemailerUtil.ts
-    |       |-- ResponseBeautifier.ts
-    |       |-- token
-    |           |-- JwtUtil.ts
-    |           |-- pem
-    |               |-- private_key.pem
-    |               |-- public_key.pem
-    |-- static
+        |-- app.ts
+        |-- apidoc
+        |-- db
+        |   |-- Base.ts
+        |   |-- BaseTable.ts
+        |   |-- BaseView.ts
+        |   |-- index.ts
+        |   |-- tables
+        |   |   |-- business
+        |   |   |   |-- TableShop.ts
+        |   |   |-- rbac
+        |   |       |-- TableResource.ts
+        |   |       |-- TableRole.ts
+        |   |       |-- TableUser.ts
+        |   |       |-- Table_role_resource.ts
+        |   |       |-- Table_user_role.ts
+        |   |-- views
+        |       |-- ViewPermission.ts
+        |-- routes
+        |   |-- controller
+        |   |   |-- RbacCtrl.ts
+        |   |-- routers
+        |       |-- index.ts
+        |       |-- rbac.ts
+        |-- types
+        |   |-- types.ts
+        |-- utils
+            |-- AntiUtil.ts
+            |-- AxiosUtil.ts
+            |-- CaptchaUtil.ts
+            |-- CryptoUtil.ts
+            |-- FileUtil.ts
+            |-- JoiUtil.ts
+            |-- JsUtil.ts
+            |-- NetUtil.ts
+            |-- NodemailerUtil.ts
+            |-- ResponseBeautifier.ts
+            |-- token
+                |-- JwtUtil.ts
+                |-- pem
+                    |-- private_key.pem
+                    |-- public_key.pem

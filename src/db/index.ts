@@ -4,14 +4,14 @@ import fs from "fs";
 
 function connectDb(): BetterSqlite3.Database {
     let db: any;
-    const options: BetterSqlite3.Options = {};
+    const dbConfig = global._envConfig.db;
+    const options: BetterSqlite3.Options = dbConfig.options || {};
     if (process.env.NODE_ENV === "development") {
         options.verbose = console.log
     }
     try {
-        const directoryPath = path.join(__dirname, '../../db');
-        const dbPath = path.join(directoryPath, 'database.db');
-        fs.mkdirSync(directoryPath, {recursive: true});
+        const dbPath = path.join(__dirname, "../../",dbConfig.path);
+        fs.mkdirSync(path.dirname(dbPath), {recursive: true});
         db = new BetterSqlite3(dbPath, options)
         console.log('数据库连接成功!', dbPath);
     } catch (err) {
