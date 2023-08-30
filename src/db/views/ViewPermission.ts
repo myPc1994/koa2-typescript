@@ -5,20 +5,17 @@ import {database} from "../index";
 import {table_user_role} from "../tables/rbac/Table_user_role";
 import {table_role_resource} from "../tables/rbac/Table_role_resource";
 import {tableUser} from "../tables/rbac/TableUser";
-//视图-权限
+
 const sql = `select id,name,description, type from ${tableResource.name} 
                      UNION 
                      select id,name,description,'shop' as type from ${tableShop.name} `;
-// 这边的fields主要是定义视图中的所有字段，只有key有用，value可以随便填写
-const fields = {
-    "id": "id",
-    "name": "权限名称",
-    "type": "类型",
-    "description": "描述",
-}
+//定义视图的字段
+const fields = ['id', 'name', 'type', "description"] as const
+//构建视图的类型
 export type IViewPermission = {
-    [key in keyof typeof fields]?: any;
-}
+    [key in typeof fields[number]]: any;
+};
+//视图-权限
 class View extends BaseView<IViewPermission> {
     constructor(viewName: string) {
         super(viewName, fields, sql);

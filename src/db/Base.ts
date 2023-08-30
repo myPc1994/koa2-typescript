@@ -4,9 +4,13 @@ import {IKeyValue} from "../types/types";
 export abstract class Base<T extends IKeyValue<any>> {
     public name: string;//表名
     protected allFields: string[] = [];//表的所有字段
-    protected constructor(name: string, fieldInfo: T) {
+    protected constructor(name: string, fieldInfo: T | string[]) {
         this.name = name;
-        this.allFields = Object.keys(fieldInfo);
+        if (Array.isArray(fieldInfo)) {
+            this.allFields = fieldInfo;
+        } else {
+            this.allFields = Object.keys(fieldInfo);
+        }
     }
 
     /**
